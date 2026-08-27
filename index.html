@@ -17,120 +17,145 @@
         }
 
         body {
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+
             font-family: Arial, sans-serif;
-            background: #f4f7fb;
+
+            background: linear-gradient(
+                135deg,
+                #eef2ff,
+                #f8fafc
+            );
+
             color: #1f2937;
         }
 
-        .header {
+        .container {
+            width: 100%;
+            max-width: 480px;
+
+            background: white;
+
+            padding: 45px 30px;
+
+            border-radius: 24px;
+
             text-align: center;
-            padding: 35px 20px 25px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.12);
         }
 
-        .header h1 {
+        .icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 30px;
+        }
+
+        h1 {
             font-size: 28px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .header p {
-            font-size: 16px;
+        p {
             color: #6b7280;
-            max-width: 500px;
-            margin: auto;
-            line-height: 1.5;
+
+            line-height: 1.6;
+
+            margin-bottom: 30px;
+
+            font-size: 16px;
         }
 
-        .form-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 15px;
-        }
-
-        .form-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        iframe {
-            width: 100%;
-            min-height: 850px;
-            border: none;
+        .continue-btn {
             display: block;
+
+            width: 100%;
+
+            padding: 16px;
+
+            border-radius: 12px;
+
+            background: #111827;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .continue-btn:hover {
+            background: #374151;
+
+            transform: translateY(-2px);
         }
 
         .footer {
-            text-align: center;
-            padding: 20px;
-            color: #9ca3af;
+            margin-top: 25px;
+
             font-size: 13px;
+
+            color: #9ca3af;
         }
 
-        @media (max-width: 600px) {
-
-            .header {
-                padding: 25px 15px 20px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .form-container {
-                margin: 15px auto;
-                padding: 0;
-            }
-
-            .form-card {
-                border-radius: 0;
-                box-shadow: none;
-            }
-
-            iframe {
-                min-height: 900px;
-            }
-
-        }
     </style>
+
 </head>
 
 <body>
 
-    <header class="header">
+    <div class="container">
+
+        <div class="icon">
+            +
+        </div>
 
         <h1>Extra Activities</h1>
 
         <p>
-            Register your interest in participating in
-            additional activities.
+            Interested in participating in additional
+            activities? Fill out the short registration
+            form below.
         </p>
 
-    </header>
+        <a
+            href="https://forms.gle/gL7BdWEndEuQbH2EA"
+            class="continue-btn">
 
+            Register Now
 
-    <main class="form-container">
+        </a>
 
-        <div class="form-card">
+        <div class="footer">
 
-            <iframe
-                src="https://forms.gle/gL7BdWEndEuQbH2EA">
-
-            </iframe>
+            Please submit your details only once.
 
         </div>
 
-    </main>
-
-
-    <footer class="footer">
-
-        Please submit the form only once.
-
-    </footer>
+    </div>
 
 </body>
 
