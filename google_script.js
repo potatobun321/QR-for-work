@@ -44,7 +44,7 @@ function setupSheet() {
     headerRange.setBackground("#0F172A"); // Dark Slate
     headerRange.setFontColor("#FFFFFF");
     headerRange.setFontSize(11);
-    headerRange.setHeight(36);
+    sheet.setRowHeight(1, 36);
     headerRange.setHorizontalAlignment("center");
 
     // Freeze Header Row

@@ -7,7 +7,7 @@ const CONFIG = {
     startDate: "2026-08-31", // Day 1
     endDate: "2026-09-05",   // Day 6
     // Paste your Deployed Google Apps Script Web App URL below:
-    googleScriptUrl: "",
+    googleScriptUrl: "https://script.google.com/macros/s/AKfycbyGOrgI8ZKjFJKouFgpN5WuufpoJnZL0UROHAOwTLL6Vkx9xMg5z34s0nFRPjWd01u-8A/exec",
     // Branches List (Exactly 3 Options as requested)
     branches: [
         "Artificial Intelligence",
