@@ -3,159 +3,92 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fresher Orientation & Attendance Check-In Portal">
+    <title>Fresher Induction 2026 • Attendance Check-In</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Extra Activities Registration</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            padding: 20px;
-
-            font-family: Arial, sans-serif;
-
-            background: linear-gradient(
-                135deg,
-                #eef2ff,
-                #f8fafc
-            );
-
-            color: #1f2937;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-
-            background: white;
-
-            padding: 45px 30px;
-
-            border-radius: 24px;
-
-            text-align: center;
-
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.12);
-        }
-
-        .icon {
-            width: 70px;
-            height: 70px;
-
-            margin: 0 auto 25px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background: #111827;
-
-            color: white;
-
-            font-size: 30px;
-        }
-
-        h1 {
-            font-size: 28px;
-            margin-bottom: 15px;
-        }
-
-        p {
-            color: #6b7280;
-
-            line-height: 1.6;
-
-            margin-bottom: 30px;
-
-            font-size: 16px;
-        }
-
-        .continue-btn {
-            display: block;
-
-            width: 100%;
-
-            padding: 16px;
-
-            border-radius: 12px;
-
-            background: #111827;
-
-            color: white;
-
-            text-decoration: none;
-
-            font-size: 16px;
-            font-weight: bold;
-
-            transition: 0.2s;
-        }
-
-        .continue-btn:hover {
-            background: #374151;
-
-            transform: translateY(-2px);
-        }
-
-        .footer {
-            margin-top: 25px;
-
-            font-size: 13px;
-
-            color: #9ca3af;
-        }
-
-    </style>
-
+    <!-- Google Fonts & Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="container">
+    <!-- Ambient Glowing Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
 
-        <div class="icon">
-            +
-        </div>
+    <!-- Main Glassmorphism Card -->
+    <main class="main-container">
 
-        <h1>Extra Activities</h1>
+        <!-- Top Header & Live Badge -->
+        <header class="header-badge-wrap">
+            <div class="badge" id="dayBadgeWrap">
+                <span class="live-dot"></span>
+                <span id="dayBadge">Day 1 of 6 • Welcome!</span>
+            </div>
+            <span class="org-tag">Extra Activities</span>
+        </header>
 
-        <p>
-            Interested in participating in additional
-            activities? Fill out the short registration
-            form below.
-        </p>
+        <!-- 6-Day Stepper Timeline Bar -->
+        <nav class="stepper-container" aria-label="6-Day Orientation Schedule">
+            <div class="stepper-title">6-Day Induction Stepper</div>
+            <div class="stepper-steps" id="stepperSteps">
+                <!-- Dynamically populated via app.js -->
+            </div>
+        </nav>
 
-        <a
-            href="https://tally.so/r/aQqlrq"
-            class="continue-btn">
+        <!-- Dynamic Hero Section -->
+        <section class="hero-card">
+            <div class="icon-wrapper" id="heroIcon">
+                ✨
+            </div>
+            <h1 class="hero-title" id="heroTitle">
+                The Grand Welcome
+            </h1>
+            <p class="quote-box" id="heroQuote">
+                "Welcome to campus! Every journey of a thousand miles begins with a single bold step."
+            </p>
+        </section>
 
-            Register Now
+        <!-- Schedule Highlights -->
+        <section class="schedule-box">
+            <div class="schedule-header">
+                <span>🗓️ Today's Highlights</span>
+            </div>
+            <ul class="schedule-list" id="scheduleList">
+                <!-- Dynamically populated -->
+            </ul>
+        </section>
 
+        <!-- Energizer / Vibe Check -->
+        <section class="energizer-section">
+            <span class="energizer-label">⚡ How's the vibe today?</span>
+            <div class="energizer-chips" id="energizerChips">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- Action Button -->
+        <a href="https://tally.so/r/aQqlrq" class="cta-button" id="ctaButton" id="mainCta">
+            <span>Mark Day 1 Attendance →</span>
         </a>
 
-        <div class="footer">
+        <footer class="footer-note">
+            Submit your attendance details once per day. Have a great session!
+        </footer>
 
-            Please submit your details only once.
+    </main>
 
-        </div>
-
+    <!-- Transition Redirection Modal Overlay -->
+    <div class="redirect-overlay" id="redirectOverlay">
+        <div class="spinner"></div>
+        <div class="redirect-text">Connecting to Attendance Form...</div>
+        <div class="redirect-subtext">Preparing your Tally sheet link</div>
     </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
 
 </body>
 
