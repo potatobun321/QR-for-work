@@ -1,4 +1,4 @@
-// Dynamic 6-Day Attendance & Fresher Warm-Up Logic (Blocky Vibrant Theme)
+// Smart 6-Day Attendance Logic with Device ID Locking & Google Sheets Integration
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -12,33 +12,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const quoteElement = document.getElementById("heroQuote");
     const scheduleListElement = document.getElementById("scheduleList");
     const energizerChipsElement = document.getElementById("energizerChips");
-    const ctaButton = document.getElementById("ctaButton");
+
+    // Action Cards
+    const registrationFormCard = document.getElementById("registrationFormCard");
+    const regForm = document.getElementById("regForm");
+    const regPhoneInput = document.getElementById("regPhone");
+    const regNameInput = document.getElementById("regName");
+    const regEmailInput = document.getElementById("regEmail");
+    const regBranchInput = document.getElementById("regBranch");
+
+    const recurringCheckInCard = document.getElementById("recurringCheckInCard");
+    const userNameGreeting = document.getElementById("userNameGreeting");
+    const userMetaDetails = document.getElementById("userMetaDetails");
+    const oneTapAttendBtn = document.getElementById("oneTapAttendBtn");
+    const oneTapBtnText = document.getElementById("oneTapBtnText");
+
+    const alreadySubmittedCard = document.getElementById("alreadySubmittedCard");
+    const alreadySubmittedDesc = document.getElementById("alreadySubmittedDesc");
+
+    const deviceMismatchCard = document.getElementById("deviceMismatchCard");
     const redirectOverlay = document.getElementById("redirectOverlay");
+    const redirectStatusText = document.getElementById("redirectStatusText");
+    const redirectStatusSubtext = document.getElementById("redirectStatusSubtext");
 
+    // State Variables
+    let deviceId = getOrCreateDeviceId();
     let currentDayIndex = calculateActiveDayIndex();
-    renderDayUI(currentDayIndex);
+    let selectedVibe = "Ready";
 
-    // Calculate Active Day index (0 to 5)
+    // Initialize UI
+    renderDayUI(currentDayIndex);
+    checkUserAttendanceState();
+
+    // 1. Device ID Generator (Stored in LocalStorage)
+    function getOrCreateDeviceId() {
+        let id = localStorage.getItem("qr_attendance_device_id");
+        if (!id) {
+            if (typeof crypto !== "undefined" && crypto.randomUUID) {
+                id = "dev_" + crypto.randomUUID().replace(/-/g, "").substring(0, 16);
+            } else {
+                id = "dev_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+            }
+            localStorage.setItem("qr_attendance_device_id", id);
+        }
+        return id;
+    }
+
+    // 2. Active Day Calculation
     function calculateActiveDayIndex() {
-        // 1. Check URL param '?day=X'
         const urlParams = new URLSearchParams(window.location.search);
         const paramDay = parseInt(urlParams.get("day"), 10);
         if (!isNaN(paramDay) && paramDay >= 1 && paramDay <= 6) {
             return paramDay - 1;
         }
 
-        // 2. Calculate based on current date
         const now = new Date();
         const todayStr = formatDateStr(now);
-
         const foundIndex = daysData.findIndex(d => d.date === todayStr);
-        if (foundIndex !== -1) {
-            return foundIndex;
-        }
 
+        if (foundIndex !== -1) return foundIndex;
         if (todayStr < config.startDate) return 0;
         if (todayStr > config.endDate) return 5;
-
         return 0;
     }
 
@@ -49,25 +83,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${yyyy}-${mm}-${dd}`;
     }
 
-    // Render UI for specific day index (0 to 5)
+    // 3. Render Day UI & Theme Block Colors
     function renderDayUI(index) {
         const dayData = daysData[index];
 
-        // Dynamic CSS Block Colors
         document.documentElement.style.setProperty('--day-bg', dayData.bgColor);
         document.documentElement.style.setProperty('--day-accent', dayData.accentColor);
         document.documentElement.style.setProperty('--day-secondary', dayData.secondaryBg);
 
-        // Header & Hero Elements
         badgeElement.textContent = dayData.badge;
         iconElement.textContent = dayData.icon;
         titleElement.textContent = dayData.title;
         quoteElement.textContent = `"${dayData.quote}"`;
 
-        // Render Stepper Bar
         renderStepper(index);
 
-        // Schedule Highlights
         scheduleListElement.innerHTML = dayData.highlights.map(item => `
             <li class="schedule-item">
                 <span class="schedule-bullet"></span>
@@ -75,30 +105,27 @@ document.addEventListener("DOMContentLoaded", () => {
             </li>
         `).join("");
 
-        // Energizer Vibe Chips
         energizerChipsElement.innerHTML = dayData.energizers.map((energizer, i) => `
-            <button class="chip-btn ${i === 0 ? 'selected' : ''}" data-index="${i}">
+            <button class="chip-btn ${i === 0 ? 'selected' : ''}" data-vibe="${energizer}">
                 ${energizer}
             </button>
         `).join("");
 
-        // Chip click listener
+        selectedVibe = dayData.energizers[0] || "Ready";
+
         const chips = energizerChipsElement.querySelectorAll(".chip-btn");
         chips.forEach(chip => {
             chip.addEventListener("click", () => {
                 chips.forEach(c => c.classList.remove("selected"));
                 chip.classList.add("selected");
+                selectedVibe = chip.dataset.vibe;
             });
         });
 
-        // CTA Button Text and Link Target
-        ctaButton.innerHTML = `
-            <span>${dayData.ctaText}</span>
-        `;
-        ctaButton.dataset.targetUrl = dayData.tallyUrl || config.defaultTallyUrl;
+        oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
 
-    // Render Stepper Visual Pills
+    // 4. Render Stepper
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
@@ -112,27 +139,202 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }).join("");
 
-        // Add event listener to allow manual day preview on pill click
         const stepItems = stepperStepsElement.querySelectorAll(".step-item");
         stepItems.forEach(item => {
             item.addEventListener("click", () => {
                 const targetIdx = parseInt(item.dataset.dayIdx, 10);
                 currentDayIndex = targetIdx;
                 renderDayUI(targetIdx);
+                checkUserAttendanceState();
             });
         });
     }
 
-    // CTA Redirection Handler
-    ctaButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const targetUrl = ctaButton.dataset.targetUrl;
+    // 5. User Attendance & Device State Check
+    async function checkUserAttendanceState() {
+        const dayNumber = currentDayIndex + 1;
+        const cachedPhone = localStorage.getItem("qr_user_phone");
+        const cachedName = localStorage.getItem("qr_user_name");
+        const cachedBranch = localStorage.getItem("qr_user_branch");
 
-        // Activate Redirection Overlay
-        redirectOverlay.classList.add("active");
+        // Local Storage Check for same day
+        const dayAttendanceKey = `qr_attended_day_${dayNumber}`;
+        if (localStorage.getItem(dayAttendanceKey) === "true") {
+            showCard(alreadySubmittedCard);
+            alreadySubmittedDesc.textContent = `You have already logged your Day ${dayNumber} attendance!`;
+            return;
+        }
+
+        // If Google Apps Script API URL is set, perform API check
+        if (config.googleScriptUrl && cachedPhone) {
+            try {
+                const checkUrl = `${config.googleScriptUrl}?action=check&phone=${encodeURIComponent(cachedPhone)}&day=${dayNumber}&deviceId=${encodeURIComponent(deviceId)}`;
+                const res = await fetch(checkUrl);
+                const data = await res.json();
+
+                if (data.status === "ALREADY_SUBMITTED") {
+                    localStorage.setItem(dayAttendanceKey, "true");
+                    showCard(alreadySubmittedCard);
+                    alreadySubmittedDesc.textContent = `Attendance for ${data.name || 'you'} on Day ${dayNumber} is already recorded in Google Sheets.`;
+                    return;
+                }
+
+                if (data.status === "DEVICE_MISMATCH") {
+                    showCard(deviceMismatchCard);
+                    return;
+                }
+
+                if (data.status === "READY_ONE_TAP") {
+                    userNameGreeting.textContent = `Welcome back, ${data.name || cachedName}!`;
+                    userMetaDetails.textContent = `${data.branch || cachedBranch || 'Fresher'} • 🔒 Device Locked`;
+                    showCard(recurringCheckInCard);
+                    return;
+                }
+
+                if (data.status === "NEW_USER") {
+                    showCard(registrationFormCard);
+                    return;
+                }
+            } catch (err) {
+                console.warn("Google Script API check failed, falling back to local state:", err);
+            }
+        }
+
+        // Local Fallback Check
+        if (cachedPhone && cachedName) {
+            userNameGreeting.textContent = `Welcome back, ${cachedName}!`;
+            userMetaDetails.textContent = `${cachedBranch || 'Fresher'} • 🔒 Device Locked`;
+            showCard(recurringCheckInCard);
+        } else {
+            showCard(registrationFormCard);
+        }
+    }
+
+    // Helper: Show specific card and hide others
+    function showCard(targetCard) {
+        registrationFormCard.classList.add("hidden");
+        recurringCheckInCard.classList.add("hidden");
+        alreadySubmittedCard.classList.add("hidden");
+        deviceMismatchCard.classList.add("hidden");
+
+        if (targetCard) {
+            targetCard.classList.remove("hidden");
+        }
+    }
+
+    // 6. Registration Form Submission (First-Time Visitor / Day 1 / Late Joiner)
+    regForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = regNameInput.value.trim();
+        const phone = regPhoneInput.value.trim();
+        const email = regEmailInput.value.trim();
+        const branch = regBranchInput.value;
+        const dayNumber = currentDayIndex + 1;
+
+        if (!name || !phone || !email || !branch) {
+            alert("Please fill out all fields.");
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(phone)) {
+            alert("Please enter a valid 10-digit mobile number.");
+            return;
+        }
+
+        // Cache details locally
+        localStorage.setItem("qr_user_phone", phone);
+        localStorage.setItem("qr_user_name", name);
+        localStorage.setItem("qr_user_email", email);
+        localStorage.setItem("qr_user_branch", branch);
+
+        // Show Overlay Loader
+        showOverlay("Registering & Logging Attendance...", "Connecting to Google Sheets");
+
+        // Submit to Google Apps Script API if URL is provided
+        if (config.googleScriptUrl) {
+            try {
+                const payload = {
+                    action: "register",
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    branch: branch,
+                    deviceId: deviceId,
+                    day: dayNumber,
+                    vibe: selectedVibe
+                };
+
+                await fetch(config.googleScriptUrl, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Error pushing to Google Script:", err);
+            }
+        }
+
+        // Mark local day attendance
+        localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
         setTimeout(() => {
-            window.location.href = targetUrl;
-        }, 1100);
+            hideOverlay();
+            showCard(alreadySubmittedCard);
+            alreadySubmittedDesc.textContent = `Registration complete! Your Day ${dayNumber} attendance has been logged.`;
+        }, 1200);
     });
+
+    // 7. 1-Tap Attendance Submission (Returning Device)
+    oneTapAttendBtn.addEventListener("click", async () => {
+        const phone = localStorage.getItem("qr_user_phone");
+        const dayNumber = currentDayIndex + 1;
+
+        if (!phone) {
+            showCard(registrationFormCard);
+            return;
+        }
+
+        showOverlay(`Logging Day ${dayNumber} Attendance...`, "Verifying Device & Updating Google Sheet");
+
+        if (config.googleScriptUrl) {
+            try {
+                const payload = {
+                    action: "attend",
+                    phone: phone,
+                    deviceId: deviceId,
+                    day: dayNumber,
+                    vibe: selectedVibe
+                };
+
+                await fetch(config.googleScriptUrl, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Error submitting 1-tap attendance:", err);
+            }
+        }
+
+        localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
+
+        setTimeout(() => {
+            hideOverlay();
+            showCard(alreadySubmittedCard);
+            alreadySubmittedDesc.textContent = `Success! Your Day ${dayNumber} attendance has been marked.`;
+        }, 1200);
+    });
+
+    function showOverlay(title, subtitle) {
+        redirectStatusText.textContent = title;
+        redirectStatusSubtext.textContent = subtitle;
+        redirectOverlay.classList.add("active");
+    }
+
+    function hideOverlay() {
+        redirectOverlay.classList.remove("active");
+    }
 });

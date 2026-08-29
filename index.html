@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Fresher Orientation & Attendance Check-In Portal">
+    <meta name="description" content="Fresher Orientation & Smart Attendance Check-In Portal">
     <title>Fresher Induction 2026 • Attendance Check-In</title>
 
     <!-- Google Fonts & Styles -->
@@ -64,13 +64,79 @@
             </div>
         </section>
 
-        <!-- Action Button -->
-        <a href="https://tally.so/r/aQqlrq" class="cta-button" id="ctaButton">
-            <span>Mark Day 1 Attendance →</span>
-        </a>
+        <!-- DYNAMIC ATTENDANCE ACTION AREA -->
+        <section id="actionArea">
+            
+            <!-- STATE A: FIRST-TIME REGISTRATION FORM (Day 1 / Late Joiners) -->
+            <div id="registrationFormCard" class="form-card">
+                <div class="form-header">
+                    <span class="form-title">📝 Fresher Registration</span>
+                    <span class="form-subtitle">First-time check-in details</span>
+                </div>
+                <form id="regForm">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPhone">Mobile Number (Primary Key)</label>
+                        <input type="tel" id="regPhone" class="form-input" placeholder="10-Digit Mobile No." pattern="[0-9]{10}" maxlength="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" id="regEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regBranch">Branch / Department</label>
+                        <select id="regBranch" class="form-input form-select" required>
+                            <option value="" disabled selected>Select Your Branch</option>
+                            <option value="Artificial Intelligence">Artificial Intelligence</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="cta-button" id="regSubmitBtn">
+                        <span>REGISTER & MARK ATTENDANCE →</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- STATE B: 1-TAP RECURRING CHECK-IN (Returning Device) -->
+            <div id="recurringCheckInCard" class="form-card hidden">
+                <div class="user-greeting-box">
+                    <div class="user-avatar" id="userAvatar">👋</div>
+                    <div>
+                        <div class="user-name" id="userNameGreeting">Welcome back!</div>
+                        <div class="user-meta" id="userMetaDetails">CSE • 🔒 Device Locked</div>
+                    </div>
+                </div>
+                <button type="button" class="cta-button" id="oneTapAttendBtn">
+                    <span id="oneTapBtnText">MARK DAY 1 ATTENDANCE →</span>
+                </button>
+            </div>
+
+            <!-- STATE C: ALREADY SUBMITTED TODAY BANNER -->
+            <div id="alreadySubmittedCard" class="status-card success hidden">
+                <div class="status-icon">✅</div>
+                <div class="status-title">Attendance Marked!</div>
+                <div class="status-desc" id="alreadySubmittedDesc">Your attendance for today has already been logged. See you tomorrow!</div>
+            </div>
+
+            <!-- STATE D: DEVICE MISMATCH / PROXY BLOCK BANNER -->
+            <div id="deviceMismatchCard" class="status-card warning hidden">
+                <div class="status-icon">⚠️</div>
+                <div class="status-title">Proxy Attendance Blocked</div>
+                <div class="status-desc">This mobile number is locked to a different smartphone device. Proxy attendance is strictly prohibited.</div>
+            </div>
+
+        </section>
 
         <footer class="footer-note">
-            Submit your attendance details once per day
+            Submit your attendance details once per day • Anti-Proxy Device Locking Enabled
         </footer>
 
     </main>
@@ -79,8 +145,8 @@
     <div class="redirect-overlay" id="redirectOverlay">
         <div class="redirect-card">
             <div class="spinner"></div>
-            <div class="redirect-text">Connecting...</div>
-            <div class="redirect-subtext">Redirecting to your Tally attendance form</div>
+            <div class="redirect-text" id="redirectStatusText">Logging Attendance...</div>
+            <div class="redirect-subtext" id="redirectStatusSubtext">Updating your record in Google Sheets</div>
         </div>
     </div>
 
