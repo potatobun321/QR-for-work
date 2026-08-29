@@ -1,4 +1,4 @@
-// Dynamic 6-Day Attendance & Fresher Warm-Up Logic
+// Dynamic 6-Day Attendance & Fresher Warm-Up Logic (Blocky Vibrant Theme)
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -18,13 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentDayIndex = calculateActiveDayIndex();
     renderDayUI(currentDayIndex);
 
-    // Calculate Active Day based on URL query param fallback to Date
+    // Calculate Active Day index (0 to 5)
     function calculateActiveDayIndex() {
         // 1. Check URL param '?day=X'
         const urlParams = new URLSearchParams(window.location.search);
         const paramDay = parseInt(urlParams.get("day"), 10);
         if (!isNaN(paramDay) && paramDay >= 1 && paramDay <= 6) {
-            return paramDay - 1; // 0-indexed
+            return paramDay - 1;
         }
 
         // 2. Calculate based on current date
@@ -36,13 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return foundIndex;
         }
 
-        // Check if before start date or after end date
-        if (todayStr < config.startDate) {
-            return 0; // Day 1 default
-        }
-        if (todayStr > config.endDate) {
-            return 5; // Day 6 default
-        }
+        if (todayStr < config.startDate) return 0;
+        if (todayStr > config.endDate) return 5;
 
         return 0;
     }
@@ -58,11 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderDayUI(index) {
         const dayData = daysData[index];
 
-        // Dynamic CSS Variables
-        document.documentElement.style.setProperty('--accent', dayData.accentColor);
-        document.documentElement.style.setProperty('--accent-glow', `${dayData.accentColor}55`);
+        // Dynamic CSS Block Colors
+        document.documentElement.style.setProperty('--day-bg', dayData.bgColor);
+        document.documentElement.style.setProperty('--day-accent', dayData.accentColor);
+        document.documentElement.style.setProperty('--day-secondary', dayData.secondaryBg);
 
-        // Badge & Header
+        // Header & Hero Elements
         badgeElement.textContent = dayData.badge;
         iconElement.textContent = dayData.icon;
         titleElement.textContent = dayData.title;
@@ -95,14 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // CTA Button Text and Link
+        // CTA Button Text and Link Target
         ctaButton.innerHTML = `
             <span>${dayData.ctaText}</span>
         `;
         ctaButton.dataset.targetUrl = dayData.tallyUrl || config.defaultTallyUrl;
     }
 
-    // Render Stepper Visual
+    // Render Stepper Visual Pills
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
@@ -111,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return `
                 <button class="step-item ${statusClass}" data-day-idx="${idx}" title="Preview Day ${d.day}">
-                    <div class="step-pill"></div>
                     <span class="step-label">D${d.day}</span>
                 </button>
             `;
@@ -128,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // CTA Redirection Handler with Smooth Warm Up Transition
+    // CTA Redirection Handler
     ctaButton.addEventListener("click", (e) => {
         e.preventDefault();
         const targetUrl = ctaButton.dataset.targetUrl;
@@ -138,6 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
             window.location.href = targetUrl;
-        }, 1200);
+        }, 1100);
     });
 });

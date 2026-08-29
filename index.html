@@ -13,11 +13,7 @@
 
 <body>
 
-    <!-- Ambient Glowing Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-
-    <!-- Main Glassmorphism Card -->
+    <!-- Main Blocky Container -->
     <main class="main-container">
 
         <!-- Top Header & Live Badge -->
@@ -69,21 +65,23 @@
         </section>
 
         <!-- Action Button -->
-        <a href="https://tally.so/r/aQqlrq" class="cta-button" id="ctaButton" id="mainCta">
+        <a href="https://tally.so/r/aQqlrq" class="cta-button" id="ctaButton">
             <span>Mark Day 1 Attendance →</span>
         </a>
 
         <footer class="footer-note">
-            Submit your attendance details once per day. Have a great session!
+            Submit your attendance details once per day
         </footer>
 
     </main>
 
     <!-- Transition Redirection Modal Overlay -->
     <div class="redirect-overlay" id="redirectOverlay">
-        <div class="spinner"></div>
-        <div class="redirect-text">Connecting to Attendance Form...</div>
-        <div class="redirect-subtext">Preparing your Tally sheet link</div>
+        <div class="redirect-card">
+            <div class="spinner"></div>
+            <div class="redirect-text">Connecting...</div>
+            <div class="redirect-subtext">Redirecting to your Tally attendance form</div>
+        </div>
     </div>
 
     <!-- Scripts -->

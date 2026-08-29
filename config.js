@@ -1,4 +1,4 @@
-// 6-Day Fresher Attendance & Orientation Config
+// 6-Day Fresher Attendance & Orientation Config - Blocky Vibrant Theme
 
 const CONFIG = {
     eventName: "Fresher Induction 2026",
@@ -16,12 +16,16 @@ const DAYS_DATA = [
         title: "The Grand Welcome",
         badge: "Day 1 of 6 • Welcome Freshers!",
         icon: "✨",
-        accentColor: "#6366f1",
+        bgColor: "#FFDE59",       // Electric Yellow
+        cardBg: "#FFFFFF",
+        accentColor: "#FFDE59",
+        secondaryBg: "#FFF9C4",
+        textColor: "#000000",
         quote: "Welcome to campus! Every journey of a thousand miles begins with a single bold step.",
         highlights: ["Registration & Badges", "Welcome Address by Seniors", "Campus Tour & Icebreakers"],
-        energizers: ["🚀 Ready to launch!", "🔥 Super hyped!", "🎉 Excited!"],
-        tallyUrl: "https://tally.so/r/aQqlrq", // Override per day if needed
-        ctaText: "Mark Day 1 Attendance →"
+        energizers: ["🚀 Ready!", "🔥 Hyped!", "🎉 Excited!"],
+        tallyUrl: "https://tally.so/r/aQqlrq",
+        ctaText: "MARK DAY 1 ATTENDANCE →"
     },
     {
         day: 2,
@@ -30,12 +34,16 @@ const DAYS_DATA = [
         title: "Icebreakers & Vibe Check",
         badge: "Day 2 of 6 • Vibe Check",
         icon: "⚡",
-        accentColor: "#ec4899",
-        quote: "Make at least 3 new friends today. The people next to you might just become lifelong buddies!",
+        bgColor: "#FF66C4",       // Hot Pink
+        cardBg: "#FFFFFF",
+        accentColor: "#FF66C4",
+        secondaryBg: "#FFE4F3",
+        textColor: "#000000",
+        quote: "Make at least 3 new friends today! The people next to you might become lifelong buddies.",
         highlights: ["Team Bonding Games", "Clubs & Societies Teaser", "Interactive Q&A Session"],
         energizers: ["💬 Let's connect!", "⚡ Supercharged!", "🤝 Friendly vibes"],
         tallyUrl: "https://tally.so/r/aQqlrq",
-        ctaText: "Mark Day 2 Attendance →"
+        ctaText: "MARK DAY 2 ATTENDANCE →"
     },
     {
         day: 3,
@@ -44,12 +52,16 @@ const DAYS_DATA = [
         title: "Deep Dive & Exploration",
         badge: "Day 3 of 6 • Mid-Week Sync",
         icon: "🔍",
-        accentColor: "#8b5cf6",
+        bgColor: "#00F0FF",       // Electric Cyan
+        cardBg: "#FFFFFF",
+        accentColor: "#00F0FF",
+        secondaryBg: "#E0F7FA",
+        textColor: "#000000",
         quote: "Mid-week milestone! You're officially settling into the rhythm of college life.",
         highlights: ["Academic Roadmap", "Tech & Creative Showcase", "Mentorship Speed Dating"],
-        energizers: ["💡 Inspired!", "🧠 Curious mindset", "🚀 Full steam ahead"],
+        energizers: ["💡 Inspired!", "🧠 Curious mindset", "🚀 Full steam"],
         tallyUrl: "https://tally.so/r/aQqlrq",
-        ctaText: "Mark Day 3 Attendance →"
+        ctaText: "MARK DAY 3 ATTENDANCE →"
     },
     {
         day: 4,
@@ -58,12 +70,16 @@ const DAYS_DATA = [
         title: "Talent & Workshops",
         badge: "Day 4 of 6 • Spotlight",
         icon: "🌟",
-        accentColor: "#10b981",
+        bgColor: "#70E000",       // Lime Green
+        cardBg: "#FFFFFF",
+        accentColor: "#70E000",
+        secondaryBg: "#F1F8E9",
+        textColor: "#000000",
         quote: "Unleash your potential! Today is all about discovering what makes your skill set unique.",
         highlights: ["Hands-on Skill Workshops", "Open Mic & Showcase", "Networking Lounge"],
-        energizers: ["🎨 Feeling creative", "🌟 Ready to shine", "🎸 Full energy"],
+        energizers: ["🎨 Creative", "🌟 Ready to shine", "🎸 High energy"],
         tallyUrl: "https://tally.so/r/aQqlrq",
-        ctaText: "Mark Day 4 Attendance →"
+        ctaText: "MARK DAY 4 ATTENDANCE →"
     },
     {
         day: 5,
@@ -72,12 +88,16 @@ const DAYS_DATA = [
         title: "Culture & Celebration",
         badge: "Day 5 of 6 • Party Energy",
         icon: "🎉",
-        accentColor: "#f59e0b",
+        bgColor: "#FF914D",       // Bright Orange
+        cardBg: "#FFFFFF",
+        accentColor: "#FF914D",
+        secondaryBg: "#FFF3E0",
+        textColor: "#000000",
         quote: "Turn up the noise! Celebration day is where core college memories are created.",
         highlights: ["Cultural Performances", "DJ Jam Session", "Surprise Guest Appearance"],
         energizers: ["💃 Ready to dance!", "🎶 Music lovers", "🔥 Unstoppable"],
         tallyUrl: "https://tally.so/r/aQqlrq",
-        ctaText: "Mark Day 5 Attendance →"
+        ctaText: "MARK DAY 5 ATTENDANCE →"
     },
     {
         day: 6,
@@ -86,12 +106,16 @@ const DAYS_DATA = [
         title: "Grand Finale & Farewell",
         badge: "Day 6 of 6 • Grand Finale",
         icon: "👑",
-        accentColor: "#3b82f6",
+        bgColor: "#B57EDC",       // Vibrant Violet
+        cardBg: "#FFFFFF",
+        accentColor: "#B57EDC",
+        secondaryBg: "#F3E5F5",
+        textColor: "#000000",
         quote: "What an incredible week! This is only the beginning of your legendary college adventure.",
         highlights: ["Valedictory & Awards", "Memory Wall & Photo Ops", "Feedback & Final Cheer"],
-        energizers: ["🎓 Proud fresher!", "💖 Unforgettable week", "🏆 Victory mode"],
+        energizers: ["🎓 Proud fresher!", "💖 Unforgettable", "🏆 Victory mode"],
         tallyUrl: "https://tally.so/r/aQqlrq",
-        ctaText: "Complete Final Attendance →"
+        ctaText: "COMPLETE FINAL ATTENDANCE →"
     }
 ];
 
