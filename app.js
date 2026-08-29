@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Device ID Locking & Google Sheets Integration
+// Smart 6-Day Attendance Logic with Strict Day Locking & Device ID Binding
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -9,9 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const stepperStepsElement = document.getElementById("stepperSteps");
     const iconElement = document.getElementById("heroIcon");
     const titleElement = document.getElementById("heroTitle");
-    const quoteElement = document.getElementById("heroQuote");
     const scheduleListElement = document.getElementById("scheduleList");
-    const energizerChipsElement = document.getElementById("energizerChips");
 
     // Action Cards
     const registrationFormCard = document.getElementById("registrationFormCard");
@@ -31,17 +29,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const alreadySubmittedDesc = document.getElementById("alreadySubmittedDesc");
 
     const deviceMismatchCard = document.getElementById("deviceMismatchCard");
+    const dayLockedCard = document.getElementById("dayLockedCard");
+    const lockedDayTitle = document.getElementById("lockedDayTitle");
+    const lockedDayDesc = document.getElementById("lockedDayDesc");
+    const returnTodayBtn = document.getElementById("returnTodayBtn");
+
     const redirectOverlay = document.getElementById("redirectOverlay");
     const redirectStatusText = document.getElementById("redirectStatusText");
     const redirectStatusSubtext = document.getElementById("redirectStatusSubtext");
 
+    // Check URL params for preview override (?preview=true)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPreviewMode = urlParams.get("preview") === "true" || urlParams.get("override") === "true";
+
     // State Variables
     let deviceId = getOrCreateDeviceId();
-    let currentDayIndex = calculateActiveDayIndex();
-    let selectedVibe = "Ready";
+    let realTodayIndex = calculateRealTodayIndex();
+    let selectedDayIndex = getRequestedDayIndex(realTodayIndex);
 
     // Initialize UI
-    renderDayUI(currentDayIndex);
+    renderDayUI(selectedDayIndex);
     checkUserAttendanceState();
 
     // 1. Device ID Generator (Stored in LocalStorage)
@@ -58,14 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return id;
     }
 
-    // 2. Active Day Calculation
-    function calculateActiveDayIndex() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramDay = parseInt(urlParams.get("day"), 10);
-        if (!isNaN(paramDay) && paramDay >= 1 && paramDay <= 6) {
-            return paramDay - 1;
-        }
-
+    // 2. Real Today Index Calculation based on Date
+    function calculateRealTodayIndex() {
         const now = new Date();
         const todayStr = formatDateStr(now);
         const foundIndex = daysData.findIndex(d => d.date === todayStr);
@@ -74,6 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (todayStr < config.startDate) return 0;
         if (todayStr > config.endDate) return 5;
         return 0;
+    }
+
+    function getRequestedDayIndex(realIndex) {
+        const paramDay = parseInt(urlParams.get("day"), 10);
+        if (!isNaN(paramDay) && paramDay >= 1 && paramDay <= 6) {
+            return paramDay - 1;
+        }
+        return realIndex;
     }
 
     function formatDateStr(date) {
@@ -94,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
         badgeElement.textContent = dayData.badge;
         iconElement.textContent = dayData.icon;
         titleElement.textContent = dayData.title;
-        quoteElement.textContent = `"${dayData.quote}"`;
 
         renderStepper(index);
 
@@ -105,54 +113,52 @@ document.addEventListener("DOMContentLoaded", () => {
             </li>
         `).join("");
 
-        energizerChipsElement.innerHTML = dayData.energizers.map((energizer, i) => `
-            <button class="chip-btn ${i === 0 ? 'selected' : ''}" data-vibe="${energizer}">
-                ${energizer}
-            </button>
-        `).join("");
-
-        selectedVibe = dayData.energizers[0] || "Ready";
-
-        const chips = energizerChipsElement.querySelectorAll(".chip-btn");
-        chips.forEach(chip => {
-            chip.addEventListener("click", () => {
-                chips.forEach(c => c.classList.remove("selected"));
-                chip.classList.add("selected");
-                selectedVibe = chip.dataset.vibe;
-            });
-        });
-
         oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
 
-    // 4. Render Stepper
+    // 4. Render Stepper Timeline Bar (Disables & Locks Future Days)
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
+            let isLocked = idx > realTodayIndex && !isPreviewMode;
+
             if (idx === activeIndex) statusClass = "active";
             else if (idx < activeIndex) statusClass = "completed";
+            if (isLocked) statusClass += " locked";
+
+            const labelText = isLocked ? `🔒 D${d.day}` : `D${d.day}`;
 
             return `
-                <button class="step-item ${statusClass}" data-day-idx="${idx}" title="Preview Day ${d.day}">
-                    <span class="step-label">D${d.day}</span>
+                <button class="step-item ${statusClass}" data-day-idx="${idx}" ${isLocked ? 'disabled' : ''} title="${isLocked ? `Day ${d.day} is Locked until ${d.displayDate}` : `View Day ${d.day}`}">
+                    <span class="step-label">${labelText}</span>
                 </button>
             `;
         }).join("");
 
-        const stepItems = stepperStepsElement.querySelectorAll(".step-item");
+        const stepItems = stepperStepsElement.querySelectorAll(".step-item:not(.locked)");
         stepItems.forEach(item => {
             item.addEventListener("click", () => {
                 const targetIdx = parseInt(item.dataset.dayIdx, 10);
-                currentDayIndex = targetIdx;
+                selectedDayIndex = targetIdx;
                 renderDayUI(targetIdx);
                 checkUserAttendanceState();
             });
         });
     }
 
-    // 5. User Attendance & Device State Check
+    // 5. User Attendance & Strict Day Lock Check
     async function checkUserAttendanceState() {
-        const dayNumber = currentDayIndex + 1;
+        const dayNumber = selectedDayIndex + 1;
+        const dayData = daysData[selectedDayIndex];
+
+        // STRICT DAY LOCKOUT CHECK
+        if (selectedDayIndex > realTodayIndex && !isPreviewMode) {
+            showCard(dayLockedCard);
+            lockedDayTitle.textContent = `🔒 Day ${dayNumber} is Locked`;
+            lockedDayDesc.textContent = `This session is scheduled for ${dayData.displayDate}, 2026. Please return on the event date to mark your attendance.`;
+            return;
+        }
+
         const cachedPhone = localStorage.getItem("qr_user_phone");
         const cachedName = localStorage.getItem("qr_user_name");
         const cachedBranch = localStorage.getItem("qr_user_branch");
@@ -165,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // If Google Apps Script API URL is set, perform API check
+        // Google Apps Script API Check
         if (config.googleScriptUrl && cachedPhone) {
             try {
                 const checkUrl = `${config.googleScriptUrl}?action=check&phone=${encodeURIComponent(cachedPhone)}&day=${dayNumber}&deviceId=${encodeURIComponent(deviceId)}`;
@@ -210,19 +216,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Return to Today's Active Session Handler
+    returnTodayBtn.addEventListener("click", () => {
+        selectedDayIndex = realTodayIndex;
+        renderDayUI(realTodayIndex);
+        checkUserAttendanceState();
+    });
+
     // Helper: Show specific card and hide others
     function showCard(targetCard) {
         registrationFormCard.classList.add("hidden");
         recurringCheckInCard.classList.add("hidden");
         alreadySubmittedCard.classList.add("hidden");
         deviceMismatchCard.classList.add("hidden");
+        dayLockedCard.classList.add("hidden");
 
         if (targetCard) {
             targetCard.classList.remove("hidden");
         }
     }
 
-    // 6. Registration Form Submission (First-Time Visitor / Day 1 / Late Joiner)
+    // 6. Registration Form Submission
     regForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -230,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const phone = regPhoneInput.value.trim();
         const email = regEmailInput.value.trim();
         const branch = regBranchInput.value;
-        const dayNumber = currentDayIndex + 1;
+        const dayNumber = selectedDayIndex + 1;
 
         if (!name || !phone || !email || !branch) {
             alert("Please fill out all fields.");
@@ -242,16 +256,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Cache details locally
         localStorage.setItem("qr_user_phone", phone);
         localStorage.setItem("qr_user_name", name);
         localStorage.setItem("qr_user_email", email);
         localStorage.setItem("qr_user_branch", branch);
 
-        // Show Overlay Loader
         showOverlay("Registering & Logging Attendance...", "Connecting to Google Sheets");
 
-        // Submit to Google Apps Script API if URL is provided
         if (config.googleScriptUrl) {
             try {
                 const payload = {
@@ -261,8 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     email: email,
                     branch: branch,
                     deviceId: deviceId,
-                    day: dayNumber,
-                    vibe: selectedVibe
+                    day: dayNumber
                 };
 
                 await fetch(config.googleScriptUrl, {
@@ -276,7 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Mark local day attendance
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
         setTimeout(() => {
@@ -286,10 +295,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1200);
     });
 
-    // 7. 1-Tap Attendance Submission (Returning Device)
+    // 7. 1-Tap Attendance Submission
     oneTapAttendBtn.addEventListener("click", async () => {
         const phone = localStorage.getItem("qr_user_phone");
-        const dayNumber = currentDayIndex + 1;
+        const dayNumber = selectedDayIndex + 1;
 
         if (!phone) {
             showCard(registrationFormCard);
@@ -304,8 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     action: "attend",
                     phone: phone,
                     deviceId: deviceId,
-                    day: dayNumber,
-                    vibe: selectedVibe
+                    day: dayNumber
                 };
 
                 await fetch(config.googleScriptUrl, {
