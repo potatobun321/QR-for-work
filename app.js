@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check URL params for reset parameter (?reset=true)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("reset") === "true") {
+        clearLocalCache();
+        console.log("🧹 Pre-registered local records flushed!");
+    }
+
+    function clearLocalCache() {
         localStorage.removeItem("qr_user_phone");
         localStorage.removeItem("qr_user_name");
         localStorage.removeItem("qr_user_email");
@@ -14,7 +19,17 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let d = 1; d <= 6; d++) {
             localStorage.removeItem(`qr_attended_day_${d}`);
         }
-        console.log("🧹 Pre-registered local records flushed!");
+    }
+
+    // 1-Tap Footer Reset Handler
+    const resetLocalDataBtn = document.getElementById("resetLocalDataBtn");
+    if (resetLocalDataBtn) {
+        resetLocalDataBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            clearLocalCache();
+            alert("Phone cache cleared! Loading fresh registration form...");
+            window.location.href = window.location.pathname;
+        });
     }
 
     const isPreviewMode = urlParams.get("preview") === "true" || urlParams.get("override") === "true";
@@ -188,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. User Attendance & Day Attendance Barrier Check
+    // 5. User Attendance & Day Attendance Barrier Check (Checks Google Sheets Ground Truth FIRST!)
     async function checkUserAttendanceState() {
         const dayNumber = selectedDayIndex + 1;
         const dayData = daysData[selectedDayIndex];
@@ -205,13 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cachedName = localStorage.getItem("qr_user_name");
         const cachedBranch = localStorage.getItem("qr_user_branch");
 
-        const dayAttendanceKey = `qr_attended_day_${dayNumber}`;
-        if (localStorage.getItem(dayAttendanceKey) === "true") {
-            showCard(alreadySubmittedCard);
-            alreadySubmittedDesc.textContent = `You have already logged your Day ${dayNumber} attendance!`;
-            return;
-        }
-
+        // 1. LIVE GOOGLE APPS SCRIPT GROUND TRUTH CHECK
         if (config.googleScriptUrl && cachedPhone) {
             try {
                 const checkUrl = `${config.googleScriptUrl}?action=check&phone=${encodeURIComponent(cachedPhone)}&day=${dayNumber}&deviceId=${encodeURIComponent(deviceId)}`;
@@ -219,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
 
                 if (data.status === "ALREADY_SUBMITTED") {
-                    localStorage.setItem(dayAttendanceKey, "true");
+                    localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
                     showCard(alreadySubmittedCard);
                     alreadySubmittedDesc.textContent = `Attendance for ${data.name || 'you'} on Day ${dayNumber} is already recorded in Google Sheets.`;
                     return;
@@ -238,12 +247,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (data.status === "NEW_USER") {
+                    // Google Sheets does NOT have this user! Clear false-positive local flags & show form
+                    for (let d = 1; d <= 6; d++) {
+                        localStorage.removeItem(`qr_attended_day_${d}`);
+                    }
                     showCard(registrationFormCard);
                     return;
                 }
             } catch (err) {
                 console.warn("Google Script API check failed, falling back to local state:", err);
             }
+        }
+
+        // 2. LOCAL FALLBACK (Only evaluated if no API response or no cached phone)
+        const dayAttendanceKey = `qr_attended_day_${dayNumber}`;
+        if (localStorage.getItem(dayAttendanceKey) === "true") {
+            showCard(alreadySubmittedCard);
+            alreadySubmittedDesc.textContent = `Your attendance for today has already been logged. See you tomorrow!`;
+            return;
         }
 
         if (cachedPhone && cachedName) {
