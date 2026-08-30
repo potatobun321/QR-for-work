@@ -4,6 +4,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
     const daysData = window.DAYS_DATA;
 
+    // Check URL params for reset parameter (?reset=true)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("reset") === "true") {
+        localStorage.removeItem("qr_user_phone");
+        localStorage.removeItem("qr_user_name");
+        localStorage.removeItem("qr_user_email");
+        localStorage.removeItem("qr_user_branch");
+        for (let d = 1; d <= 6; d++) {
+            localStorage.removeItem(`qr_attended_day_${d}`);
+        }
+        console.log("🧹 Pre-registered local records flushed!");
+    }
+
+    const isPreviewMode = urlParams.get("preview") === "true" || urlParams.get("override") === "true";
+
     // Elements
     const badgeElement = document.getElementById("dayBadge");
     const stepperStepsElement = document.getElementById("stepperSteps");
@@ -38,10 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const redirectOverlay = document.getElementById("redirectOverlay");
     const redirectStatusText = document.getElementById("redirectStatusText");
     const redirectStatusSubtext = document.getElementById("redirectStatusSubtext");
-
-    // Check URL params for preview override (?preview=true)
-    const urlParams = new URLSearchParams(window.location.search);
-    const isPreviewMode = urlParams.get("preview") === "true" || urlParams.get("override") === "true";
 
     // State Variables
     let deviceId = getOrCreateDeviceId();
@@ -117,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
 
-    // 4. Render Stepper Timeline Bar (All steps clickable for schedule exploration)
+    // 4. Render Stepper Timeline Bar
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
@@ -136,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }).join("");
 
-        // Allow clicking on ALL step items to explore schedule
         const stepItems = stepperStepsElement.querySelectorAll(".step-item");
         stepItems.forEach(item => {
             item.addEventListener("click", () => {
@@ -281,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 await fetch(config.googleScriptUrl, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
             } catch (err) {
@@ -322,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 await fetch(config.googleScriptUrl, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
             } catch (err) {
