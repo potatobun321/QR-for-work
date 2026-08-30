@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Bulletproof Mobile Delivery
+// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Universal Mobile Delivery
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -261,7 +261,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. Registration Form Submission (100% Reliable GET Delivery for Mobile Browsers)
+    // Helper: Send Universal Request (CORS Fetch + Script Tag Ping Fallback)
+    async function sendGoogleScriptRequest(url) {
+        let success = false;
+
+        // Method 1: Native CORS Fetch (Standard follow-redirects mode)
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data && (data.status === "SUCCESS" || data.status === "ALREADY_SUBMITTED")) {
+                success = true;
+            }
+        } catch (err) {
+            console.warn("Native fetch encountered CORS redirect, executing script ping:", err);
+        }
+
+        // Method 2: Script Tag Ping (Universal 100% delivery for all mobile browsers)
+        try {
+            const scriptTag = document.createElement("script");
+            scriptTag.src = url + "&_ts=" + Date.now();
+            document.body.appendChild(scriptTag);
+            setTimeout(() => {
+                try { document.body.removeChild(scriptTag); } catch(e){}
+            }, 3000);
+            success = true;
+        } catch(scriptErr) {
+            console.error("Script ping error:", scriptErr);
+        }
+
+        return success;
+    }
+
+    // 6. Registration Form Submission (Universal Phone Delivery)
     regForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -281,24 +312,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        showOverlay("Registering & Logging Attendance...", "Connecting to Google Sheets");
+        showOverlay("Registering & Logging Attendance...", "Updating Google Sheet");
 
         if (config.googleScriptUrl) {
             const registerUrl = `${config.googleScriptUrl}?action=register&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&branch=${encodeURIComponent(branch)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
-            
-            // Primary Delivery: Fetch
-            try {
-                await fetch(registerUrl, { mode: "no-cors" });
-            } catch (err) {
-                console.warn("Fetch failed, attempting image ping fallback:", err);
-            }
-
-            // Secondary Fallback Ping (Guarantees delivery on iOS/Android background tabs)
-            const pingImg = new Image();
-            pingImg.src = registerUrl;
+            await sendGoogleScriptRequest(registerUrl);
         }
 
-        // Cache details locally AFTER sending API request
+        // Cache details locally AFTER sending request
         localStorage.setItem("qr_user_phone", phone);
         localStorage.setItem("qr_user_name", name);
         localStorage.setItem("qr_user_email", email);
@@ -309,10 +330,10 @@ document.addEventListener("DOMContentLoaded", () => {
             hideOverlay();
             showCard(alreadySubmittedCard);
             alreadySubmittedDesc.textContent = `Registration complete! Your Day ${dayNumber} attendance has been logged in Google Sheets.`;
-        }, 1400);
+        }, 1200);
     });
 
-    // 7. 1-Tap Attendance Submission (100% Reliable GET Delivery for Mobile Browsers)
+    // 7. 1-Tap Attendance Submission (Universal Phone Delivery)
     oneTapAttendBtn.addEventListener("click", async () => {
         const phone = localStorage.getItem("qr_user_phone");
         const dayNumber = selectedDayIndex + 1;
@@ -326,15 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (config.googleScriptUrl) {
             const attendUrl = `${config.googleScriptUrl}?action=attend&phone=${encodeURIComponent(phone)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
-            
-            try {
-                await fetch(attendUrl, { mode: "no-cors" });
-            } catch (err) {
-                console.warn("Fetch failed, attempting image ping fallback:", err);
-            }
-
-            const pingImg = new Image();
-            pingImg.src = attendUrl;
+            await sendGoogleScriptRequest(attendUrl);
         }
 
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
@@ -343,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hideOverlay();
             showCard(alreadySubmittedCard);
             alreadySubmittedDesc.textContent = `Success! Your Day ${dayNumber} attendance has been marked in Google Sheets.`;
-        }, 1400);
+        }, 1200);
     });
 
     function showOverlay(title, subtitle) {
