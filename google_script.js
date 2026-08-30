@@ -1,34 +1,17 @@
 /**
  * GOOGLE APPS SCRIPT: 6-DAY SMART ATTENDANCE & DEVICE LOCKING SYSTEM
  * 
- * TARGET SPREADSHEET ID: 1LcB4PB6Cus1uHnlezYYKzx5UVFkVFGLaBFRdZ9KOpc0
+ * Instructions: Paste directly into Extensions -> Apps Script inside your Google Sheet!
  */
-
-var SPREADSHEET_ID = "1LcB4PB6Cus1uHnlezYYKzx5UVFkVFGLaBFRdZ9KOpc0";
-
-// HELPER: GET SPREADSHEET BY ID OR ACTIVE
-function getSpreadsheet() {
-    try {
-        return SpreadsheetApp.openById(SPREADSHEET_ID);
-    } catch (e) {
-        return SpreadsheetApp.getActiveSpreadsheet();
-    }
-}
-
-// HELPER: ALWAYS TARGET THE FIRST TAB (TAB #1 AT BOTTOM LEFT)
-function getAttendanceSheet() {
-    var ss = getSpreadsheet();
-    var sheets = ss.getSheets();
-    var sheet = (sheets && sheets.length > 0) ? sheets[0] : ss.getActiveSheet();
-    try {
-        sheet.setName("Attendance");
-    } catch (e) {}
-    return sheet;
-}
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
-    var sheet = getAttendanceSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
+    
+    try {
+        sheet.setName("Attendance");
+    } catch (e) {}
 
     var headers = [
         "Timestamp",
@@ -69,7 +52,8 @@ function setupSheet() {
 
 // 2. ONE-CLICK DATA FLUSH / WIPER (Clears all student rows below header)
 function flushSheet() {
-    var sheet = getAttendanceSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
     var lastRow = sheet.getLastRow();
 
     if (lastRow > 1) {
@@ -94,7 +78,7 @@ function doGet(e) {
 
         if (action === "setup") {
             setupSheet();
-            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes on Tab 1!" });
+            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes!" });
         }
 
         if (action === "flush") {
@@ -102,7 +86,8 @@ function doGet(e) {
             return createJsonResponse({ status: "SUCCESS", message: "All attendance records flushed!" });
         }
 
-        var sheet = getAttendanceSheet();
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var sheet = ss.getActiveSheet();
         var data = sheet.getDataRange().getValues();
 
         if (action === "register") {
