@@ -1,22 +1,37 @@
 /**
- * 6-DAY SMART ATTENDANCE GOOGLE APPS SCRIPT
+ * GOOGLE APPS SCRIPT: 6-DAY SMART ATTENDANCE & DEVICE LOCKING SYSTEM
  * 
- * Instructions:
- * 1. Open your Google Sheet
- * 2. Click Extensions -> Apps Script
- * 3. Replace all code in Code.gs with this script
- * 4. Run 'setupSheet' once to format the sheet with checkboxes
- * 5. Deploy as Web App (Execute as: Me, Who has access: Anyone)
+ * EXACT TARGET SPREADSHEET ID: 1EJAWalQkM5iGvTgc7Zj7qMQ9mX3zwM4ws7Yate8BXR8
  */
+
+var SPREADSHEET_ID = "1EJAWalQkM5iGvTgc7Zj7qMQ9mX3zwM4ws7Yate8BXR8";
+
+// HELPER: GET SPREADSHEET BY EXACT ID
+function getSpreadsheet() {
+    try {
+        return SpreadsheetApp.openById(SPREADSHEET_ID);
+    } catch (e) {
+        return SpreadsheetApp.getActiveSpreadsheet();
+    }
+}
+
+// HELPER: GET ACTIVE OR FIRST ATTENDANCE TAB
+function getAttendanceSheet() {
+    var ss = getSpreadsheet();
+    var sheet = ss.getSheetByName("Attendance");
+    if (!sheet) {
+        var sheets = ss.getSheets();
+        sheet = (sheets && sheets.length > 0) ? sheets[0] : ss.getActiveSheet();
+        try {
+            sheet.setName("Attendance");
+        } catch (e) {}
+    }
+    return sheet;
+}
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet();
-
-    try {
-        sheet.setName("Attendance");
-    } catch (e) {}
+    var sheet = getAttendanceSheet();
 
     var headers = [
         "Timestamp",
@@ -57,8 +72,7 @@ function setupSheet() {
 
 // 2. ONE-CLICK DATA FLUSH / WIPER (Clears all student rows below header)
 function flushSheet() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet();
+    var sheet = getAttendanceSheet();
     var lastRow = sheet.getLastRow();
 
     if (lastRow > 1) {
@@ -72,7 +86,7 @@ function flushSheet() {
     }
 }
 
-// 3. REST API ENDPOINT (GET & POST)
+// 3. GET REST API: HANDLES CHECK, REGISTER, ATTEND, SETUP & FLUSH
 function doGet(e) {
     try {
         var params = e ? e.parameter : {};
@@ -91,8 +105,7 @@ function doGet(e) {
             return createJsonResponse({ status: "SUCCESS", message: "All records flushed!" });
         }
 
-        var ss = SpreadsheetApp.getActiveSpreadsheet();
-        var sheet = ss.getActiveSheet();
+        var sheet = getAttendanceSheet();
         var data = sheet.getDataRange().getValues();
 
         if (action === "register") {
