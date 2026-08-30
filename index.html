@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Fresher Orientation & Smart Attendance Check-In Portal">
     <title>Fresher Induction 2026 • Attendance Check-In</title>
 
@@ -33,7 +33,7 @@
             </div>
         </nav>
 
-        <!-- Dynamic Hero Section -->
+        <!-- Dynamic Compact Hero Section -->
         <section class="hero-card">
             <div class="icon-wrapper" id="heroIcon">
                 ✨
@@ -125,13 +125,18 @@
                 <div class="status-desc">This mobile number is locked to a different smartphone device. Proxy attendance is strictly prohibited.</div>
             </div>
 
-            <!-- STATE E: STRICT DAY LOCKED OUT BANNER (Future Days) -->
+            <!-- STATE E: FUTURE DAY ATTENDANCE LOCKED BARRIER -->
             <div id="dayLockedCard" class="status-card locked-card hidden">
                 <div class="status-icon">🔒</div>
-                <div class="status-title" id="lockedDayTitle">Day Locked</div>
-                <div class="status-desc" id="lockedDayDesc">This session is locked until its scheduled date. Please check back on the event date.</div>
-                <button type="button" class="cta-button secondary-btn" id="returnTodayBtn" style="margin-top: 14px;">
-                    <span id="returnTodayBtnText">← GO TO TODAY'S SESSION</span>
+                <div class="status-title" id="lockedDayTitle">Attendance Locked</div>
+                <div class="status-desc" id="lockedDayDesc">Attendance for Day 2 opens on Sept 1, 2026. You can explore the schedule above, but check-in opens on the event date.</div>
+                
+                <button type="button" class="cta-button disabled-btn" id="lockedCtaBtn" disabled style="margin-top: 12px;">
+                    <span id="lockedCtaBtnText">ATTENDANCE OPENS ON SEPT 1 🔒</span>
+                </button>
+
+                <button type="button" class="cta-button secondary-btn" id="returnTodayBtn" style="margin-top: 10px;">
+                    <span>← GO TO TODAY'S SESSION</span>
                 </button>
             </div>
 

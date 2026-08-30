@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Strict Day Locking & Device ID Binding
+// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Attendance Barrier
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dayLockedCard = document.getElementById("dayLockedCard");
     const lockedDayTitle = document.getElementById("lockedDayTitle");
     const lockedDayDesc = document.getElementById("lockedDayDesc");
+    const lockedCtaBtnText = document.getElementById("lockedCtaBtnText");
     const returnTodayBtn = document.getElementById("returnTodayBtn");
 
     const redirectOverlay = document.getElementById("redirectOverlay");
@@ -116,26 +117,27 @@ document.addEventListener("DOMContentLoaded", () => {
         oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
 
-    // 4. Render Stepper Timeline Bar (Disables & Locks Future Days)
+    // 4. Render Stepper Timeline Bar (All steps clickable for schedule exploration)
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
-            let isLocked = idx > realTodayIndex && !isPreviewMode;
+            let isFutureLocked = idx > realTodayIndex && !isPreviewMode;
 
             if (idx === activeIndex) statusClass = "active";
             else if (idx < activeIndex) statusClass = "completed";
-            if (isLocked) statusClass += " locked";
+            if (isFutureLocked) statusClass += " locked";
 
-            const labelText = isLocked ? `🔒 D${d.day}` : `D${d.day}`;
+            const labelText = isFutureLocked ? `🔒 D${d.day}` : `D${d.day}`;
 
             return `
-                <button class="step-item ${statusClass}" data-day-idx="${idx}" ${isLocked ? 'disabled' : ''} title="${isLocked ? `Day ${d.day} is Locked until ${d.displayDate}` : `View Day ${d.day}`}">
+                <button class="step-item ${statusClass}" data-day-idx="${idx}" title="${isFutureLocked ? `Explore Day ${d.day} Schedule (Attendance Locked)` : `View Day ${d.day}`}">
                     <span class="step-label">${labelText}</span>
                 </button>
             `;
         }).join("");
 
-        const stepItems = stepperStepsElement.querySelectorAll(".step-item:not(.locked)");
+        // Allow clicking on ALL step items to explore schedule
+        const stepItems = stepperStepsElement.querySelectorAll(".step-item");
         stepItems.forEach(item => {
             item.addEventListener("click", () => {
                 const targetIdx = parseInt(item.dataset.dayIdx, 10);
@@ -146,16 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. User Attendance & Strict Day Lock Check
+    // 5. User Attendance & Day Attendance Barrier Check
     async function checkUserAttendanceState() {
         const dayNumber = selectedDayIndex + 1;
         const dayData = daysData[selectedDayIndex];
 
-        // STRICT DAY LOCKOUT CHECK
+        // FUTURE DAY ATTENDANCE LOCKED BARRIER
         if (selectedDayIndex > realTodayIndex && !isPreviewMode) {
             showCard(dayLockedCard);
-            lockedDayTitle.textContent = `🔒 Day ${dayNumber} is Locked`;
-            lockedDayDesc.textContent = `This session is scheduled for ${dayData.displayDate}, 2026. Please return on the event date to mark your attendance.`;
+            lockedDayTitle.textContent = `🔒 Day ${dayNumber} Attendance Locked`;
+            lockedDayDesc.textContent = `Attendance for Day ${dayNumber} opens on ${dayData.displayDate}, 2026. You can explore today's schedule above, but check-in is disabled until the scheduled date.`;
+            lockedCtaBtnText.textContent = `ATTENDANCE OPENS ON ${dayData.displayDate.toUpperCase()} 🔒`;
             return;
         }
 
