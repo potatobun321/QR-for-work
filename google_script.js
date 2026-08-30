@@ -3,25 +3,23 @@
  * 6-DAY SIP ORIENTATION QR ATTENDANCE SYSTEM - GOOGLE APPS SCRIPT BACKEND
  * ==============================================================================
  * File: Code.gs / google_script.js
- * Target Sheet ID: "1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w"
- * Target Sheet Name: "Attendance"
+ * Target Sheet: "Attendance"
+ * 
+ * SETUP INSTRUCTIONS FOR SPREADSHEET 1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w:
+ * 1. Open your target sheet: https://docs.google.com/spreadsheets/d/1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w/edit
+ * 2. Click Extensions -> Apps Script.
+ * 3. Replace Code.gs content with this code and click Save (Ctrl+S).
+ * 4. Run `setupSheet()` once to create headers.
+ * 5. Click Deploy -> New deployment -> Select Web app:
+ *    - Description: SIP Attendance API
+ *    - Execute as: Me
+ *    - Who has access: Anyone
+ * 6. Copy the NEW Web App URL and update app.js or paste in API URL settings!
  * ==============================================================================
  */
 
-// Explicitly bind to your target Google Spreadsheet ID
-var TARGET_SPREADSHEET_ID = "1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w";
-
-function getTargetSpreadsheet() {
-    try {
-        if (TARGET_SPREADSHEET_ID && TARGET_SPREADSHEET_ID.trim().length > 10) {
-            return SpreadsheetApp.openById(TARGET_SPREADSHEET_ID.trim());
-        }
-    } catch (e) {}
-    return SpreadsheetApp.getActiveSpreadsheet();
-}
-
 function getAttendanceSheet(ss) {
-    if (!ss) ss = getTargetSpreadsheet();
+    if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Attendance");
     if (!sheet) {
         sheet = ss.getActiveSheet();
@@ -44,7 +42,7 @@ function unhideAllRows(sheet) {
 }
 
 function setupSheet() {
-    var ss = getTargetSpreadsheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = getAttendanceSheet(ss);
 
     // Unhide any hidden rows
@@ -85,7 +83,7 @@ function setupSheet() {
 }
 
 function flushSheet() {
-    var ss = getTargetSpreadsheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = getAttendanceSheet(ss);
     unhideAllRows(sheet);
     var lastRow = sheet.getLastRow();
@@ -105,7 +103,7 @@ function doGet(e) {
         var day = parseInt(params.day || "1", 10);
         var deviceId = (params.deviceId || "").trim();
 
-        var ss = getTargetSpreadsheet();
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
         var sheet = getAttendanceSheet(ss);
 
         if (action === "setup") { 
