@@ -15,14 +15,20 @@ function getSpreadsheet() {
     }
 }
 
-// 1. ONE-CLICK SHEET SETUP & FORMATTER
-function setupSheet() {
+// HELPER: ALWAYS TARGET THE FIRST TAB (TAB #1 AT BOTTOM LEFT)
+function getAttendanceSheet() {
     var ss = getSpreadsheet();
-    var sheet = ss.getSheetByName("Attendance") || ss.getActiveSheet();
-
+    var sheets = ss.getSheets();
+    var sheet = (sheets && sheets.length > 0) ? sheets[0] : ss.getActiveSheet();
     try {
         sheet.setName("Attendance");
     } catch (e) {}
+    return sheet;
+}
+
+// 1. ONE-CLICK SHEET SETUP & FORMATTER
+function setupSheet() {
+    var sheet = getAttendanceSheet();
 
     var headers = [
         "Timestamp",
@@ -63,8 +69,7 @@ function setupSheet() {
 
 // 2. ONE-CLICK DATA FLUSH / WIPER (Clears all student rows below header)
 function flushSheet() {
-    var ss = getSpreadsheet();
-    var sheet = ss.getSheetByName("Attendance") || ss.getActiveSheet();
+    var sheet = getAttendanceSheet();
     var lastRow = sheet.getLastRow();
 
     if (lastRow > 1) {
@@ -89,7 +94,7 @@ function doGet(e) {
 
         if (action === "setup") {
             setupSheet();
-            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes!" });
+            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes on Tab 1!" });
         }
 
         if (action === "flush") {
@@ -231,18 +236,6 @@ function findUserRowByPhone(data, phone) {
 
 function sanitizePhone(phoneStr) {
     return String(phoneStr || "").trim().replace(/[^0-9]/g, "");
-}
-
-function getAttendanceSheet() {
-    var ss = getSpreadsheet();
-    var sheet = ss.getSheetByName("Attendance");
-    if (!sheet) {
-        sheet = ss.getActiveSheet();
-        try {
-            sheet.setName("Attendance");
-        } catch (e) {}
-    }
-    return sheet;
 }
 
 function createJsonResponse(data) {
