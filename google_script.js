@@ -4,17 +4,6 @@
  * ==============================================================================
  * File: Code.gs / google_script.js
  * Target Sheet: "Attendance"
- * 
- * SETUP INSTRUCTIONS FOR SPREADSHEET 1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w:
- * 1. Open your target sheet: https://docs.google.com/spreadsheets/d/1p__C9swhbDubbpZVuKiMhQSoOkUtm_2Z-04rw7Ap39w/edit
- * 2. Click Extensions -> Apps Script.
- * 3. Replace Code.gs content with this code and click Save (Ctrl+S).
- * 4. Run `setupSheet()` once to create headers.
- * 5. Click Deploy -> New deployment -> Select Web app:
- *    - Description: SIP Attendance API
- *    - Execute as: Me
- *    - Who has access: Anyone
- * 6. Copy the NEW Web App URL and update app.js or paste in API URL settings!
  * ==============================================================================
  */
 
@@ -75,11 +64,6 @@ function setupSheet() {
     
     // Format Phone Number column as explicit text (@) to preserve leading zeros
     sheet.getRange("B:B").setNumberFormat("@");
-    
-    // Insert checkboxes for Day 1 through Day 6 columns
-    try { 
-        sheet.getRange("G2:L1000").insertCheckboxes(); 
-    } catch(e) {}
 }
 
 function flushSheet() {
@@ -89,10 +73,22 @@ function flushSheet() {
     var lastRow = sheet.getLastRow();
     if (lastRow > 1) {
         sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).clearContent();
-        try { 
-            sheet.getRange("G2:L1000").insertCheckboxes(); 
+        try {
+            sheet.getRange(2, 7, lastRow - 1, 6).removeCheckboxes();
         } catch(e) {}
     }
+}
+
+function getFirstEmptyRow(sheet) {
+    var data = sheet.getRange("A1:B1000").getValues();
+    for (var i = 1; i < data.length; i++) {
+        var timestampCell = String(data[i][0] || "").trim();
+        var phoneCell = String(data[i][1] || "").trim();
+        if (!timestampCell && !phoneCell) {
+            return i + 1; // 1-indexed row
+        }
+    }
+    return data.length + 1;
 }
 
 function doGet(e) {
@@ -108,7 +104,7 @@ function doGet(e) {
 
         if (action === "setup") { 
             setupSheet(); 
-            return createJsonResponse({ status: "SUCCESS", message: "Sheet formatted & rows unhidden successfully." }); 
+            return createJsonResponse({ status: "SUCCESS", message: "Sheet formatted successfully." }); 
         }
         
         if (action === "flush") { 
@@ -116,7 +112,6 @@ function doGet(e) {
             return createJsonResponse({ status: "SUCCESS", message: "Sheet cleared successfully." }); 
         }
 
-        // Ensure rows 1 to max are visible when writing
         unhideAllRows(sheet);
         var data = sheet.getDataRange().getValues();
 
@@ -133,8 +128,11 @@ function doGet(e) {
             }
 
             if (existingRow === -1) {
-                // New User Record
-                var newRow = [
+                // Find actual first empty row (Row 2, Row 3...) ignoring empty checkboxes
+                var targetRow = getFirstEmptyRow(sheet);
+                
+                // Write data to target row
+                var newRowData = [
                     new Date(), 
                     "'" + phone, 
                     name, 
@@ -143,7 +141,13 @@ function doGet(e) {
                     deviceId, 
                     dayCols[0], dayCols[1], dayCols[2], dayCols[3], dayCols[4], dayCols[5]
                 ];
-                sheet.appendRow(newRow);
+                
+                sheet.getRange(targetRow, 1, 1, newRowData.length).setValues([newRowData]);
+                
+                // Ensure checkboxes exist on columns G to L for this row
+                try {
+                    sheet.getRange(targetRow, 7, 1, 6).insertCheckboxes();
+                } catch(e) {}
             } else {
                 // Existing User Record - Anti-Proxy Device Check
                 var regDevId = String(data[existingRow - 1][5] || "").trim();
