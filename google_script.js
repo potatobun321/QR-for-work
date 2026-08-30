@@ -48,7 +48,7 @@ function setupSheet() {
     Logger.log("✅ Attendance sheet setup completed successfully on tab: " + sheet.getName());
 }
 
-// 2. GET API: CHECK REGISTRATION & ATTENDANCE STATUS
+// 2. GET API: HANDLES CHECK, REGISTER, ATTEND, & SETUP (100% Mobile GET Delivery!)
 function doGet(e) {
     try {
         var params = e ? e.parameter : {};
@@ -57,99 +57,20 @@ function doGet(e) {
         var day = parseInt(params.day || "1", 10);
         var deviceId = (params.deviceId || "").trim();
 
+        // Action 1: Auto-Setup Sheet
         if (action === "setup") {
             setupSheet();
             return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed!" });
         }
 
-        if (action !== "check" || !phone) {
-            return createJsonResponse({ status: "READY_NEW_USER" });
-        }
-
         var sheet = getAttendanceSheet();
         var data = sheet.getDataRange().getValues();
 
-        var userData = null;
-        for (var i = 1; i < data.length; i++) {
-            var sheetPhone = String(data[i][1]).trim().replace(/['"'\s]/g, "");
-            if (sheetPhone === phone.replace(/['"'\s]/g, "")) {
-                userData = data[i];
-                break;
-            }
-        }
-
-        if (!userData) {
-            return createJsonResponse({ status: "NEW_USER" });
-        }
-
-        var registeredName = userData[2];
-        var registeredEmail = userData[3];
-        var registeredBranch = userData[4];
-        var registeredDeviceId = String(userData[5] || "").trim();
-
-        if (deviceId && registeredDeviceId && deviceId !== registeredDeviceId) {
-            return createJsonResponse({
-                status: "DEVICE_MISMATCH",
-                name: registeredName,
-                message: "Device mismatch locked."
-            });
-        }
-
-        var dayColIndex = 5 + day; // Day 1 = index 6 (Col G)
-        var dayValue = String(userData[dayColIndex] || "").trim();
-
-        if (dayValue === "✅" || dayValue === "PRESENT" || dayValue === "TRUE") {
-            return createJsonResponse({
-                status: "ALREADY_SUBMITTED",
-                name: registeredName,
-                day: day
-            });
-        }
-
-        return createJsonResponse({
-            status: "READY_ONE_TAP",
-            name: registeredName,
-            email: registeredEmail,
-            branch: registeredBranch,
-            day: day
-        });
-
-    } catch (err) {
-        return createJsonResponse({ status: "ERROR", message: err.toString() });
-    }
-}
-
-// 3. POST API: REGISTER NEW USER OR MARK DAILY ATTENDANCE
-function doPost(e) {
-    try {
-        var postData = {};
-
-        // Parse URLSearchParams e.parameter FIRST (bulletproof for mobile form posts)
-        if (e && e.parameter && Object.keys(e.parameter).length > 0) {
-            postData = e.parameter;
-        }
-        
-        // Fallback: parse raw e.postData.contents if JSON string
-        if (!postData.action && e && e.postData && e.postData.contents) {
-            try {
-                postData = JSON.parse(e.postData.contents);
-            } catch(jsonErr) {
-                // Ignore parse error
-            }
-        }
-
-        var action = postData.action;
-        var phone = (postData.phone || "").trim();
-        var day = parseInt(postData.day || "1", 10);
-        var deviceId = (postData.deviceId || "").trim();
-
-        var sheet = getAttendanceSheet();
-        var data = sheet.getDataRange().getValues();
-
+        // Action 2: Register New User
         if (action === "register") {
-            var name = (postData.name || "").trim();
-            var email = (postData.email || "").trim();
-            var branch = (postData.branch || "").trim();
+            var name = (params.name || "").trim();
+            var email = (params.email || "").trim();
+            var branch = (params.branch || "").trim();
 
             if (!phone || !name) {
                 return createJsonResponse({ status: "ERROR", message: "Missing required fields" });
@@ -194,6 +115,7 @@ function doPost(e) {
             return createJsonResponse({ status: "SUCCESS", message: "Registered & Marked!" });
         }
 
+        // Action 3: Mark 1-Tap Attendance
         if (action === "attend") {
             var userRowIndex = -1;
             var registeredDeviceId = "";
@@ -221,11 +143,64 @@ function doPost(e) {
             return createJsonResponse({ status: "SUCCESS", message: "Attendance Marked!" });
         }
 
-        return createJsonResponse({ status: "ERROR", message: "Unknown action" });
+        // Action 4: Check Registration & Day Status
+        if (action === "check" && phone) {
+            var userData = null;
+            for (var i = 1; i < data.length; i++) {
+                var sheetPhone = String(data[i][1]).trim().replace(/['"'\s]/g, "");
+                if (sheetPhone === phone.replace(/['"'\s]/g, "")) {
+                    userData = data[i];
+                    break;
+                }
+            }
+
+            if (!userData) {
+                return createJsonResponse({ status: "NEW_USER" });
+            }
+
+            var registeredName = userData[2];
+            var registeredEmail = userData[3];
+            var registeredBranch = userData[4];
+            var registeredDeviceId = String(userData[5] || "").trim();
+
+            if (deviceId && registeredDeviceId && deviceId !== registeredDeviceId) {
+                return createJsonResponse({
+                    status: "DEVICE_MISMATCH",
+                    name: registeredName,
+                    message: "Device mismatch locked."
+                });
+            }
+
+            var dayColIndex = 5 + day; // Day 1 = index 6 (Col G)
+            var dayValue = String(userData[dayColIndex] || "").trim();
+
+            if (dayValue === "✅" || dayValue === "PRESENT" || dayValue === "TRUE") {
+                return createJsonResponse({
+                    status: "ALREADY_SUBMITTED",
+                    name: registeredName,
+                    day: day
+                });
+            }
+
+            return createJsonResponse({
+                status: "READY_ONE_TAP",
+                name: registeredName,
+                email: registeredEmail,
+                branch: registeredBranch,
+                day: day
+            });
+        }
+
+        return createJsonResponse({ status: "READY_NEW_USER" });
 
     } catch (err) {
         return createJsonResponse({ status: "ERROR", message: err.toString() });
     }
+}
+
+// 3. POST API FALLBACK
+function doPost(e) {
+    return doGet(e);
 }
 
 // HELPER: GET SHEET

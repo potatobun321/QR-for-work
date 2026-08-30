@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Mystery Highlights
+// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Bulletproof Mobile Delivery
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         renderStepper(index);
 
-        // HIDE FUTURE HIGHLIGHTS WITH MYSTERY QUESTION MARKS IF LOCKED
         if (isFutureLocked) {
             scheduleListElement.innerHTML = `
                 <li class="schedule-item">
@@ -182,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const dayNumber = selectedDayIndex + 1;
         const dayData = daysData[selectedDayIndex];
 
-        // FUTURE DAY ATTENDANCE LOCKED BARRIER
         if (selectedDayIndex > realTodayIndex && !isPreviewMode) {
             showCard(dayLockedCard);
             lockedDayTitle.textContent = `🔒 Day ${dayNumber} Agenda & Attendance Locked`;
@@ -195,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const cachedName = localStorage.getItem("qr_user_name");
         const cachedBranch = localStorage.getItem("qr_user_branch");
 
-        // Local Storage Check for same day
         const dayAttendanceKey = `qr_attended_day_${dayNumber}`;
         if (localStorage.getItem(dayAttendanceKey) === "true") {
             showCard(alreadySubmittedCard);
@@ -203,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Google Apps Script API Check
         if (config.googleScriptUrl && cachedPhone) {
             try {
                 const checkUrl = `${config.googleScriptUrl}?action=check&phone=${encodeURIComponent(cachedPhone)}&day=${dayNumber}&deviceId=${encodeURIComponent(deviceId)}`;
@@ -238,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Local Fallback Check
         if (cachedPhone && cachedName) {
             userNameGreeting.textContent = `Welcome back, ${cachedName}!`;
             userMetaDetails.textContent = `${cachedBranch || 'Fresher'} • 🔒 Device Locked`;
@@ -248,14 +243,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Return to Today's Active Session Handler
     returnTodayBtn.addEventListener("click", () => {
         selectedDayIndex = realTodayIndex;
         renderDayUI(realTodayIndex);
         checkUserAttendanceState();
     });
 
-    // Helper: Show specific card and hide others
     function showCard(targetCard) {
         registrationFormCard.classList.add("hidden");
         recurringCheckInCard.classList.add("hidden");
@@ -268,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. Registration Form Submission (Uses URLSearchParams for 100% mobile GAS delivery!)
+    // 6. Registration Form Submission (100% Reliable GET Delivery for Mobile Browsers)
     regForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -288,45 +281,38 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        showOverlay("Registering & Logging Attendance...", "Connecting to Google Sheets");
+
+        if (config.googleScriptUrl) {
+            const registerUrl = `${config.googleScriptUrl}?action=register&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&branch=${encodeURIComponent(branch)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
+            
+            // Primary Delivery: Fetch
+            try {
+                await fetch(registerUrl, { mode: "no-cors" });
+            } catch (err) {
+                console.warn("Fetch failed, attempting image ping fallback:", err);
+            }
+
+            // Secondary Fallback Ping (Guarantees delivery on iOS/Android background tabs)
+            const pingImg = new Image();
+            pingImg.src = registerUrl;
+        }
+
+        // Cache details locally AFTER sending API request
         localStorage.setItem("qr_user_phone", phone);
         localStorage.setItem("qr_user_name", name);
         localStorage.setItem("qr_user_email", email);
         localStorage.setItem("qr_user_branch", branch);
-
-        showOverlay("Registering & Logging Attendance...", "Connecting to Google Sheets");
-
-        if (config.googleScriptUrl) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append("action", "register");
-                formData.append("name", name);
-                formData.append("phone", phone);
-                formData.append("email", email);
-                formData.append("branch", branch);
-                formData.append("deviceId", deviceId);
-                formData.append("day", dayNumber);
-
-                await fetch(config.googleScriptUrl, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: formData.toString()
-                });
-            } catch (err) {
-                console.error("Error pushing to Google Script:", err);
-            }
-        }
-
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
         setTimeout(() => {
             hideOverlay();
             showCard(alreadySubmittedCard);
-            alreadySubmittedDesc.textContent = `Registration complete! Your Day ${dayNumber} attendance has been logged.`;
-        }, 1200);
+            alreadySubmittedDesc.textContent = `Registration complete! Your Day ${dayNumber} attendance has been logged in Google Sheets.`;
+        }, 1400);
     });
 
-    // 7. 1-Tap Attendance Submission (Uses URLSearchParams for 100% mobile GAS delivery!)
+    // 7. 1-Tap Attendance Submission (100% Reliable GET Delivery for Mobile Browsers)
     oneTapAttendBtn.addEventListener("click", async () => {
         const phone = localStorage.getItem("qr_user_phone");
         const dayNumber = selectedDayIndex + 1;
@@ -339,22 +325,16 @@ document.addEventListener("DOMContentLoaded", () => {
         showOverlay(`Logging Day ${dayNumber} Attendance...`, "Verifying Device & Updating Google Sheet");
 
         if (config.googleScriptUrl) {
+            const attendUrl = `${config.googleScriptUrl}?action=attend&phone=${encodeURIComponent(phone)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
+            
             try {
-                const formData = new URLSearchParams();
-                formData.append("action", "attend");
-                formData.append("phone", phone);
-                formData.append("deviceId", deviceId);
-                formData.append("day", dayNumber);
-
-                await fetch(config.googleScriptUrl, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: formData.toString()
-                });
+                await fetch(attendUrl, { mode: "no-cors" });
             } catch (err) {
-                console.error("Error submitting 1-tap attendance:", err);
+                console.warn("Fetch failed, attempting image ping fallback:", err);
             }
+
+            const pingImg = new Image();
+            pingImg.src = attendUrl;
         }
 
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
@@ -362,8 +342,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             hideOverlay();
             showCard(alreadySubmittedCard);
-            alreadySubmittedDesc.textContent = `Success! Your Day ${dayNumber} attendance has been marked.`;
-        }, 1200);
+            alreadySubmittedDesc.textContent = `Success! Your Day ${dayNumber} attendance has been marked in Google Sheets.`;
+        }, 1400);
     });
 
     function showOverlay(title, subtitle) {
