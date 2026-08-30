@@ -62,26 +62,32 @@
                     <span class="form-title">📝 Fresher Registration</span>
                     <span class="form-subtitle">First-time check-in details</span>
                 </div>
-                <form id="regForm">
+                
+                <!-- Native HTML Form targeting Hidden Iframe (Bypasses Firefox Tracking Protection) -->
+                <form id="regForm" target="hidden_iframe" method="GET">
+                    <input type="hidden" name="action" value="register">
+                    <input type="hidden" name="deviceId" id="hiddenRegDeviceId">
+                    <input type="hidden" name="day" id="hiddenRegDayNumber" value="1">
+
                     <div class="form-group">
                         <label for="regName">Full Name</label>
-                        <input type="text" id="regName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+                        <input type="text" id="regName" name="name" class="form-input" placeholder="e.g. Rahul Sharma" required>
                     </div>
 
                     <div class="form-group">
                         <label for="regPhone">Mobile Number (Primary Key)</label>
-                        <input type="tel" id="regPhone" class="form-input" placeholder="10-Digit Mobile No." pattern="[0-9]{10}" maxlength="10" required>
+                        <input type="tel" id="regPhone" name="phone" class="form-input" placeholder="10-Digit Mobile No." pattern="[0-9]{10}" maxlength="10" required>
                     </div>
 
                     <div class="form-group">
                         <label for="regEmail">Email Address</label>
-                        <input type="email" id="regEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
+                        <input type="email" id="regEmail" name="email" class="form-input" placeholder="e.g. rahul@example.com" required>
                     </div>
 
                     <div class="form-group">
                         <label for="regBranch">Branch / Department</label>
                         <div class="select-wrapper">
-                            <select id="regBranch" class="form-input form-select" required>
+                            <select id="regBranch" name="branch" class="form-input form-select" required>
                                 <option value="" disabled selected>Select Your Branch</option>
                                 <option value="Artificial Intelligence">Artificial Intelligence</option>
                                 <option value="Computer Science">Computer Science</option>
@@ -109,6 +115,14 @@
                 <button type="button" class="cta-button" id="oneTapAttendBtn">
                     <span id="oneTapBtnText">MARK DAY 1 ATTENDANCE →</span>
                 </button>
+
+                <!-- Hidden Form for 1-Tap Attendance targeting Hidden Iframe -->
+                <form id="oneTapForm" target="hidden_iframe" method="GET" style="display:none;">
+                    <input type="hidden" name="action" value="attend">
+                    <input type="hidden" name="phone" id="hiddenOneTapPhone">
+                    <input type="hidden" name="deviceId" id="hiddenOneTapDeviceId">
+                    <input type="hidden" name="day" id="hiddenOneTapDayNumber">
+                </form>
             </div>
 
             <!-- STATE C: ALREADY SUBMITTED TODAY BANNER -->
@@ -156,6 +170,9 @@
             <div class="redirect-subtext" id="redirectStatusSubtext">Updating your record in Google Sheets</div>
         </div>
     </div>
+
+    <!-- Hidden Iframe Target for Native HTML Form Submissions (Immune to Firefox Tracking Protection) -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none; width:0; height:0; border:0;"></iframe>
 
     <!-- Scripts -->
     <script src="config.js"></script>

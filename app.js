@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Universal Mobile Delivery
+// Smart 6-Day Attendance Logic with Universal Firefox & Mobile Compatibility
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -26,19 +26,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const titleElement = document.getElementById("heroTitle");
     const scheduleListElement = document.getElementById("scheduleList");
 
-    // Action Cards
+    // Action Cards & Forms
     const registrationFormCard = document.getElementById("registrationFormCard");
     const regForm = document.getElementById("regForm");
     const regPhoneInput = document.getElementById("regPhone");
     const regNameInput = document.getElementById("regName");
     const regEmailInput = document.getElementById("regEmail");
     const regBranchInput = document.getElementById("regBranch");
+    const hiddenRegDeviceId = document.getElementById("hiddenRegDeviceId");
+    const hiddenRegDayNumber = document.getElementById("hiddenRegDayNumber");
 
     const recurringCheckInCard = document.getElementById("recurringCheckInCard");
     const userNameGreeting = document.getElementById("userNameGreeting");
     const userMetaDetails = document.getElementById("userMetaDetails");
     const oneTapAttendBtn = document.getElementById("oneTapAttendBtn");
     const oneTapBtnText = document.getElementById("oneTapBtnText");
+    const oneTapForm = document.getElementById("oneTapForm");
+    const hiddenOneTapPhone = document.getElementById("hiddenOneTapPhone");
+    const hiddenOneTapDeviceId = document.getElementById("hiddenOneTapDeviceId");
+    const hiddenOneTapDayNumber = document.getElementById("hiddenOneTapDayNumber");
 
     const alreadySubmittedCard = document.getElementById("alreadySubmittedCard");
     const alreadySubmittedDesc = document.getElementById("alreadySubmittedDesc");
@@ -58,6 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let deviceId = getOrCreateDeviceId();
     let realTodayIndex = calculateRealTodayIndex();
     let selectedDayIndex = getRequestedDayIndex(realTodayIndex);
+
+    // Bind Form Actions to Google Script Web App URL
+    if (config.googleScriptUrl) {
+        regForm.action = config.googleScriptUrl;
+        oneTapForm.action = config.googleScriptUrl;
+    }
 
     // Initialize UI
     renderDayUI(selectedDayIndex);
@@ -261,41 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Helper: Send Universal Request (CORS Fetch + Script Tag Ping Fallback)
-    async function sendGoogleScriptRequest(url) {
-        let success = false;
-
-        // Method 1: Native CORS Fetch (Standard follow-redirects mode)
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data && (data.status === "SUCCESS" || data.status === "ALREADY_SUBMITTED")) {
-                success = true;
-            }
-        } catch (err) {
-            console.warn("Native fetch encountered CORS redirect, executing script ping:", err);
-        }
-
-        // Method 2: Script Tag Ping (Universal 100% delivery for all mobile browsers)
-        try {
-            const scriptTag = document.createElement("script");
-            scriptTag.src = url + "&_ts=" + Date.now();
-            document.body.appendChild(scriptTag);
-            setTimeout(() => {
-                try { document.body.removeChild(scriptTag); } catch(e){}
-            }, 3000);
-            success = true;
-        } catch(scriptErr) {
-            console.error("Script ping error:", scriptErr);
-        }
-
-        return success;
-    }
-
-    // 6. Registration Form Submission (Universal Phone Delivery)
-    regForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
+    // 6. Registration Form Submission (Native HTML Form Submit to Hidden Iframe - Firefox & Universal Compatible)
+    regForm.addEventListener("submit", (e) => {
         const name = regNameInput.value.trim();
         const phone = regPhoneInput.value.trim();
         const email = regEmailInput.value.trim();
@@ -303,38 +282,40 @@ document.addEventListener("DOMContentLoaded", () => {
         const dayNumber = selectedDayIndex + 1;
 
         if (!name || !phone || !email || !branch) {
+            e.preventDefault();
             alert("Please fill out all fields.");
             return;
         }
 
         if (!/^[0-9]{10}$/.test(phone)) {
+            e.preventDefault();
             alert("Please enter a valid 10-digit mobile number.");
             return;
         }
 
+        // Set hidden form parameters for native submit
+        hiddenRegDeviceId.value = deviceId;
+        hiddenRegDayNumber.value = dayNumber;
+
         showOverlay("Registering & Logging Attendance...", "Updating Google Sheet");
 
-        if (config.googleScriptUrl) {
-            const registerUrl = `${config.googleScriptUrl}?action=register&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&branch=${encodeURIComponent(branch)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
-            await sendGoogleScriptRequest(registerUrl);
-        }
-
-        // Cache details locally AFTER sending request
+        // Cache details locally
         localStorage.setItem("qr_user_phone", phone);
         localStorage.setItem("qr_user_name", name);
         localStorage.setItem("qr_user_email", email);
         localStorage.setItem("qr_user_branch", branch);
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
+        // Allow form to submit natively to hidden_iframe!
         setTimeout(() => {
             hideOverlay();
             showCard(alreadySubmittedCard);
             alreadySubmittedDesc.textContent = `Registration complete! Your Day ${dayNumber} attendance has been logged in Google Sheets.`;
-        }, 1200);
+        }, 1400);
     });
 
-    // 7. 1-Tap Attendance Submission (Universal Phone Delivery)
-    oneTapAttendBtn.addEventListener("click", async () => {
+    // 7. 1-Tap Attendance Submission (Native HTML Form Submit to Hidden Iframe - Firefox & Universal Compatible)
+    oneTapAttendBtn.addEventListener("click", () => {
         const phone = localStorage.getItem("qr_user_phone");
         const dayNumber = selectedDayIndex + 1;
 
@@ -343,12 +324,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        hiddenOneTapPhone.value = phone;
+        hiddenOneTapDeviceId.value = deviceId;
+        hiddenOneTapDayNumber.value = dayNumber;
+
         showOverlay(`Logging Day ${dayNumber} Attendance...`, "Verifying Device & Updating Google Sheet");
 
-        if (config.googleScriptUrl) {
-            const attendUrl = `${config.googleScriptUrl}?action=attend&phone=${encodeURIComponent(phone)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
-            await sendGoogleScriptRequest(attendUrl);
-        }
+        // Submit hidden form natively to hidden_iframe!
+        oneTapForm.submit();
 
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
@@ -356,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hideOverlay();
             showCard(alreadySubmittedCard);
             alreadySubmittedDesc.textContent = `Success! Your Day ${dayNumber} attendance has been marked in Google Sheets.`;
-        }, 1200);
+        }, 1400);
     });
 
     function showOverlay(title, subtitle) {
