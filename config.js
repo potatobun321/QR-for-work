@@ -6,8 +6,8 @@ const CONFIG = {
     defaultTallyUrl: "https://tally.so/r/aQqlrq",
     startDate: "2026-08-31", // Day 1
     endDate: "2026-09-05",   // Day 6
-    // Deployed Google Apps Script Web App URL:
-    googleScriptUrl: "https://script.google.com/macros/s/AKfycbyEpC31aQKlH8JKgvwBruiBcBDCCwQE6wIgb9rK0YyHkD8ZRufDry1yCTsnkRmzYdzY/exec",
+    // User's New Active Google Apps Script Web App URL:
+    googleScriptUrl: "https://script.google.com/macros/s/AKfycbxMiOZdLd3DpuoIJ9yUEgjaSPToQhZZfxzbHABEgFHtWwlgetdV_7bHobuTI9hWbkUtew/exec",
     // Branches List (Exactly 3 Options as requested)
     branches: [
         "Artificial Intelligence",
