@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>6-Day SIP Orientation | Digital QR Attendance Portal</title>
+  <meta name="description" content="Official Neo-Brutalist 6-Day Student Induction Program (SIP) Digital Entrance & QR Attendance System with Anti-Proxy Smartphone Locking." />
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- HEADER CARD -->
+    <header class="app-header" id="appHeader">
+      <div class="header-top">
+        <span class="badge-tag" id="sipHeaderTag">SIP 2026 ORIENTATION</span>
+        <button class="config-btn" id="openConfigBtn" title="API Settings">⚙️ API URL</button>
+      </div>
+      <h1 class="app-title" id="appHeaderTitle">STUDENT INDUCTION PROGRAM</h1>
+      <div class="app-subtitle" id="appDaySubtitle">⚡ DAY 1 ATTENDANCE</div>
+    </header>
+
+    <!-- DEVICE ANTI-PROXY LOCKING FINGERPRINT BADGE -->
+    <div class="device-badge" id="deviceBadge">
+      <span>🔒 <strong>DEVICE ID:</strong></span>
+      <span class="device-id-code" id="displayDeviceId">dev_loading...</span>
+    </div>
+
+    <!-- 6-DAY STEPPER TIMELINE TOOLBAR -->
+    <div class="neo-box stepper-container" id="stepperContainer">
+      <div class="stepper-title">
+        <span>🗓️ 6-DAY EVENT SCHEDULE</span>
+        <span id="activeDayTextBadge" style="font-weight:700; color:#000;">DAY 1 OF 6</span>
+      </div>
+      <div class="stepper-bar" id="stepperBar">
+        <button class="step-btn active" id="stepDay1" data-day="1">
+          <span class="step-num">D1</span>
+          <span class="step-date">Aug 31</span>
+        </button>
+        <button class="step-btn" id="stepDay2" data-day="2">
+          <span class="step-num">D2</span>
+          <span class="step-date">Sep 01</span>
+        </button>
+        <button class="step-btn" id="stepDay3" data-day="3">
+          <span class="step-num">D3</span>
+          <span class="step-date">Sep 02</span>
+        </button>
+        <button class="step-btn" id="stepDay4" data-day="4">
+          <span class="step-num">D4</span>
+          <span class="step-date">Sep 03</span>
+        </button>
+        <button class="step-btn" id="stepDay5" data-day="5">
+          <span class="step-num">D5</span>
+          <span class="step-date">Sep 04</span>
+        </button>
+        <button class="step-btn" id="stepDay6" data-day="6">
+          <span class="step-num">D6</span>
+          <span class="step-date">Sep 05</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SECTION 1: FIRST-TIME USER REGISTRATION FORM (DAY 1 OR NEW USER) -->
+    <section class="neo-box" id="registrationCard">
+      <div class="card-header">
+        <div class="card-icon" id="formCardIcon">📝</div>
+        <div>
+          <div class="card-title-text" id="formCardTitle">FRESHER REGISTRATION</div>
+          <p style="font-size:0.8rem; font-weight:600; color:#555;">Fill details once on Day 1 to bind your device</p>
+        </div>
+      </div>
+
+      <form id="attendanceForm" autocomplete="on">
+        <!-- Hidden Inputs for Apps Script API -->
+        <input type="hidden" name="action" id="formActionInput" value="register" />
+        <input type="hidden" name="day" id="formDayInput" value="1" />
+        <input type="hidden" name="deviceId" id="formDeviceIdInput" value="" />
+
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="inputName">Full Name <span class="req">*</span></label>
+          <input 
+            type="text" 
+            id="inputName" 
+            name="name" 
+            class="form-control" 
+            placeholder="e.g. Rahul Sharma" 
+            required 
+          />
+        </div>
+
+        <!-- Phone Number (Primary Key & Device Lock) -->
+        <div class="form-group">
+          <label class="form-label" for="inputPhone">10-Digit Mobile Number <span class="req">*</span></label>
+          <input 
+            type="tel" 
+            id="inputPhone" 
+            name="phone" 
+            class="form-control" 
+            placeholder="e.g. 9876543210" 
+            pattern="[0-9]{10}" 
+            maxlength="10" 
+            required 
+          />
+          <span style="font-size:0.75rem; font-weight:700; color:#666;">🔒 Permanently links attendance to this smartphone</span>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label" for="inputEmail">Email Address <span class="req">*</span></label>
+          <input 
+            type="email" 
+            id="inputEmail" 
+            name="email" 
+            class="form-control" 
+            placeholder="e.g. rahul@example.com" 
+            required 
+          />
+        </div>
+
+        <!-- Branch / Department Dropdown -->
+        <div class="form-group">
+          <label class="form-label" for="selectBranch">Branch / Department <span class="req">*</span></label>
+          <select id="selectBranch" name="branch" class="form-control" required>
+            <option value="" disabled selected>-- Select Your Branch --</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Electronics & Communication">Electronics & Communication</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-primary" id="submitRegBtn">
+          <span id="btnSpinner" class="loading-spinner" style="display:none;"></span>
+          <span id="btnText">SUBMIT & MARK DAY 1 →</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- SECTION 2: 1-TAP QUICK CHECK-IN CARD (FOR RETURNING USERS - DAYS 2 TO 6) -->
+    <section class="neo-box" id="oneTapCard" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <div>
+          <div class="card-title-text" id="oneTapCardTitle">1-TAP QUICK CHECK-IN</div>
+          <p style="font-size:0.8rem; font-weight:600; color:#555;">Recognized device: Instant check-in ready</p>
+        </div>
+      </div>
+
+      <div class="welcome-user-box" id="welcomeUserBox">
+        <div class="user-name-title" id="welcomeNameText">Welcome Back!</div>
+        <div class="user-meta-line" id="welcomePhoneText">📱 Phone: --</div>
+        <div class="user-meta-line" id="welcomeBranchText">🎓 Branch: --</div>
+      </div>
+
+      <button type="button" class="btn-primary" id="oneTapSubmitBtn">
+        <span id="oneTapSpinner" class="loading-spinner" style="display:none;"></span>
+        <span id="oneTapBtnText">MARK DAY 2 ATTENDANCE →</span>
+      </button>
+
+      <button type="button" class="btn-secondary" id="switchUserBtn" style="margin-top:0.75rem;">
+        🔄 Switch Account / Register Different Phone
+      </button>
+    </section>
+
+    <!-- SECTION 3: DYNAMIC STATUS BANNER CARDS -->
+
+    <!-- SUCCESS CARD -->
+    <div class="status-card success" id="statusSuccessCard">
+      <span class="status-icon">🎉</span>
+      <div class="status-title" id="successTitle">ATTENDANCE MARKED!</div>
+      <p class="status-msg" id="successMsg">Your attendance for Day 1 has been successfully recorded in Google Sheets.</p>
+      <button class="btn-secondary" id="successDoneBtn">DONE / VIEW SCHEDULE</button>
+    </div>
+
+    <!-- PROXY WARNING / DEVICE MISMATCH CARD -->
+    <div class="status-card danger" id="statusMismatchCard">
+      <span class="status-icon">🚨</span>
+      <div class="status-title">PROXY CHECK-IN BLOCKED!</div>
+      <p class="status-msg" id="mismatchMsg">
+        Security Alert: This phone number is already registered to a different smartphone device. False or proxy check-in is strictly prohibited.
+      </p>
+      <button class="btn-secondary" id="mismatchDismissBtn">TRY AGAIN / BACK</button>
+    </div>
+
+    <!-- ALREADY SUBMITTED CARD -->
+    <div class="status-card warning" id="statusAlreadySubmittedCard">
+      <span class="status-icon">✅</span>
+      <div class="status-title">ALREADY MARKED!</div>
+      <p class="status-msg" id="alreadySubmittedMsg">
+        You have already submitted your attendance for today. Thank you for participating!
+      </p>
+      <button class="btn-secondary" id="alreadySubmittedDismissBtn">BACK TO HOME</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <p>⚡ NEO-BRUTALIST DIGITAL ENTRANCE SYSTEM</p>
+      <p style="font-size:0.75rem; color:#777; margin-top:2px;">SIP Orientation 2026 • Powered by Google Sheets API</p>
+    </footer>
+
+  </div>
+
+  <!-- MODAL: GOOGLE APPS SCRIPT API CONFIGURATION & TESTING -->
+  <div class="modal-overlay" id="configModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">⚙️ API CONFIGURATION</div>
+        <button class="close-modal-btn" id="closeConfigModalBtn">✕</button>
+      </div>
+
+      <p style="font-size:0.85rem; font-weight:600; margin-bottom:1rem; color:#333;">
+        Paste your published Google Apps Script Web App URL below to sync submissions with your Google Sheet:
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="apiUrlInput">Apps Script Web App URL</label>
+        <input 
+          type="url" 
+          id="apiUrlInput" 
+          class="form-control" 
+          placeholder="https://script.google.com/macros/s/.../exec" 
+        />
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
+        <button class="btn-primary" id="saveApiUrlBtn" style="font-size:0.95rem;">SAVE API URL</button>
+        <button class="btn-secondary btn-danger" id="resetStorageBtn" style="font-size:0.85rem;">
+          ⚠️ Reset Local Device Storage (Testing)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVISIBLE IFRAME FOR CROSS-ORIGIN APPS SCRIPT SUBMISSION FALLBACK -->
+  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+  <!-- JS LOGIC SCRIPTS -->
+  <script src="app.js"></script>
+</body>
+</html>

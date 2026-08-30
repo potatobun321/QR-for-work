@@ -1,0 +1,191 @@
+# 📌 MASTER PROMPT: Build 6-Day SIP Orientation QR Attendance System from Zero
+
+> **Copy and paste the prompt below into any AI coding tool (ChatGPT, Claude, v0, Bolt, Replit, Cursor, etc.) to generate the complete system from scratch:**
+
+```markdown
+Build a mobile-responsive, vibrant, blocky 6-Day Student Induction Program (SIP) Orientation QR Attendance Web Application from absolute zero with a Google Sheets backend integration and Anti-Proxy Device Locking.
+
+---
+
+### 1. REPOSITORY & HOSTING METADATA
+- GitHub Repository Link: https://github.com/potatobun321/QR-for-work
+- Live GitHub Pages Link (QR Target): https://potatobun321.github.io/QR-for-work/
+
+---
+
+### 2. SYSTEM ARCHITECTURE & USER FLOW
+
+1. QR Code Scanning & Access:
+   - Freshers scan a physical campus QR code linked to https://potatobun321.github.io/QR-for-work/.
+
+2. Anti-Proxy Smartphone Device Locking:
+   - On first load, JavaScript generates a unique UUID string (`dev_...`) saved in `localStorage` (`qr_attendance_device_id`).
+   - When a student registers, their 10-digit mobile number (Primary Key) is permanently bound to their smartphone's Device ID in Google Sheets.
+   - Proxy check-in attempts from a different phone or device are blocked with a warning banner.
+
+3. First-Time Fresher Registration (Day 1 / Late Joiners):
+   - Form fields:
+     - Full Name (Text input)
+     - Mobile Number (10-Digit tel input, Primary Key)
+     - Email Address (Email input)
+     - Branch / Department (Dropdown: "Artificial Intelligence", "Computer Science", "Civil Engineering")
+   - Submits natively into Google Sheets.
+
+4. 1-Tap Recurring Check-In (Days 2 to 6):
+   - Returning students are greeted by name ("Welcome back, Rahul Sharma!") with a 1-tap action button ("MARK DAY 2 ATTENDANCE →").
+
+5. 6-Day Stepper Schedule & Future Day Locks:
+   - Interactive Stepper Timeline Bar (D1 through D6) with dynamic blocky color themes per day:
+     - Day 1: Aug 31, 2026 (Electric Yellow `#FFDE59`)
+     - Day 2: Sept 1, 2026 (Hot Pink `#FF66C4`)
+     - Day 3: Sept 2, 2026 (Electric Cyan `#00F0FF`)
+     - Day 4: Sept 3, 2026 (Lime Green `#70E000`)
+     - Day 5: Sept 4, 2026 (Bright Orange `#FF914D`)
+     - Day 6: Sept 5, 2026 (Vibrant Violet `#B57EDC`)
+   - Future days are locked with question marks (`❓ Secret Induction Session`) until the actual event date arrives.
+
+6. 100% Cross-Browser Tracking Protection Bypass (Firefox, Safari, Chrome):
+   - Submissions use a native HTML `<form action="GOOGLE_SCRIPT_WEB_APP_URL" method="POST" target="hidden_iframe">` targeting an invisible `<iframe>` (`<iframe name="hidden_iframe" style="display:none;"></iframe>`).
+
+---
+
+### 3. GOOGLE SHEETS DATA SCHEMA (12 MASTER COLUMNS)
+
+Target Sheet Tab Name: `Attendance`
+
+| Column | Header Name | Data Format / Type | Description |
+|---|---|---|---|
+| Col A (1) | Timestamp | `DateTime` | Date & Time of check-in |
+| Col B (2) | Phone Number | `Text (@)` | 10-Digit Mobile Number (Primary Key) |
+| Col C (3) | Full Name | `Text` | Student's Full Name |
+| Col D (4) | Email ID | `Text` | Student's Email Address |
+| Col E (5) | Branch | `Text` | Branch ("Artificial Intelligence", "Computer Science", "Civil Engineering") |
+| Col F (6) | Device ID | `Text` | Unique Smartphone UUID (`dev_...`) |
+| Col G (7) | Day 1 | `Checkbox (TRUE/FALSE)` | Day 1 Attendance Status |
+| Col H (8) | Day 2 | `Checkbox (TRUE/FALSE)` | Day 2 Attendance Status |
+| Col I (9) | Day 3 | `Checkbox (TRUE/FALSE)` | Day 3 Attendance Status |
+| Col J (10)| Day 4 | `Checkbox (TRUE/FALSE)` | Day 4 Attendance Status |
+| Col K (11)| Day 5 | `Checkbox (TRUE/FALSE)` | Day 5 Attendance Status |
+| Col L (12)| Day 6 | `Checkbox (TRUE/FALSE)` | Day 6 Attendance Status |
+
+---
+
+### 4. GOOGLE APPS SCRIPT CODE (`Code.gs`)
+
+Provide clean container-bound Google Apps Script code for `Code.gs`:
+
+```javascript
+function setupSheet() {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
+    try { sheet.setName("Attendance"); } catch (e) {}
+
+    var headers = [
+        "Timestamp", "Phone Number", "Full Name", "Email ID", 
+        "Branch", "Device ID", "Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6"
+    ];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    var headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setFontWeight("bold");
+    headerRange.setBackground("#0F172A");
+    headerRange.setFontColor("#FFFFFF");
+    headerRange.setFontSize(11);
+    sheet.setRowHeight(1, 36);
+    headerRange.setHorizontalAlignment("center");
+    sheet.setFrozenRows(1);
+    sheet.getRange("B:B").setNumberFormat("@");
+    try { sheet.getRange("G2:L1000").insertCheckboxes(); } catch(e) {}
+}
+
+function flushSheet() {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+        sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).clearContent();
+        try { sheet.getRange("G2:L1000").insertCheckboxes(); } catch(e) {}
+    }
+}
+
+function doGet(e) {
+    try {
+        var params = e ? e.parameter : {};
+        var action = params.action;
+        var phone = String(params.phone || "").trim().replace(/[^0-9]/g, "");
+        var day = parseInt(params.day || "1", 10);
+        var deviceId = (params.deviceId || "").trim();
+
+        if (action === "setup") { setupSheet(); return createJsonResponse({ status: "SUCCESS" }); }
+        if (action === "flush") { flushSheet(); return createJsonResponse({ status: "SUCCESS" }); }
+
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var sheet = ss.getActiveSheet();
+        var data = sheet.getDataRange().getValues();
+
+        if (action === "register") {
+            var name = (params.name || "").trim();
+            var email = (params.email || "").trim();
+            var branch = (params.branch || "").trim();
+            var existingRow = findUserRowByPhone(data, phone);
+            var dayCols = [false, false, false, false, false, false];
+            dayCols[day - 1] = true;
+
+            if (existingRow === -1) {
+                var newRow = [new Date(), "'" + phone, name, email, branch, deviceId, dayCols[0], dayCols[1], dayCols[2], dayCols[3], dayCols[4], dayCols[5]];
+                sheet.appendRow(newRow);
+            } else {
+                var regDevId = String(data[existingRow - 1][5] || "").trim();
+                if (deviceId && regDevId && deviceId !== regDevId) {
+                    return createJsonResponse({ status: "DEVICE_MISMATCH" });
+                }
+                sheet.getRange(existingRow, 3).setValue(name);
+                sheet.getRange(existingRow, 4).setValue(email);
+                sheet.getRange(existingRow, 5).setValue(branch);
+                sheet.getRange(existingRow, 6).setValue(deviceId);
+                sheet.getRange(existingRow, 6 + day).setValue(true);
+            }
+            return createJsonResponse({ status: "SUCCESS" });
+        }
+
+        if (action === "attend") {
+            var userRowIndex = findUserRowByPhone(data, phone);
+            if (userRowIndex === -1) return createJsonResponse({ status: "NEW_USER" });
+            var regDevId = String(data[userRowIndex - 1][5] || "").trim();
+            if (deviceId && regDevId && deviceId !== regDevId) return createJsonResponse({ status: "DEVICE_MISMATCH" });
+            sheet.getRange(userRowIndex, 6 + day).setValue(true);
+            return createJsonResponse({ status: "SUCCESS" });
+        }
+
+        if (action === "check" && phone) {
+            var userRowIndex = findUserRowByPhone(data, phone);
+            if (userRowIndex === -1) return createJsonResponse({ status: "NEW_USER" });
+            var userData = data[userRowIndex - 1];
+            var regDevId = String(userData[5] || "").trim();
+            if (deviceId && regDevId && deviceId !== regDevId) return createJsonResponse({ status: "DEVICE_MISMATCH", name: userData[2] });
+            var dayVal = userData[5 + day];
+            if (dayVal === true || String(dayVal).trim().toUpperCase() === "TRUE") return createJsonResponse({ status: "ALREADY_SUBMITTED", name: userData[2] });
+            return createJsonResponse({ status: "READY_ONE_TAP", name: userData[2], email: userData[3], branch: userData[4] });
+        }
+        return createJsonResponse({ status: "READY_NEW_USER" });
+    } catch (err) {
+        return createJsonResponse({ status: "ERROR", message: err.toString() });
+    }
+}
+
+function doPost(e) { return doGet(e); }
+
+function findUserRowByPhone(data, phone) {
+    if (!phone) return -1;
+    var targetPhone = phone.replace(/['"'\s]/g, "");
+    for (var i = 1; i < data.length; i++) {
+        if (String(data[i][1] || "").trim().replace(/['"'\s]/g, "") === targetPhone) return i + 1;
+    }
+    return -1;
+}
+
+function createJsonResponse(data) {
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+}
+```
+```
+
