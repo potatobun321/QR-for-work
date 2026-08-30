@@ -5,8 +5,8 @@ const CONFIG = {
     organization: "Extra Activities Cell",
     startDate: "2026-08-31", // Day 1
     endDate: "2026-09-05",   // Day 6
-    // Active Google Apps Script Web App URL (Updated on deployment)
-    googleScriptUrl: "",
+    // Active Google Apps Script Web App URL
+    googleScriptUrl: "https://script.google.com/macros/s/AKfycbxmceP7ANIFmPJCnx9P17Lm2KltaKrE51yn8AbYGnQcwhGk27Ai4vmp1gQ8FUqLym4khA/exec",
     // Branches List
     branches: [
         "Artificial Intelligence",
