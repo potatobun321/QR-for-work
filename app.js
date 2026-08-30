@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * 6-DAY SIP ORIENTATION QR ATTENDANCE SYSTEM - FRONTEND LOGIC (app.js)
+ * STUDENT INDUCTION PROGRAM - FRONTEND LOGIC (app.js)
  * ==============================================================================
  */
 
@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const DAY_THEMES = {
-    1: { name: 'Day 1', date: 'Aug 31', color: '#FFDE59' }, // Electric Yellow
-    2: { name: 'Day 2', date: 'Sep 01', color: '#FF66C4' }, // Hot Pink
-    3: { name: 'Day 3', date: 'Sep 02', color: '#00F0FF' }, // Electric Cyan
-    4: { name: 'Day 4', date: 'Sep 03', color: '#70E000' }, // Lime Green
-    5: { name: 'Day 5', date: 'Sep 04', color: '#FF914D' }, // Bright Orange
-    6: { name: 'Day 6', date: 'Sep 05', color: '#B57EDC' }  // Vibrant Violet
+    1: { name: 'Day 1', date: 'Aug 31', fullDate: '2026-08-31', color: '#FFDE59' }, // Electric Yellow
+    2: { name: 'Day 2', date: 'Sep 01', fullDate: '2026-09-01', color: '#FF66C4' }, // Hot Pink
+    3: { name: 'Day 3', date: 'Sep 02', fullDate: '2026-09-02', color: '#00F0FF' }, // Electric Cyan
+    4: { name: 'Day 4', date: 'Sep 03', fullDate: '2026-09-03', color: '#70E000' }, // Lime Green
+    5: { name: 'Day 5', date: 'Sep 04', fullDate: '2026-09-04', color: '#FF914D' }, // Bright Orange
+    6: { name: 'Day 6', date: 'Sep 05', fullDate: '2026-09-05', color: '#B57EDC' }  // Vibrant Violet
   };
 
   // --- STATE VARIABLES ---
@@ -29,13 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentActiveDay = calculateActiveDay();
   let currentUserProfile = loadUserProfile();
   let activeApiUrl = localStorage.getItem(STORAGE_KEYS.API_URL) || DEFAULT_API_URL;
+  let secretClickCount = 0;
+  let secretClickTimer = null;
 
   // --- DOM ELEMENT REFERENCES ---
-  const displayDeviceIdEl = document.getElementById('displayDeviceId');
+  const appHeaderTitleEl = document.getElementById('appHeaderTitle');
   const appDaySubtitleEl = document.getElementById('appDaySubtitle');
   const activeDayTextBadgeEl = document.getElementById('activeDayTextBadge');
   const stepperBarEl = document.getElementById('stepperBar');
   
+  const timeLockBox = document.getElementById('timeLockBox');
+  const timeLockTitle = document.getElementById('timeLockTitle');
+  const timeLockMsg = document.getElementById('timeLockMsg');
+
   const registrationCard = document.getElementById('registrationCard');
   const attendanceForm = document.getElementById('attendanceForm');
   const formActionInput = document.getElementById('formActionInput');
@@ -74,40 +80,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const alreadySubmittedDismissBtn = document.getElementById('alreadySubmittedDismissBtn');
 
   const configModal = document.getElementById('configModal');
-  const openConfigBtn = document.getElementById('openConfigBtn');
   const closeConfigModalBtn = document.getElementById('closeConfigModalBtn');
   const apiUrlInput = document.getElementById('apiUrlInput');
   const saveApiUrlBtn = document.getElementById('saveApiUrlBtn');
   const resetStorageBtn = document.getElementById('resetStorageBtn');
+  const appFooter = document.getElementById('appFooter');
 
   // --- INITIALIZATION ---
   initApp();
 
   function initApp() {
-    // 1. Render Device ID snippet
-    if (displayDeviceIdEl) {
-      displayDeviceIdEl.textContent = shortenDeviceId(currentDeviceId);
-    }
     if (formDeviceIdInput) {
       formDeviceIdInput.value = currentDeviceId;
     }
 
-    // 2. Set API URL in modal input
     if (apiUrlInput) {
       apiUrlInput.value = activeApiUrl;
     }
 
-    // 3. Set Active Day & Theme
     setDayTheme(currentActiveDay);
-
-    // 4. Attach Event Listeners
     setupEventListeners();
-
-    // 5. Evaluate User Flow (Registration vs 1-Tap Check-In)
     evaluateUserFlow();
   }
 
-  // --- DEVICE LOCKING LOGIC ---
+  // --- DEVICE LOCKING LOGIC (SILENT IN BACKGROUND) ---
   function getOrCreateDeviceId() {
     let id = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
     if (!id) {
@@ -118,19 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return id;
   }
 
-  function shortenDeviceId(id) {
-    if (!id) return 'dev_unknown';
-    if (id.length <= 14) return id;
-    return id.substring(0, 8) + '...' + id.substring(id.length - 4);
-  }
-
-  // --- DAY CALCULATOR & THEME SWITCHER ---
+  // --- DAY CALCULATOR & TIME-LOCK ENGINE ---
   function calculateActiveDay() {
     const today = new Date();
     const month = today.getMonth() + 1; // 1-12
     const date = today.getDate();
 
-    // If event is around Aug 31 - Sep 05, 2026
     if (month === 8 && date >= 31) return 1;
     if (month === 9) {
       if (date === 1) return 2;
@@ -139,18 +128,54 @@ document.addEventListener('DOMContentLoaded', () => {
       if (date === 4) return 5;
       if (date >= 5) return 6;
     }
-    // Default to Day 1
     return 1;
+  }
+
+  // Check if attendance is unlocked for selected day & 9:30 AM time condition
+  function isAttendanceUnlocked(dayNum) {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const currentDate = String(now.getDate()).padStart(2, '0');
+    const todayYMD = `${currentYear}-${currentMonth}-${currentDate}`;
+
+    const targetDayInfo = DAY_THEMES[dayNum];
+    if (!targetDayInfo) return { unlocked: true };
+
+    const targetYMD = targetDayInfo.fullDate;
+
+    // 1. Future Date Check
+    if (targetYMD > todayYMD) {
+      return { 
+        unlocked: false, 
+        reason: `Attendance for ${targetDayInfo.name} unlocks at 9:30 AM on ${targetDayInfo.date}.` 
+      };
+    }
+
+    // 2. Same Day 9:30 AM Check
+    if (targetYMD === todayYMD) {
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      // Unlock after 9:30 AM (9 * 60 + 30 = 570 mins)
+      const currentMinutes = hours * 60 + minutes;
+      if (currentMinutes < 570) {
+        return { 
+          unlocked: false, 
+          reason: `Orientation starts at 9:30 AM today! Registration unlocks at 9:30 AM.` 
+        };
+      }
+    }
+
+    // Past Days or Current Day after 9:30 AM -> Unlocked!
+    return { unlocked: true };
   }
 
   function setDayTheme(dayNum) {
     currentActiveDay = dayNum;
     const theme = DAY_THEMES[dayNum] || DAY_THEMES[1];
 
-    // Update CSS Root Variable
     document.documentElement.style.setProperty('--theme-accent', theme.color);
 
-    // Update Subtitles & Headers
     if (appDaySubtitleEl) {
       appDaySubtitleEl.textContent = `⚡ ${theme.name.toUpperCase()} ATTENDANCE (${theme.date})`;
     }
@@ -161,13 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
       formDayInput.value = dayNum;
     }
     if (btnText) {
-      btnText.textContent = `SUBMIT & MARK ${theme.name.toUpperCase()} →`;
+      btnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE →`;
     }
     if (oneTapBtnText) {
       oneTapBtnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE →`;
     }
 
-    // Update Stepper Active State
     const stepButtons = stepperBarEl ? stepperBarEl.querySelectorAll('.step-btn') : [];
     stepButtons.forEach(btn => {
       const bDay = parseInt(btn.getAttribute('data-day'), 10);
@@ -178,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Re-evaluate card view for selected day
     evaluateUserFlow();
   }
 
@@ -201,23 +224,42 @@ document.addEventListener('DOMContentLoaded', () => {
   function evaluateUserFlow() {
     hideAllStatusCards();
 
-    // Check if user has already marked attendance locally for current active day
+    // 1. Time-Lock Check (Must be >= 9:30 AM on event day)
+    const lockStatus = isAttendanceUnlocked(currentActiveDay);
+    if (!lockStatus.unlocked) {
+      showTimeLockCard(lockStatus.reason);
+      return;
+    } else {
+      if (timeLockBox) timeLockBox.style.display = 'none';
+    }
+
+    // 2. Already Submitted Check
     const loggedDays = getLoggedDays();
     if (currentUserProfile && loggedDays[currentActiveDay]) {
-      showStatusCard('alreadySubmitted', 'ATTENDANCE MARKED!', `You have already marked your attendance for ${DAY_THEMES[currentActiveDay].name}. Thank you!`);
+      showStatusCard('alreadySubmitted', 'ALREADY MARKED', `You have already submitted attendance for ${DAY_THEMES[currentActiveDay].name}.`);
       return;
     }
 
+    // 3. Flow Selector (1-Tap vs Registration Form)
     if (currentUserProfile && currentUserProfile.phone) {
-      // Returning User -> Show 1-Tap Card
       showOneTapCard();
     } else {
-      // New User / Day 1 -> Show Registration Form
       showRegistrationForm();
     }
   }
 
+  function showTimeLockCard(reason) {
+    registrationCard.style.display = 'none';
+    oneTapCard.style.display = 'none';
+    hideAllStatusCards();
+    if (timeLockBox) {
+      timeLockBox.style.display = 'block';
+      if (timeLockMsg) timeLockMsg.textContent = reason;
+    }
+  }
+
   function showRegistrationForm() {
+    if (timeLockBox) timeLockBox.style.display = 'none';
     registrationCard.style.display = 'block';
     oneTapCard.style.display = 'none';
     hideAllStatusCards();
@@ -231,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showOneTapCard() {
+    if (timeLockBox) timeLockBox.style.display = 'none';
     registrationCard.style.display = 'none';
     oneTapCard.style.display = 'block';
     hideAllStatusCards();
@@ -247,16 +290,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showStatusCard(type, title, message) {
+    if (timeLockBox) timeLockBox.style.display = 'none';
     registrationCard.style.display = 'none';
     oneTapCard.style.display = 'none';
     hideAllStatusCards();
 
     if (type === 'success') {
       if (successTitle) successTitle.textContent = title || 'ATTENDANCE MARKED!';
-      if (successMsg) successMsg.textContent = message || 'Attendance successfully saved in Google Sheets.';
+      if (successMsg) successMsg.textContent = message || 'Attendance successfully saved.';
       if (statusSuccessCard) statusSuccessCard.style.display = 'block';
     } else if (type === 'mismatch') {
-      if (mismatchMsg) mismatchMsg.textContent = message || 'Device mismatch detected. Anti-proxy lock enabled.';
+      if (mismatchMsg) mismatchMsg.textContent = message || 'Device mismatch detected.';
       if (statusMismatchCard) statusMismatchCard.style.display = 'block';
     } else if (type === 'alreadySubmitted') {
       if (alreadySubmittedMsg) alreadySubmittedMsg.textContent = message || 'You have already marked attendance for today.';
@@ -361,12 +405,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 6. Config Modal Handlers
-    if (openConfigBtn) {
-      openConfigBtn.addEventListener('click', () => {
+    // 6. Secret Admin Modal Trigger (5 fast clicks on Header Title or Footer)
+    const triggerSecretAdmin = () => {
+      secretClickCount++;
+      clearTimeout(secretClickTimer);
+      secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 2000);
+      if (secretClickCount >= 5) {
+        secretClickCount = 0;
         configModal.classList.add('active');
-      });
-    }
+      }
+    };
+
+    if (appHeaderTitleEl) appHeaderTitleEl.addEventListener('click', triggerSecretAdmin);
+    if (appFooter) appFooter.addEventListener('click', triggerSecretAdmin);
+
     if (closeConfigModalBtn) {
       closeConfigModalBtn.addEventListener('click', () => {
         configModal.classList.remove('active');
@@ -400,7 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Construct Query Parameters for Apps Script
       const queryString = new URLSearchParams(params).toString();
       const requestUrl = `${activeApiUrl}?${queryString}`;
 
@@ -411,14 +462,13 @@ document.addEventListener('DOMContentLoaded', () => {
         cache: 'no-cache'
       });
 
-      // 2. Also trigger Image ping to guarantee request transmission
+      // 2. Trigger Image ping to guarantee request transmission
       const imgPing = new Image();
       imgPing.src = requestUrl;
 
-      // Handle successful UI state update
       saveUserProfile(profile);
       markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE MARKED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded successfully in Google Sheets!`);
+      showStatusCard('success', 'ATTENDANCE MARKED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded successfully.`);
 
     } catch (err) {
       console.warn('Network error, triggering iframe fallback:', err);
@@ -426,29 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function handleApiResponse(resData, params, profile) {
-    if (resData.status === 'SUCCESS') {
-      saveUserProfile(profile);
-      markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE MARKED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded successfully in Google Sheets!`);
-    } else if (resData.status === 'DEVICE_MISMATCH') {
-      showStatusCard('mismatch', 'PROXY CHECK-IN BLOCKED!', resData.message || 'This phone number is permanently bound to another smartphone device.');
-    } else if (resData.status === 'ALREADY_SUBMITTED') {
-      markDayAsLogged(params.day);
-      showStatusCard('alreadySubmitted', 'ALREADY SUBMITTED!', `Attendance for ${DAY_THEMES[params.day].name} was already marked.`);
-    } else if (resData.status === 'NEW_USER') {
-      showRegistrationForm();
-      alert('Your phone number is not registered yet. Please complete registration form.');
-    } else {
-      // Generic success fallback if API returns custom ok status
-      saveUserProfile(profile);
-      markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE MARKED!', `Attendance submitted for ${DAY_THEMES[params.day].name}.`);
-    }
-  }
-
   function fallbackIframeSubmission(params, profile) {
-    // Hidden Iframe Form Submit Fallback for zero-CORS protection
     const form = document.createElement('form');
     form.action = activeApiUrl;
     form.method = 'GET';
@@ -466,11 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
     form.submit();
     document.body.removeChild(form);
 
-    // Assume success on iframe fallback after slight delay
     setTimeout(() => {
       saveUserProfile(profile);
       markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE SUBMITTED!', `Your attendance for ${DAY_THEMES[params.day].name} has been sent!`);
+      showStatusCard('success', 'ATTENDANCE SUBMITTED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded.`);
     }, 1200);
   }
 

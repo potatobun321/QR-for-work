@@ -1,8 +1,8 @@
 /* ==============================================================================
-   6-DAY SIP ORIENTATION - NEO-BRUTALIST STYLING (style.css)
+   STUDENT INDUCTION PROGRAM - CLEAN MINIMAL NEO-BRUTALIST STYLING (style.css)
    ============================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@500;700&display=swap');
 
 :root {
   /* Neo-Brutalist Base Tokens */
@@ -13,8 +13,8 @@
   --border-width: 3px;
   --border-width-thick: 4px;
   --shadow-sm: 3px 3px 0px #000000;
-  --shadow-md: 5px 5px 0px #000000;
-  --shadow-lg: 8px 8px 0px #000000;
+  --shadow-md: 4px 4px 0px #000000;
+  --shadow-lg: 6px 6px 0px #000000;
 
   /* Dynamic Day Accent Colors */
   --day1-color: #FFDE59; /* Electric Yellow */
@@ -46,26 +46,24 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg-color);
   color: var(--text-main);
-  line-height: 1.5;
-  padding: 1rem;
+  line-height: 1.4;
+  padding: 0.75rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Retro Grid Pattern */
-  background-image: 
-    radial-gradient(#000000 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(#000000 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Container */
 .app-container {
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto 2rem auto;
+  max-width: 440px;
+  margin: 0 auto 1.5rem auto;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 /* Neo-Brutalist Box Utility */
@@ -74,7 +72,7 @@ body {
   border: var(--border-width-thick) solid var(--border-color);
   box-shadow: var(--shadow-lg);
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 1.15rem;
   position: relative;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -85,99 +83,32 @@ body {
   border: var(--border-width-thick) solid var(--border-color);
   box-shadow: var(--shadow-lg);
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 1rem 1.15rem;
   text-align: center;
   position: relative;
-  overflow: hidden;
   transition: background-color 0.3s ease;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.badge-tag {
-  background-color: #000000;
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  letter-spacing: 1px;
-}
-
-.config-btn {
-  background: #FFFFFF;
-  border: 2px solid #000000;
-  box-shadow: 2px 2px 0px #000000;
-  border-radius: 8px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 700;
-  transition: all 0.1s ease;
-}
-
-.config-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px #000000;
-}
-
-.config-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px #000000;
 }
 
 .app-title {
   font-family: var(--font-heading);
-  font-size: 1.8rem;
-  line-height: 1.1;
+  font-size: 1.35rem;
+  line-height: 1.15;
   text-transform: uppercase;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   color: #000000;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
+  user-select: none;
 }
 
 .app-subtitle {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   background-color: #FFFFFF;
   display: inline-block;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border: 2px solid #000000;
   border-radius: 6px;
   box-shadow: 2px 2px 0px #000000;
-}
-
-/* Device Fingerprint Strip */
-.device-badge {
-  background-color: #000000;
-  color: #FFFFFF;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-sm);
-}
-
-.device-badge strong {
-  color: var(--theme-accent);
-  font-family: var(--font-heading);
-}
-
-.device-id-code {
-  font-family: monospace;
-  background: #222222;
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #00FF66;
 }
 
 /* 6-Day Stepper Toolbar */
@@ -185,29 +116,39 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1rem;
 }
 
 .stepper-title {
   font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.day-badge-pill {
+  font-weight: 700;
+  font-size: 0.75rem;
+  background: #000;
+  color: #FFF;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
 .stepper-bar {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  gap: 4px;
 }
 
 .step-btn {
   background: #FFFFFF;
   border: var(--border-width) solid #000000;
   box-shadow: 2px 2px 0px #000000;
-  border-radius: 8px;
-  padding: 8px 2px;
+  border-radius: 6px;
+  padding: 6px 1px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -215,15 +156,15 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: var(--font-heading);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
 }
 
 .step-btn .step-num {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .step-btn .step-date {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-family: var(--font-body);
   font-weight: 700;
 }
@@ -236,7 +177,7 @@ body {
 .step-btn.active {
   background-color: var(--theme-accent) !important;
   transform: translate(0, 0);
-  box-shadow: 3px 3px 0px #000000;
+  box-shadow: 2px 2px 0px #000000;
   border-width: 3px;
 }
 
@@ -246,9 +187,36 @@ body {
 }
 
 .step-btn.locked {
-  opacity: 0.6;
+  opacity: 0.55;
   background-color: #E2E8F0;
   cursor: not-allowed;
+}
+
+/* Time Lock Box */
+.time-lock-box {
+  background-color: #FFF9C4;
+  border: var(--border-width-thick) solid #000000;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.lock-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.lock-msg {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #444444;
 }
 
 /* Card Sections */
@@ -256,16 +224,16 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
   border-bottom: 3px solid #000000;
 }
 
 .card-icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   background-color: var(--theme-accent);
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -276,24 +244,30 @@ body {
 
 .card-title-text {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1.1;
+}
+
+.card-sub-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #666;
 }
 
 /* Forms & Inputs */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 1rem;
+  gap: 4px;
+  margin-bottom: 0.85rem;
 }
 
 .form-label {
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -305,10 +279,10 @@ body {
 
 .form-control {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #000000;
   background-color: #FFFFFF;
   border: var(--border-width) solid #000000;
@@ -321,7 +295,6 @@ body {
 .form-control:focus {
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0px #000000;
-  border-color: #000000;
   background-color: #FFFFF0;
 }
 
@@ -329,19 +302,19 @@ select.form-control {
   appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+  background-position: right 10px center;
+  padding-right: 32px;
   cursor: pointer;
 }
 
 /* Buttons */
 .btn-primary {
   width: 100%;
-  padding: 14px 20px;
+  padding: 12px 16px;
   background-color: var(--theme-accent);
   color: #000000;
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-transform: uppercase;
   border: var(--border-width-thick) solid #000000;
   border-radius: 10px;
@@ -352,26 +325,26 @@ select.form-control {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .btn-primary:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0px #000000;
+  box-shadow: 6px 6px 0px #000000;
 }
 
 .btn-primary:active {
-  transform: translate(2px, 2px);
+  transform: translate(1px, 1px);
   box-shadow: 2px 2px 0px #000000;
 }
 
 .btn-secondary {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background-color: #FFFFFF;
   color: #000000;
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   border: var(--border-width) solid #000000;
   border-radius: 8px;
@@ -390,49 +363,43 @@ select.form-control {
   color: #FFFFFF;
 }
 
-/* Return User Welcome Card */
+/* Return User Welcome Box */
 .welcome-user-box {
   background-color: #FFFFE0;
   border: 3px solid #000000;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-radius: 8px;
+  padding: 0.85rem;
+  margin-bottom: 0.85rem;
   box-shadow: 3px 3px 0px #000000;
 }
 
 .user-name-title {
   font-family: var(--font-heading);
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   color: #000000;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .user-meta-line {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #444444;
 }
 
 /* Status Banner Cards */
 .status-card {
-  display: none; /* Controlled by JS */
+  display: none;
   border: var(--border-width-thick) solid #000000;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow-lg);
   text-align: center;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .status-card.success {
@@ -454,32 +421,29 @@ select.form-control {
 }
 
 .status-icon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.4rem;
   display: block;
 }
 
 .status-title {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .status-msg {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 1.25rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
 }
 
 /* Modal */
 .modal-overlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1000;
   align-items: center;
@@ -494,44 +458,43 @@ select.form-control {
 .modal-box {
   background: #FFFFFF;
   border: var(--border-width-thick) solid #000000;
-  box-shadow: 10px 10px 0px #000000;
+  box-shadow: 8px 8px 0px #000000;
   border-radius: 12px;
   width: 100%;
-  max-width: 440px;
-  padding: 1.5rem;
-  position: relative;
+  max-width: 400px;
+  padding: 1.25rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
   border-bottom: 2px solid #000000;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
 }
 
 .modal-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
 }
 
 .close-modal-btn {
   background: #000;
   color: #FFF;
   border: none;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
 }
 
-/* Toast Loader */
+/* Loading Spinner */
 .loading-spinner {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border: 3px solid rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   border-top-color: #000000;
@@ -542,22 +505,22 @@ select.form-control {
   to { transform: rotate(360deg); }
 }
 
-/* Footer */
+/* Minimal Footer */
 .app-footer {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  margin-top: 1rem;
-  opacity: 0.8;
+  color: #777777;
+  margin-top: 0.5rem;
 }
 
-/* Mobile Responsiveness tweak */
+/* Mobile Tweaks */
 @media (max-width: 360px) {
   .app-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   .step-btn {
-    padding: 6px 1px;
-    font-size: 0.65rem;
+    padding: 4px 1px;
+    font-size: 0.6rem;
   }
 }
