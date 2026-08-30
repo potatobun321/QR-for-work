@@ -7,7 +7,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   
   // --- CONFIGURATION & CONSTANTS ---
-  const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxoKa8I7Ks93RdGVSrdTFOlam6lHBzfkl9fIPhzRyYhD8LCNEAmzY9REr09NTnUnuDF/exec';
+  const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxAkqAEFdImcBK84eDabGiCf4WSocQELZUPIQRt1Nw68yJBDmuc4SyMfLs_3ZVWLPdm/exec';
   const STORAGE_KEYS = {
     DEVICE_ID: 'qr_attendance_device_id',
     USER_PROFILE: 'qr_attendance_user_profile',
