@@ -63,8 +63,8 @@
                     <span class="form-subtitle">First-time check-in details</span>
                 </div>
                 
-                <!-- Native HTML Form targeting Hidden Iframe (Bypasses Firefox Tracking Protection) -->
-                <form id="regForm" target="hidden_iframe" method="GET">
+                <!-- Native HTML Form targeting Hidden Iframe (Hardcoded Google Script Action & Method POST) -->
+                <form id="regForm" target="hidden_iframe" action="https://script.google.com/macros/s/AKfycbyEpC31aQKlH8JKgvwBruiBcBDCCwQE6wIgb9rK0YyHkD8ZRufDry1yCTsnkRmzYdzY/exec" method="POST">
                     <input type="hidden" name="action" value="register">
                     <input type="hidden" name="deviceId" id="hiddenRegDeviceId">
                     <input type="hidden" name="day" id="hiddenRegDayNumber" value="1">
@@ -117,7 +117,7 @@
                 </button>
 
                 <!-- Hidden Form for 1-Tap Attendance targeting Hidden Iframe -->
-                <form id="oneTapForm" target="hidden_iframe" method="GET" style="display:none;">
+                <form id="oneTapForm" target="hidden_iframe" action="https://script.google.com/macros/s/AKfycbyEpC31aQKlH8JKgvwBruiBcBDCCwQE6wIgb9rK0YyHkD8ZRufDry1yCTsnkRmzYdzY/exec" method="POST" style="display:none;">
                     <input type="hidden" name="action" value="attend">
                     <input type="hidden" name="phone" id="hiddenOneTapPhone">
                     <input type="hidden" name="deviceId" id="hiddenOneTapDeviceId">
@@ -171,7 +171,7 @@
         </div>
     </div>
 
-    <!-- Hidden Iframe Target for Native HTML Form Submissions (Immune to Firefox Tracking Protection) -->
+    <!-- Hidden Iframe Target for Native HTML Form Submissions -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none; width:0; height:0; border:0;"></iframe>
 
     <!-- Scripts -->

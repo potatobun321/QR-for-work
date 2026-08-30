@@ -273,7 +273,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. Registration Form Submission (Native HTML Form Submit to Hidden Iframe - Firefox & Universal Compatible)
+    // Helper: Secondary Ping Fallback
+    function sendSecondaryPing(url) {
+        try {
+            fetch(url, { mode: "no-cors" }).catch(() => {});
+        } catch(e) {}
+    }
+
+    // 6. Registration Form Submission (Native Form POST to Hidden Iframe + Dual Ping)
     regForm.addEventListener("submit", (e) => {
         const name = regNameInput.value.trim();
         const phone = regPhoneInput.value.trim();
@@ -293,11 +300,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Set hidden form parameters for native submit
+        // Ensure form action and hidden parameters are set
+        if (config.googleScriptUrl) {
+            regForm.action = config.googleScriptUrl;
+        }
         hiddenRegDeviceId.value = deviceId;
         hiddenRegDayNumber.value = dayNumber;
 
         showOverlay("Registering & Logging Attendance...", "Updating Google Sheet");
+
+        // Dual Delivery Redundancy Ping
+        if (config.googleScriptUrl) {
+            const pingUrl = `${config.googleScriptUrl}?action=register&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&branch=${encodeURIComponent(branch)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
+            sendSecondaryPing(pingUrl);
+        }
 
         // Cache details locally
         localStorage.setItem("qr_user_phone", phone);
@@ -306,7 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("qr_user_branch", branch);
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
-        // Allow form to submit natively to hidden_iframe!
         setTimeout(() => {
             hideOverlay();
             showCard(alreadySubmittedCard);
@@ -314,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1400);
     });
 
-    // 7. 1-Tap Attendance Submission (Native HTML Form Submit to Hidden Iframe - Firefox & Universal Compatible)
+    // 7. 1-Tap Attendance Submission (Native Form POST to Hidden Iframe + Dual Ping)
     oneTapAttendBtn.addEventListener("click", () => {
         const phone = localStorage.getItem("qr_user_phone");
         const dayNumber = selectedDayIndex + 1;
@@ -324,6 +339,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (config.googleScriptUrl) {
+            oneTapForm.action = config.googleScriptUrl;
+        }
         hiddenOneTapPhone.value = phone;
         hiddenOneTapDeviceId.value = deviceId;
         hiddenOneTapDayNumber.value = dayNumber;
@@ -332,6 +350,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Submit hidden form natively to hidden_iframe!
         oneTapForm.submit();
+
+        // Dual Delivery Redundancy Ping
+        if (config.googleScriptUrl) {
+            const pingUrl = `${config.googleScriptUrl}?action=attend&phone=${encodeURIComponent(phone)}&deviceId=${encodeURIComponent(deviceId)}&day=${dayNumber}`;
+            sendSecondaryPing(pingUrl);
+        }
 
         localStorage.setItem(`qr_attended_day_${dayNumber}`, "true");
 
