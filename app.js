@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Universal Firefox & Mobile Compatibility
+// 6-Day Smart Attendance & Orientation Logic
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 1-Tap Footer Reset Handler
+    // Reset Phone Cache Footer Button
     const resetLocalDataBtn = document.getElementById("resetLocalDataBtn");
     if (resetLocalDataBtn) {
         resetLocalDataBtn.addEventListener("click", (e) => {
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isPreviewMode = urlParams.get("preview") === "true" || urlParams.get("override") === "true";
 
-    // Elements
+    // DOM Elements
     const badgeElement = document.getElementById("dayBadge");
     const stepperStepsElement = document.getElementById("stepperSteps");
     const iconElement = document.getElementById("heroIcon");
@@ -80,17 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let realTodayIndex = calculateRealTodayIndex();
     let selectedDayIndex = getRequestedDayIndex(realTodayIndex);
 
-    // Bind Form Actions to Google Script Web App URL
-    if (config.googleScriptUrl) {
-        regForm.action = config.googleScriptUrl;
-        oneTapForm.action = config.googleScriptUrl;
+    // Bind Form Actions if URL configured
+    bindFormActions();
+
+    function bindFormActions() {
+        if (config.googleScriptUrl) {
+            regForm.action = config.googleScriptUrl;
+            oneTapForm.action = config.googleScriptUrl;
+        }
     }
 
     // Initialize UI
     renderDayUI(selectedDayIndex);
     checkUserAttendanceState();
 
-    // 1. Device ID Generator (Stored in LocalStorage)
+    // 1. Device ID Generator (UUID string dev_...)
     function getOrCreateDeviceId() {
         let id = localStorage.getItem("qr_attendance_device_id");
         if (!id) {
@@ -104,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return id;
     }
 
-    // 2. Real Today Index Calculation based on Date
+    // 2. Real Today Index Calculation
     function calculateRealTodayIndex() {
         const now = new Date();
         const todayStr = formatDateStr(now);
@@ -131,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${yyyy}-${mm}-${dd}`;
     }
 
-    // 3. Render Day UI & Theme Block Colors
+    // 3. Render Day UI & Blocky Colors
     function renderDayUI(index) {
         const dayData = daysData[index];
         const isFutureLocked = index > realTodayIndex && !isPreviewMode;
@@ -173,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
 
-    // 4. Render Stepper Timeline Bar
+    // 4. Render Stepper Timeline
     function renderStepper(activeIndex) {
         stepperStepsElement.innerHTML = daysData.map((d, idx) => {
             let statusClass = "";
@@ -203,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. User Attendance & Day Attendance Barrier Check (Checks Google Sheets Ground Truth FIRST!)
+    // 5. User Attendance State Check (Queries Live Google Sheets Ground Truth)
     async function checkUserAttendanceState() {
         const dayNumber = selectedDayIndex + 1;
         const dayData = daysData[selectedDayIndex];
@@ -220,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cachedName = localStorage.getItem("qr_user_name");
         const cachedBranch = localStorage.getItem("qr_user_branch");
 
-        // 1. LIVE GOOGLE APPS SCRIPT GROUND TRUTH CHECK
+        // 1. Live Check Google Sheets Ground Truth First
         if (config.googleScriptUrl && cachedPhone) {
             try {
                 const checkUrl = `${config.googleScriptUrl}?action=check&phone=${encodeURIComponent(cachedPhone)}&day=${dayNumber}&deviceId=${encodeURIComponent(deviceId)}`;
@@ -247,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (data.status === "NEW_USER") {
-                    // Google Sheets does NOT have this user! Clear false-positive local flags & show form
+                    // Clear local false-positive flags if sheet says user is new
                     for (let d = 1; d <= 6; d++) {
                         localStorage.removeItem(`qr_attended_day_${d}`);
                     }
@@ -255,11 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
             } catch (err) {
-                console.warn("Google Script API check failed, falling back to local state:", err);
+                console.warn("API check failed, falling back to local state:", err);
             }
         }
 
-        // 2. LOCAL FALLBACK (Only evaluated if no API response or no cached phone)
+        // 2. Local Fallback
         const dayAttendanceKey = `qr_attended_day_${dayNumber}`;
         if (localStorage.getItem(dayAttendanceKey) === "true") {
             showCard(alreadySubmittedCard);
@@ -301,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch(e) {}
     }
 
-    // 6. Registration Form Submission (Native Form POST to Hidden Iframe + Dual Ping)
+    // 6. Registration Form Submission (Native HTML Form Submit to Hidden Iframe + Dual Ping)
     regForm.addEventListener("submit", (e) => {
         const name = regNameInput.value.trim();
         const phone = regPhoneInput.value.trim();
@@ -321,10 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Ensure form action and hidden parameters are set
-        if (config.googleScriptUrl) {
-            regForm.action = config.googleScriptUrl;
-        }
+        bindFormActions();
         hiddenRegDeviceId.value = deviceId;
         hiddenRegDayNumber.value = dayNumber;
 
@@ -360,16 +361,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (config.googleScriptUrl) {
-            oneTapForm.action = config.googleScriptUrl;
-        }
+        bindFormActions();
         hiddenOneTapPhone.value = phone;
         hiddenOneTapDeviceId.value = deviceId;
         hiddenOneTapDayNumber.value = dayNumber;
 
         showOverlay(`Logging Day ${dayNumber} Attendance...`, "Verifying Device & Updating Google Sheet");
 
-        // Submit hidden form natively to hidden_iframe!
+        // Submit hidden form natively to hidden_iframe
         oneTapForm.submit();
 
         // Dual Delivery Redundancy Ping

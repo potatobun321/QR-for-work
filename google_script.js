@@ -1,14 +1,19 @@
 /**
- * GOOGLE APPS SCRIPT: 6-DAY SMART ATTENDANCE & DEVICE LOCKING SYSTEM
+ * 6-DAY SMART ATTENDANCE GOOGLE APPS SCRIPT
  * 
- * Instructions: Paste directly into Extensions -> Apps Script inside your Google Sheet!
+ * Instructions:
+ * 1. Open your Google Sheet
+ * 2. Click Extensions -> Apps Script
+ * 3. Replace all code in Code.gs with this script
+ * 4. Run 'setupSheet' once to format the sheet with checkboxes
+ * 5. Deploy as Web App (Execute as: Me, Who has access: Anyone)
  */
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getActiveSheet();
-    
+
     try {
         sheet.setName("Attendance");
     } catch (e) {}
@@ -41,7 +46,7 @@ function setupSheet() {
     sheet.setFrozenRows(1);
     sheet.getRange("B:B").setNumberFormat("@");
 
-    // Insert Techy Checkboxes in Columns G to L (Day 1 - Day 6)
+    // Insert Checkboxes in Columns G to L (Day 1 - Day 6)
     var dayRange = sheet.getRange("G2:L1000");
     try {
         dayRange.insertCheckboxes();
@@ -67,7 +72,7 @@ function flushSheet() {
     }
 }
 
-// 3. GET REST API: HANDLES CHECK, REGISTER, ATTEND, SETUP & FLUSH
+// 3. REST API ENDPOINT (GET & POST)
 function doGet(e) {
     try {
         var params = e ? e.parameter : {};
@@ -78,12 +83,12 @@ function doGet(e) {
 
         if (action === "setup") {
             setupSheet();
-            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes!" });
+            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed!" });
         }
 
         if (action === "flush") {
             flushSheet();
-            return createJsonResponse({ status: "SUCCESS", message: "All attendance records flushed!" });
+            return createJsonResponse({ status: "SUCCESS", message: "All records flushed!" });
         }
 
         var ss = SpreadsheetApp.getActiveSpreadsheet();
