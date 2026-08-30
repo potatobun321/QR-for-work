@@ -1,33 +1,22 @@
 /**
- * ==============================================================================
  * GOOGLE APPS SCRIPT: 6-DAY SMART ATTENDANCE & DEVICE LOCKING SYSTEM
- * ==============================================================================
  * 
- * CORE FEATURES:
- * 1. setupSheet()  : Automatically sets up headers, column width, and formatting on tab "Attendance".
- * 2. flushSheet()  : Wipes all student entries (clears row 2 onwards) to start completely fresh!
- * 3. doGet / doPost: Serves REST API for check-in, registration, and attendance logging.
- * 4. Device Locking: Binds Phone Number to unique Device ID to prevent proxy submissions.
- * 
- * Setup Instructions:
- * 1. Open your Google Sheet -> Extensions -> Apps Script.
- * 2. Replace EVERYTHING in Code.gs with this code.
- * 3. Select 'setupSheet' in the top dropdown and click 'Run'.
- * 4. Click 'Deploy' -> 'Manage deployments' -> Pencil (Edit) -> Version: New Version -> 'Deploy'.
+ * FEATURES:
+ * 1. setupSheet() : Creates master 12 headers, formats sheet, & inserts techy checkboxes.
+ * 2. flushSheet() : 1-Click function to wipe all student entries & reset sheet!
+ * 3. doGet/doPost : REST API for mobile registration, check-in, & attendance.
+ * 4. Device Lock : Binds phone number to unique device ID to prevent proxy.
  */
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet(); // Formats whichever tab is currently open/active!
+    var sheet = ss.getActiveSheet();
 
     try {
         sheet.setName("Attendance");
-    } catch (e) {
-        // Tab name is already "Attendance"
-    }
+    } catch (e) {}
 
-    // 12 Master Columns
     var headers = [
         "Timestamp",
         "Phone Number",
@@ -43,10 +32,8 @@ function setupSheet() {
         "Day 6"
     ];
 
-    // Write Headers
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-    // Format Header Styling (Dark Slate Header)
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
     headerRange.setFontWeight("bold");
     headerRange.setBackground("#0F172A"); // Dark Slate
@@ -55,11 +42,16 @@ function setupSheet() {
     sheet.setRowHeight(1, 36);
     headerRange.setHorizontalAlignment("center");
 
-    // Freeze Header Row & Format Phone Column as Plain Text
     sheet.setFrozenRows(1);
     sheet.getRange("B:B").setNumberFormat("@");
 
-    Logger.log("✅ Attendance sheet setup completed successfully on tab: " + sheet.getName());
+    // Insert Techy Checkboxes in Columns G to L (Day 1 - Day 6)
+    var dayRange = sheet.getRange("G2:L1000");
+    try {
+        dayRange.insertCheckboxes();
+    } catch(e) {}
+
+    Logger.log("✅ Attendance sheet setup completed with Checkboxes on tab: " + sheet.getName());
 }
 
 // 2. ONE-CLICK DATA FLUSH / WIPER (Clears all student rows below header)
@@ -69,9 +61,11 @@ function flushSheet() {
     var lastRow = sheet.getLastRow();
 
     if (lastRow > 1) {
-        // Clear contents from Row 2 to lastRow
         sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).clearContent();
-        Logger.log("🧹 Flushed " + (lastRow - 1) + " attendance entries from Google Sheet!");
+        try {
+            sheet.getRange("G2:L1000").insertCheckboxes();
+        } catch(e) {}
+        Logger.log("🧹 Flushed attendance entries from Google Sheet!");
     } else {
         Logger.log("ℹ️ Sheet is already clean. No entries to flush.");
     }
@@ -86,13 +80,11 @@ function doGet(e) {
         var day = parseInt(params.day || "1", 10);
         var deviceId = (params.deviceId || "").trim();
 
-        // Admin Action A: Remote Sheet Setup
         if (action === "setup") {
             setupSheet();
-            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed!" });
+            return createJsonResponse({ status: "SUCCESS", message: "Sheet setup completed with checkboxes!" });
         }
 
-        // Admin Action B: Remote Sheet Data Flush
         if (action === "flush") {
             flushSheet();
             return createJsonResponse({ status: "SUCCESS", message: "All attendance records flushed!" });
@@ -101,7 +93,6 @@ function doGet(e) {
         var sheet = getAttendanceSheet();
         var data = sheet.getDataRange().getValues();
 
-        // Action 1: Register New User (Day 1 or Late Joiners)
         if (action === "register") {
             var name = (params.name || "").trim();
             var email = (params.email || "").trim();
@@ -112,14 +103,13 @@ function doGet(e) {
             }
 
             var existingRow = findUserRowByPhone(data, phone);
-            var dayCols = ["", "", "", "", "", ""];
-            dayCols[day - 1] = "✅";
+            var dayCols = [false, false, false, false, false, false];
+            dayCols[day - 1] = true;
 
             if (existingRow === -1) {
-                // New User Registration
                 var newRow = [
                     new Date(),
-                    "'" + phone, // Plain text phone
+                    "'" + phone,
                     name,
                     email,
                     branch,
@@ -133,24 +123,21 @@ function doGet(e) {
                 ];
                 sheet.appendRow(newRow);
             } else {
-                // User Exists - Check Device Binding
                 var registeredDeviceId = String(data[existingRow - 1][5] || "").trim();
                 if (deviceId && registeredDeviceId && deviceId !== registeredDeviceId) {
                     return createJsonResponse({ status: "DEVICE_MISMATCH", message: "Proxy attendance blocked." });
                 }
 
-                // Update details & mark Day X = ✅
                 sheet.getRange(existingRow, 3).setValue(name);
                 sheet.getRange(existingRow, 4).setValue(email);
                 sheet.getRange(existingRow, 5).setValue(branch);
                 sheet.getRange(existingRow, 6).setValue(deviceId);
-                sheet.getRange(existingRow, 5 + day).setValue("✅");
+                sheet.getRange(existingRow, 6 + day).setValue(true); // Col 7 = Day 1
             }
 
             return createJsonResponse({ status: "SUCCESS", message: "Registration & Attendance logged!" });
         }
 
-        // Action 2: Mark 1-Tap Attendance (Returning Device)
         if (action === "attend") {
             var userRowIndex = findUserRowByPhone(data, phone);
 
@@ -160,19 +147,16 @@ function doGet(e) {
 
             var registeredDeviceId = String(data[userRowIndex - 1][5] || "").trim();
 
-            // ANTI-PROXY DEVICE CHECK
             if (deviceId && registeredDeviceId && deviceId !== registeredDeviceId) {
                 return createJsonResponse({ status: "DEVICE_MISMATCH", message: "Proxy attendance blocked!" });
             }
 
-            // Mark Day X Column = ✅ (Day 1 = Col G / Column Index 7)
-            var targetCol = 6 + day;
-            sheet.getRange(userRowIndex, targetCol).setValue("✅");
+            var targetCol = 6 + day; // Col 7 = Day 1
+            sheet.getRange(userRowIndex, targetCol).setValue(true);
 
             return createJsonResponse({ status: "SUCCESS", message: "Attendance marked successfully!" });
         }
 
-        // Action 3: Check Registration & Device Status
         if (action === "check" && phone) {
             var userRowIndex = findUserRowByPhone(data, phone);
 
@@ -186,7 +170,6 @@ function doGet(e) {
             var registeredBranch = userData[4];
             var registeredDeviceId = String(userData[5] || "").trim();
 
-            // ANTI-PROXY CHECK
             if (deviceId && registeredDeviceId && deviceId !== registeredDeviceId) {
                 return createJsonResponse({
                     status: "DEVICE_MISMATCH",
@@ -195,10 +178,10 @@ function doGet(e) {
                 });
             }
 
-            var dayColIndex = 5 + day; // Day 1 = Col G (Index 6)
-            var dayValue = String(userData[dayColIndex] || "").trim();
+            var dayColIndex = 5 + day;
+            var dayValue = userData[dayColIndex];
 
-            if (dayValue === "✅" || dayValue === "PRESENT" || dayValue === "TRUE") {
+            if (dayValue === true || String(dayValue).trim().toUpperCase() === "TRUE" || String(dayValue).trim() === "✅") {
                 return createJsonResponse({
                     status: "ALREADY_SUBMITTED",
                     name: registeredName,
@@ -222,12 +205,10 @@ function doGet(e) {
     }
 }
 
-// 4. POST REST API FALLBACK
 function doPost(e) {
     return doGet(e);
 }
 
-// HELPER: FIND USER ROW INDEX BY PHONE
 function findUserRowByPhone(data, phone) {
     if (!phone) return -1;
     var targetPhone = phone.replace(/['"'\s]/g, "");
@@ -235,18 +216,16 @@ function findUserRowByPhone(data, phone) {
     for (var i = 1; i < data.length; i++) {
         var sheetPhone = String(data[i][1] || "").trim().replace(/['"'\s]/g, "");
         if (sheetPhone === targetPhone) {
-            return i + 1; // 1-indexed row index
+            return i + 1;
         }
     }
     return -1;
 }
 
-// HELPER: SANITIZE PHONE
 function sanitizePhone(phoneStr) {
     return String(phoneStr || "").trim().replace(/[^0-9]/g, "");
 }
 
-// HELPER: GET OR CREATE ATTENDANCE SHEET
 function getAttendanceSheet() {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Attendance");
@@ -259,7 +238,6 @@ function getAttendanceSheet() {
     return sheet;
 }
 
-// HELPER: CORS JSON RESPONSE
 function createJsonResponse(data) {
     return ContentService
         .createTextOutput(JSON.stringify(data))
