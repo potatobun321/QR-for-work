@@ -5,23 +5,18 @@
  * 1. Open your Google Sheet -> Extensions -> Apps Script.
  * 2. Replace EVERYTHING in `Code.gs` with this code.
  * 3. Select `setupSheet` in the top dropdown and click 'Run'.
- * 4. Click 'Deploy' -> 'New deployment' -> Select type: 'Web app'.
- * 5. Set 'Execute as': 'Me', Set 'Who has access': 'Anyone'.
- * 6. Click 'Deploy' (or update to a New Version if re-deploying).
+ * 4. Click 'Deploy' -> 'Manage deployments' -> Edit (Pencil icon) -> Version: New Version -> 'Deploy'.
  */
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet(); // Uses whichever tab is active!
+    var sheet = ss.getActiveSheet(); // Formats active tab!
     
     try {
         sheet.setName("Attendance");
-    } catch(e) {
-        // Tab name already Attendance
-    }
+    } catch(e) {}
 
-    // Define Master Headers
     var headers = [
         "Timestamp",
         "Phone Number",
@@ -37,10 +32,8 @@ function setupSheet() {
         "Day 6"
     ];
 
-    // Set Header Values
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-    // Format Header Styling
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
     headerRange.setFontWeight("bold");
     headerRange.setBackground("#0F172A"); // Dark Slate
@@ -49,7 +42,6 @@ function setupSheet() {
     sheet.setRowHeight(1, 36);
     headerRange.setHorizontalAlignment("center");
 
-    // Freeze Header Row & Format Phone Column as Plain Text
     sheet.setFrozenRows(1);
     sheet.getRange("B:B").setNumberFormat("@");
 
@@ -131,14 +123,19 @@ function doGet(e) {
 function doPost(e) {
     try {
         var postData = {};
-        if (e && e.postData && e.postData.contents) {
+
+        // Parse URLSearchParams e.parameter FIRST (bulletproof for mobile form posts)
+        if (e && e.parameter && Object.keys(e.parameter).length > 0) {
+            postData = e.parameter;
+        }
+        
+        // Fallback: parse raw e.postData.contents if JSON string
+        if (!postData.action && e && e.postData && e.postData.contents) {
             try {
                 postData = JSON.parse(e.postData.contents);
             } catch(jsonErr) {
-                postData = e.parameter || {};
+                // Ignore parse error
             }
-        } else if (e && e.parameter) {
-            postData = e.parameter;
         }
 
         var action = postData.action;

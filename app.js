@@ -1,4 +1,4 @@
-// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Attendance Barrier
+// Smart 6-Day Attendance Logic with Interactive Schedule Preview & Mystery Highlights
 
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.CONFIG;
@@ -107,23 +107,42 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. Render Day UI & Theme Block Colors
     function renderDayUI(index) {
         const dayData = daysData[index];
+        const isFutureLocked = index > realTodayIndex && !isPreviewMode;
 
         document.documentElement.style.setProperty('--day-bg', dayData.bgColor);
         document.documentElement.style.setProperty('--day-accent', dayData.accentColor);
         document.documentElement.style.setProperty('--day-secondary', dayData.secondaryBg);
 
         badgeElement.textContent = dayData.badge;
-        iconElement.textContent = dayData.icon;
-        titleElement.textContent = dayData.title;
+        iconElement.textContent = isFutureLocked ? "❓" : dayData.icon;
+        titleElement.textContent = isFutureLocked ? `Day ${dayData.day}: Secret Agenda` : dayData.title;
 
         renderStepper(index);
 
-        scheduleListElement.innerHTML = dayData.highlights.map(item => `
-            <li class="schedule-item">
-                <span class="schedule-bullet"></span>
-                <span>${item}</span>
-            </li>
-        `).join("");
+        // HIDE FUTURE HIGHLIGHTS WITH MYSTERY QUESTION MARKS IF LOCKED
+        if (isFutureLocked) {
+            scheduleListElement.innerHTML = `
+                <li class="schedule-item">
+                    <span class="schedule-bullet"></span>
+                    <span>❓ Secret Induction Session #1 (Unlocks ${dayData.displayDate})</span>
+                </li>
+                <li class="schedule-item">
+                    <span class="schedule-bullet"></span>
+                    <span>❓ Mystery Workshop & Icebreaker #2</span>
+                </li>
+                <li class="schedule-item">
+                    <span class="schedule-bullet"></span>
+                    <span>❓ Surprise Showcase & Event #3</span>
+                </li>
+            `;
+        } else {
+            scheduleListElement.innerHTML = dayData.highlights.map(item => `
+                <li class="schedule-item">
+                    <span class="schedule-bullet"></span>
+                    <span>${item}</span>
+                </li>
+            `).join("");
+        }
 
         oneTapBtnText.textContent = `MARK DAY ${dayData.day} ATTENDANCE →`;
     }
@@ -141,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const labelText = isFutureLocked ? `🔒 D${d.day}` : `D${d.day}`;
 
             return `
-                <button class="step-item ${statusClass}" data-day-idx="${idx}" title="${isFutureLocked ? `Explore Day ${d.day} Schedule (Attendance Locked)` : `View Day ${d.day}`}">
+                <button class="step-item ${statusClass}" data-day-idx="${idx}" title="${isFutureLocked ? `Day ${d.day} is Locked until ${d.displayDate}` : `View Day ${d.day}`}">
                     <span class="step-label">${labelText}</span>
                 </button>
             `;
@@ -166,8 +185,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // FUTURE DAY ATTENDANCE LOCKED BARRIER
         if (selectedDayIndex > realTodayIndex && !isPreviewMode) {
             showCard(dayLockedCard);
-            lockedDayTitle.textContent = `🔒 Day ${dayNumber} Attendance Locked`;
-            lockedDayDesc.textContent = `Attendance for Day ${dayNumber} opens on ${dayData.displayDate}, 2026. You can explore today's schedule above, but check-in is disabled until the scheduled date.`;
+            lockedDayTitle.textContent = `🔒 Day ${dayNumber} Agenda & Attendance Locked`;
+            lockedDayDesc.textContent = `Full details and attendance for Day ${dayNumber} will unlock on ${dayData.displayDate}, 2026. Check back on the event date!`;
             lockedCtaBtnText.textContent = `ATTENDANCE OPENS ON ${dayData.displayDate.toUpperCase()} 🔒`;
             return;
         }
@@ -249,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. Registration Form Submission
+    // 6. Registration Form Submission (Uses URLSearchParams for 100% mobile GAS delivery!)
     regForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -278,21 +297,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (config.googleScriptUrl) {
             try {
-                const payload = {
-                    action: "register",
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    branch: branch,
-                    deviceId: deviceId,
-                    day: dayNumber
-                };
+                const formData = new URLSearchParams();
+                formData.append("action", "register");
+                formData.append("name", name);
+                formData.append("phone", phone);
+                formData.append("email", email);
+                formData.append("branch", branch);
+                formData.append("deviceId", deviceId);
+                formData.append("day", dayNumber);
 
                 await fetch(config.googleScriptUrl, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
                 });
             } catch (err) {
                 console.error("Error pushing to Google Script:", err);
@@ -308,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1200);
     });
 
-    // 7. 1-Tap Attendance Submission
+    // 7. 1-Tap Attendance Submission (Uses URLSearchParams for 100% mobile GAS delivery!)
     oneTapAttendBtn.addEventListener("click", async () => {
         const phone = localStorage.getItem("qr_user_phone");
         const dayNumber = selectedDayIndex + 1;
@@ -322,18 +340,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (config.googleScriptUrl) {
             try {
-                const payload = {
-                    action: "attend",
-                    phone: phone,
-                    deviceId: deviceId,
-                    day: dayNumber
-                };
+                const formData = new URLSearchParams();
+                formData.append("action", "attend");
+                formData.append("phone", phone);
+                formData.append("deviceId", deviceId);
+                formData.append("day", dayNumber);
 
                 await fetch(config.googleScriptUrl, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
                 });
             } catch (err) {
                 console.error("Error submitting 1-tap attendance:", err);
