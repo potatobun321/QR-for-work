@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--theme-accent', theme.color);
 
     if (appDaySubtitleEl) {
-      appDaySubtitleEl.textContent = `⚡ ${theme.name.toUpperCase()} ATTENDANCE (${theme.date})`;
+      appDaySubtitleEl.textContent = `${theme.name.toUpperCase()} ATTENDANCE (${theme.date})`;
     }
     if (activeDayTextBadgeEl) {
       activeDayTextBadgeEl.textContent = `${theme.name.toUpperCase()} OF 6`;
@@ -186,10 +186,10 @@ document.addEventListener('DOMContentLoaded', () => {
       formDayInput.value = dayNum;
     }
     if (btnText) {
-      btnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE →`;
+      btnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE`;
     }
     if (oneTapBtnText) {
-      oneTapBtnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE →`;
+      oneTapBtnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE`;
     }
 
     const stepButtons = stepperBarEl ? stepperBarEl.querySelectorAll('.step-btn') : [];
@@ -278,9 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
     oneTapCard.style.display = 'block';
     hideAllStatusCards();
 
-    if (welcomeNameText) welcomeNameText.textContent = `Welcome back, ${currentUserProfile.name || 'Student'}! 👋`;
-    if (welcomePhoneText) welcomePhoneText.textContent = `📱 Phone: ${currentUserProfile.phone || '--'}`;
-    if (welcomeBranchText) welcomeBranchText.textContent = `🎓 Branch: ${currentUserProfile.branch || '--'}`;
+    if (welcomeNameText) welcomeNameText.textContent = `Welcome back, ${currentUserProfile.name || 'Student'}!`;
+    if (welcomePhoneText) welcomePhoneText.textContent = `Phone: ${currentUserProfile.phone || '--'}`;
+    if (welcomeBranchText) welcomeBranchText.textContent = `Branch: ${currentUserProfile.branch || '--'}`;
   }
 
   function hideAllStatusCards() {

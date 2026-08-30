@@ -1,5 +1,5 @@
 /* ==============================================================================
-   STUDENT INDUCTION PROGRAM - CLEAN MINIMAL NEO-BRUTALIST STYLING (style.css)
+   STUDENT INDUCTION PROGRAM - DYNAMIC MINIMAL NEO-BRUTALIST STYLING (style.css)
    ============================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@500;700&display=swap');
@@ -24,7 +24,7 @@
   --day5-color: #FF914D; /* Bright Orange */
   --day6-color: #B57EDC; /* Vibrant Violet */
 
-  /* Active Theme Variable (Default Day 1) */
+  /* Active Theme Variable (Morphs dynamically per Day) */
   --theme-accent: var(--day1-color);
   --danger-color: #FF4757;
   --success-color: #2ED573;
@@ -86,7 +86,7 @@ body {
   padding: 1rem 1.15rem;
   text-align: center;
   position: relative;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app-title {
@@ -109,6 +109,7 @@ body {
   border: 2px solid #000000;
   border-radius: 6px;
   box-shadow: 2px 2px 0px #000000;
+  text-transform: uppercase;
 }
 
 /* 6-Day Stepper Toolbar */
@@ -131,10 +132,13 @@ body {
 .day-badge-pill {
   font-weight: 700;
   font-size: 0.75rem;
-  background: #000;
-  color: #FFF;
+  background: var(--theme-accent);
+  color: #000000;
   padding: 2px 8px;
+  border: 2px solid #000000;
   border-radius: 4px;
+  box-shadow: 1px 1px 0px #000000;
+  transition: background-color 0.3s ease;
 }
 
 .stepper-bar {
@@ -181,17 +185,6 @@ body {
   border-width: 3px;
 }
 
-.step-btn.completed {
-  background-color: #2ED573;
-  color: #000000;
-}
-
-.step-btn.locked {
-  opacity: 0.55;
-  background-color: #E2E8F0;
-  cursor: not-allowed;
-}
-
 /* Time Lock Box */
 .time-lock-box {
   background-color: #FFF9C4;
@@ -201,9 +194,15 @@ body {
   text-align: center;
 }
 
-.lock-icon {
-  font-size: 2.2rem;
-  margin-bottom: 0.25rem;
+.lock-tag {
+  display: inline-block;
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
 }
 
 .lock-title {
@@ -230,9 +229,11 @@ body {
 }
 
 .card-icon {
-  font-size: 1.3rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
   background-color: var(--theme-accent);
-  width: 38px;
+  color: #000000;
+  width: 40px;
   height: 38px;
   display: flex;
   align-items: center;
@@ -240,6 +241,7 @@ body {
   border: 2px solid #000000;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000000;
+  transition: background-color 0.3s ease;
 }
 
 .card-title-text {
@@ -295,7 +297,8 @@ body {
 .form-control:focus {
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0px #000000;
-  background-color: #FFFFF0;
+  background-color: #FFFFFF;
+  border-color: #000000;
 }
 
 select.form-control {
@@ -320,7 +323,7 @@ select.form-control {
   border-radius: 10px;
   box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.1s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,12 +368,14 @@ select.form-control {
 
 /* Return User Welcome Box */
 .welcome-user-box {
-  background-color: #FFFFE0;
+  background-color: #FFFFFF;
   border: 3px solid #000000;
   border-radius: 8px;
   padding: 0.85rem;
   margin-bottom: 0.85rem;
   box-shadow: 3px 3px 0px #000000;
+  border-left: 10px solid var(--theme-accent);
+  transition: border-left-color 0.3s ease;
 }
 
 .user-name-title {
@@ -420,10 +425,15 @@ select.form-control {
   color: #FFFFFF;
 }
 
-.status-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.4rem;
-  display: block;
+.status-badge {
+  display: inline-block;
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
 }
 
 .status-title {

@@ -16,13 +16,13 @@
     <!-- MINIMAL HEADER CARD -->
     <header class="app-header" id="appHeader">
       <h1 class="app-title" id="appHeaderTitle">STUDENT INDUCTION PROGRAM</h1>
-      <div class="app-subtitle" id="appDaySubtitle">⚡ DAY 1 ATTENDANCE</div>
+      <div class="app-subtitle" id="appDaySubtitle">DAY 1 ATTENDANCE</div>
     </header>
 
     <!-- 6-DAY STEPPER TIMELINE TOOLBAR -->
     <div class="neo-box stepper-container" id="stepperContainer">
       <div class="stepper-title">
-        <span>🗓️ EVENT SCHEDULE</span>
+        <span>EVENT SCHEDULE</span>
         <span id="activeDayTextBadge" class="day-badge-pill">DAY 1 OF 6</span>
       </div>
       <div class="stepper-bar" id="stepperBar">
@@ -53,20 +53,20 @@
       </div>
     </div>
 
-    <!-- TIME-LOCK BANNER (SHOWN BEFORE 9:30 AM OR FOR FUTURE DAYS) -->
+    <!-- TIME-LOCK BANNER -->
     <div class="neo-box time-lock-box" id="timeLockBox" style="display:none;">
-      <div class="lock-icon">🔒</div>
+      <div class="lock-tag">LOCKED</div>
       <div class="lock-title" id="timeLockTitle">ATTENDANCE LOCKED</div>
       <p class="lock-msg" id="timeLockMsg">Attendance for Day 1 unlocks at 9:30 AM on Aug 31.</p>
     </div>
 
-    <!-- SECTION 1: REGISTRATION FORM (DAY 1 / NEW USERS) -->
+    <!-- SECTION 1: REGISTRATION FORM -->
     <section class="neo-box" id="registrationCard">
       <div class="card-header">
-        <div class="card-icon" id="formCardIcon">📝</div>
+        <div class="card-icon" id="formCardIcon">REG</div>
         <div>
           <div class="card-title-text" id="formCardTitle">STUDENT REGISTRATION</div>
-          <p class="card-sub-text">Enter your details to mark attendance</p>
+          <p class="card-sub-text">Enter details to mark attendance</p>
         </div>
       </div>
 
@@ -117,7 +117,7 @@
           />
         </div>
 
-        <!-- Branch / Department Dropdown -->
+        <!-- Branch Dropdown -->
         <div class="form-group">
           <label class="form-label" for="selectBranch">Branch / Department <span class="req">*</span></label>
           <select id="selectBranch" name="branch" class="form-control" required>
@@ -133,15 +133,15 @@
         <!-- Submit Button -->
         <button type="submit" class="btn-primary" id="submitRegBtn">
           <span id="btnSpinner" class="loading-spinner" style="display:none;"></span>
-          <span id="btnText">MARK ATTENDANCE →</span>
+          <span id="btnText">MARK ATTENDANCE</span>
         </button>
       </form>
     </section>
 
-    <!-- SECTION 2: 1-TAP QUICK CHECK-IN CARD (RETURNING USERS) -->
+    <!-- SECTION 2: 1-TAP QUICK CHECK-IN CARD -->
     <section class="neo-box" id="oneTapCard" style="display:none;">
       <div class="card-header">
-        <div class="card-icon">⚡</div>
+        <div class="card-icon">TAP</div>
         <div>
           <div class="card-title-text" id="oneTapCardTitle">QUICK CHECK-IN</div>
           <p class="card-sub-text">1-Tap attendance for returning students</p>
@@ -150,17 +150,17 @@
 
       <div class="welcome-user-box" id="welcomeUserBox">
         <div class="user-name-title" id="welcomeNameText">Welcome Back!</div>
-        <div class="user-meta-line" id="welcomePhoneText">📱 Phone: --</div>
-        <div class="user-meta-line" id="welcomeBranchText">🎓 Branch: --</div>
+        <div class="user-meta-line" id="welcomePhoneText">Phone: --</div>
+        <div class="user-meta-line" id="welcomeBranchText">Branch: --</div>
       </div>
 
       <button type="button" class="btn-primary" id="oneTapSubmitBtn">
         <span id="oneTapSpinner" class="loading-spinner" style="display:none;"></span>
-        <span id="oneTapBtnText">MARK DAY 2 ATTENDANCE →</span>
+        <span id="oneTapBtnText">MARK ATTENDANCE</span>
       </button>
 
       <button type="button" class="btn-secondary" id="switchUserBtn" style="margin-top:0.75rem;">
-        🔄 Switch Account
+        Switch Account
       </button>
     </section>
 
@@ -168,15 +168,15 @@
 
     <!-- SUCCESS CARD -->
     <div class="status-card success" id="statusSuccessCard">
-      <span class="status-icon">🎉</span>
-      <div class="status-title" id="successTitle">ATTENDANCE MARKED!</div>
+      <div class="status-badge">SUCCESS</div>
+      <div class="status-title" id="successTitle">ATTENDANCE MARKED</div>
       <p class="status-msg" id="successMsg">Your attendance for today has been recorded successfully.</p>
       <button class="btn-secondary" id="successDoneBtn">DONE</button>
     </div>
 
     <!-- PROXY WARNING / DEVICE MISMATCH CARD -->
     <div class="status-card danger" id="statusMismatchCard">
-      <span class="status-icon">🚨</span>
+      <div class="status-badge">SECURITY ALERT</div>
       <div class="status-title">DEVICE MISMATCH</div>
       <p class="status-msg" id="mismatchMsg">
         This phone number is registered to a different device.
@@ -186,7 +186,7 @@
 
     <!-- ALREADY SUBMITTED CARD -->
     <div class="status-card warning" id="statusAlreadySubmittedCard">
-      <span class="status-icon">✅</span>
+      <div class="status-badge">COMPLETED</div>
       <div class="status-title">ALREADY MARKED</div>
       <p class="status-msg" id="alreadySubmittedMsg">
         You have already submitted your attendance for today.
@@ -205,8 +205,8 @@
   <div class="modal-overlay" id="configModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title">⚙️ API CONFIGURATION</div>
-        <button class="close-modal-btn" id="closeConfigModalBtn">✕</button>
+        <div class="modal-title">API CONFIGURATION</div>
+        <button class="close-modal-btn" id="closeConfigModalBtn">X</button>
       </div>
 
       <div class="form-group">
@@ -222,7 +222,7 @@
       <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
         <button class="btn-primary" id="saveApiUrlBtn" style="font-size:0.95rem;">SAVE API URL</button>
         <button class="btn-secondary btn-danger" id="resetStorageBtn" style="font-size:0.85rem;">
-          ⚠️ Reset Local Device Storage (Testing)
+          Reset Local Device Storage
         </button>
       </div>
     </div>
