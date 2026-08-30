@@ -1,17 +1,24 @@
 /**
  * GOOGLE APPS SCRIPT: 6-DAY SMART ATTENDANCE & DEVICE LOCKING SYSTEM
  * 
- * FEATURES:
- * 1. setupSheet() : Creates master 12 headers, formats sheet, & inserts techy checkboxes.
- * 2. flushSheet() : 1-Click function to wipe all student entries & reset sheet!
- * 3. doGet/doPost : REST API for mobile registration, check-in, & attendance.
- * 4. Device Lock : Binds phone number to unique device ID to prevent proxy.
+ * TARGET SPREADSHEET ID: 1ZTFvwYpQlOP3Re37pt1NfzfX9lFemcTn_8zO5hBq8Mg
  */
+
+var SPREADSHEET_ID = "1ZTFvwYpQlOP3Re37pt1NfzfX9lFemcTn_8zO5hBq8Mg";
+
+// HELPER: GET SPREADSHEET BY ID OR ACTIVE
+function getSpreadsheet() {
+    try {
+        return SpreadsheetApp.openById(SPREADSHEET_ID);
+    } catch (e) {
+        return SpreadsheetApp.getActiveSpreadsheet();
+    }
+}
 
 // 1. ONE-CLICK SHEET SETUP & FORMATTER
 function setupSheet() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet();
+    var ss = getSpreadsheet();
+    var sheet = ss.getSheetByName("Attendance") || ss.getActiveSheet();
 
     try {
         sheet.setName("Attendance");
@@ -56,7 +63,7 @@ function setupSheet() {
 
 // 2. ONE-CLICK DATA FLUSH / WIPER (Clears all student rows below header)
 function flushSheet() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = getSpreadsheet();
     var sheet = ss.getSheetByName("Attendance") || ss.getActiveSheet();
     var lastRow = sheet.getLastRow();
 
@@ -227,7 +234,7 @@ function sanitizePhone(phoneStr) {
 }
 
 function getAttendanceSheet() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = getSpreadsheet();
     var sheet = ss.getSheetByName("Attendance");
     if (!sheet) {
         sheet = ss.getActiveSheet();
