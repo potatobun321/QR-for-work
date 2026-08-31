@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const oneTapBtnText = document.getElementById('oneTapBtnText');
   const switchUserBtn = document.getElementById('switchUserBtn');
 
+  const toggleBranchFixBtn = document.getElementById('toggleBranchFixBtn');
+  const branchFixForm = document.getElementById('branchFixForm');
+  const updateBranchSelect = document.getElementById('updateBranchSelect');
+  const saveBranchUpdateBtn = document.getElementById('saveBranchUpdateBtn');
+  const branchFixSpinner = document.getElementById('branchFixSpinner');
+  const branchFixBtnText = document.getElementById('branchFixBtnText');
+
   const statusSuccessCard = document.getElementById('statusSuccessCard');
   const successTitle = document.getElementById('successTitle');
   const successMsg = document.getElementById('successMsg');
@@ -377,7 +384,65 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 4. Switch Account Button
+    // 4. Branch Correction (Biomedical Fix)
+    if (toggleBranchFixBtn && branchFixForm) {
+      toggleBranchFixBtn.addEventListener('click', () => {
+        const isHidden = branchFixForm.style.display === 'none' || !branchFixForm.style.display;
+        branchFixForm.style.display = isHidden ? 'block' : 'none';
+        if (isHidden && currentUserProfile && currentUserProfile.branch) {
+          if (updateBranchSelect) updateBranchSelect.value = currentUserProfile.branch;
+        }
+      });
+    }
+
+    if (saveBranchUpdateBtn) {
+      saveBranchUpdateBtn.addEventListener('click', async () => {
+        if (!currentUserProfile || !currentUserProfile.phone) return;
+
+        const newBranch = updateBranchSelect.value;
+        if (!newBranch) return;
+
+        // UI loading state
+        saveBranchUpdateBtn.disabled = true;
+        if (branchFixSpinner) branchFixSpinner.style.display = 'inline-block';
+        if (branchFixBtnText) branchFixBtnText.style.display = 'none';
+
+        try {
+          currentUserProfile.branch = newBranch;
+          saveUserProfile(currentUserProfile);
+
+          if (welcomeBranchText) {
+            welcomeBranchText.textContent = `Branch: ${newBranch}`;
+          }
+
+          // Sync with backend Google Apps Script
+          const queryString = new URLSearchParams({
+            action: 'update_branch',
+            phone: currentUserProfile.phone,
+            branch: newBranch,
+            deviceId: currentDeviceId
+          }).toString();
+
+          await fetch(`${activeApiUrl}?${queryString}`, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-cache'
+          });
+
+          alert(`Branch successfully updated to ${newBranch}!`);
+          if (branchFixForm) branchFixForm.style.display = 'none';
+        } catch (err) {
+          console.warn('Branch update failed:', err);
+          alert('Could not update branch to server. Please check internet connection.');
+        } finally {
+          saveBranchUpdateBtn.disabled = false;
+          if (branchFixSpinner) branchFixSpinner.style.display = 'none';
+          if (branchFixBtnText) branchFixBtnText.style.display = 'inline-block';
+        }
+      });
+    }
+
+    // 5. Switch Account Button
     if (switchUserBtn) {
       switchUserBtn.addEventListener('click', () => {
         if (confirm('Switching user will clear the currently active profile on this device. Continue?')) {
@@ -388,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 5. Dismiss Status Buttons
+    // 6. Dismiss Status Buttons
     if (successDoneBtn) {
       successDoneBtn.addEventListener('click', () => {
         evaluateUserFlow();

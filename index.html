@@ -138,6 +138,31 @@
         <span id="oneTapBtnText">MARK ATTENDANCE</span>
       </button>
 
+      <!-- BRANCH CORRECTION SECTION (BIOMEDICAL FIX) -->
+      <div class="branch-fix-box" id="branchFixBox">
+        <button type="button" class="branch-fix-toggle-btn" id="toggleBranchFixBtn">
+          Incorrect branch selected yesterday? Fix here
+        </button>
+        <div class="branch-fix-form" id="branchFixForm" style="display:none;">
+          <div class="branch-fix-warning">
+            IMPORTANT: This correction is specifically intended for Biomedical students who had to pick another branch yesterday. Please refrain from changing if your branch is already correct.
+          </div>
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label" for="updateBranchSelect">Select Correct Branch</label>
+            <select id="updateBranchSelect" class="form-control" style="padding: 7px 10px; font-size: 0.85rem;">
+              <option value="Biomedical" selected>Biomedical</option>
+              <option value="Artificial Intelligence">Artificial Intelligence</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+            </select>
+          </div>
+          <button type="button" class="btn-secondary" id="saveBranchUpdateBtn" style="font-size:0.8rem; padding: 8px 12px; background: #000000; color: #FFFFFF;">
+            <span id="branchFixSpinner" class="loading-spinner" style="display:none; width:12px; height:12px; border-color:rgba(255,255,255,0.3); border-top-color:#fff;"></span>
+            <span id="branchFixBtnText">CONFIRM & UPDATE BRANCH</span>
+          </button>
+        </div>
+      </div>
+
       <button type="button" class="btn-secondary" id="switchUserBtn" style="margin-top:0.75rem;">
         Switch Account
       </button>

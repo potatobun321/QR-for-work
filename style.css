@@ -382,6 +382,53 @@ select.form-control {
   color: #444444;
 }
 
+/* Branch Correction Widget (Biomedical Fix) */
+.branch-fix-box {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.branch-fix-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #555555;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: color 0.15s ease;
+}
+
+.branch-fix-toggle-btn:hover {
+  color: #000000;
+}
+
+.branch-fix-form {
+  background: #FFFDF0;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  text-align: left;
+  box-shadow: 2px 2px 0px #000000;
+  animation: popIn 0.2s ease;
+}
+
+.branch-fix-warning {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #78350F;
+  background: #FEF3C7;
+  border: 1px solid #F59E0B;
+  border-left: 4px solid #D97706;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 0.6rem;
+  line-height: 1.35;
+}
+
 /* Status Banner Cards */
 .status-card {
   display: none;

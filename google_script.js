@@ -192,7 +192,29 @@ function doGet(e) {
             return createJsonResponse({ status: "SUCCESS", message: "Attendance marked successfully!" });
         }
 
-        // 3. CHECK USER STATUS & PROXY VERIFICATION
+        // 3. ONE-TIME BRANCH CORRECTION (BIOMEDICAL FIX)
+        if (action === "update_branch" && phone) {
+            var userRowIndex = findUserRowByPhone(data, phone);
+            if (userRowIndex === -1) {
+                return createJsonResponse({ status: "NEW_USER", message: "User not found." });
+            }
+            
+            var regDevId = String(data[userRowIndex - 1][5] || "").trim();
+            if (deviceId && regDevId && deviceId !== regDevId) {
+                return createJsonResponse({ 
+                    status: "DEVICE_MISMATCH", 
+                    message: "Device mismatch! Unauthorized branch change blocked." 
+                });
+            }
+            
+            var branch = (params.branch || "").trim();
+            if (branch) {
+                sheet.getRange(userRowIndex, 5).setValue(branch); // Update Column E (Branch)
+            }
+            return createJsonResponse({ status: "SUCCESS", message: "Branch updated successfully." });
+        }
+
+        // 4. CHECK USER STATUS & PROXY VERIFICATION
         if (action === "check" && phone) {
             var userRowIndex = findUserRowByPhone(data, phone);
             if (userRowIndex === -1) {
