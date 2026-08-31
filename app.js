@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return 1;
   }
 
-  // Check if attendance is unlocked for selected day & 9:30 AM time condition
+  // Check if attendance is unlocked for selected day
   function isAttendanceUnlocked(dayNum) {
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -151,29 +151,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const targetYMD = targetDayInfo.fullDate;
 
-    // 1. Future Date Check
+    // Future Date Check (locks upcoming days like Day 3, 4, 5, 6)
     if (targetYMD > todayYMD) {
       return { 
         unlocked: false, 
-        reason: `Attendance for ${targetDayInfo.name} unlocks at 9:30 AM on ${targetDayInfo.date}.` 
+        reason: `Attendance for ${targetDayInfo.name} unlocks on ${targetDayInfo.date}.` 
       };
     }
 
-    // 2. Same Day 9:30 AM Check
-    if (targetYMD === todayYMD) {
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      // Unlock after 9:30 AM (9 * 60 + 30 = 570 mins)
-      const currentMinutes = hours * 60 + minutes;
-      if (currentMinutes < 570) {
-        return { 
-          unlocked: false, 
-          reason: `Orientation starts at 9:30 AM today! Registration unlocks at 9:30 AM.` 
-        };
-      }
-    }
-
-    // Past Days or Current Day after 9:30 AM -> Unlocked!
+    // Current Day & Past Days are fully unlocked for testing and check-ins
     return { unlocked: true };
   }
 
