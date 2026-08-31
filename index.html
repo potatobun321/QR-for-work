@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Student Induction Program | Digital Attendance</title>
   <meta name="description" content="Official Student Induction Program Digital QR Attendance Portal." />
-  
+
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <div class="app-container">
-    
+
     <!-- PURE MINIMAL HEADER CARD -->
     <header class="app-header" id="appHeader">
       <h1 class="app-title" id="appHeaderTitle">STUDENT INDUCTION PROGRAM</h1>
@@ -78,42 +80,21 @@
         <!-- Full Name -->
         <div class="form-group">
           <label class="form-label" for="inputName">Full Name <span class="req">*</span></label>
-          <input 
-            type="text" 
-            id="inputName" 
-            name="name" 
-            class="form-control" 
-            placeholder="e.g. Rahul Sharma" 
-            required 
-          />
+          <input type="text" id="inputName" name="name" class="form-control" placeholder="e.g. Rahul Sharma" required />
         </div>
 
         <!-- Phone Number -->
         <div class="form-group">
           <label class="form-label" for="inputPhone">Mobile Number <span class="req">*</span></label>
-          <input 
-            type="tel" 
-            id="inputPhone" 
-            name="phone" 
-            class="form-control" 
-            placeholder="10-digit phone number" 
-            pattern="[0-9]{10}" 
-            maxlength="10" 
-            required 
-          />
+          <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit phone number"
+            pattern="[0-9]{10}" maxlength="10" required />
         </div>
 
         <!-- Email Address -->
         <div class="form-group">
           <label class="form-label" for="inputEmail">Email Address <span class="req">*</span></label>
-          <input 
-            type="email" 
-            id="inputEmail" 
-            name="email" 
-            class="form-control" 
-            placeholder="e.g. rahul@example.com" 
-            required 
-          />
+          <input type="email" id="inputEmail" name="email" class="form-control" placeholder="e.g. rahul@example.com"
+            required />
         </div>
 
         <!-- Branch Dropdown -->
@@ -209,12 +190,8 @@
 
       <div class="form-group">
         <label class="form-label" for="apiUrlInput">Google Apps Script Web App URL</label>
-        <input 
-          type="url" 
-          id="apiUrlInput" 
-          class="form-control" 
-          placeholder="https://script.google.com/macros/s/.../exec" 
-        />
+        <input type="url" id="apiUrlInput" class="form-control"
+          placeholder="https://script.google.com/macros/s/.../exec" />
       </div>
 
       <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
@@ -232,4 +209,5 @@
   <!-- JS LOGIC SCRIPTS -->
   <script src="app.js"></script>
 </body>
+
 </html>
