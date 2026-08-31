@@ -170,16 +170,15 @@
 
     <!-- SECTION 3: STATUS BANNER CARDS -->
 
-    <!-- SUCCESS CARD -->
-    <div class="status-card success" id="statusSuccessCard">
-      <div class="status-badge">SUCCESS</div>
+    <!-- SUCCESS BANNER (PERSISTENT STATUS ABOVE SCHEDULE & FEEDBACK) -->
+    <div class="status-card success" id="statusSuccessCard" style="display:none;">
+      <div class="status-badge">ATTENDANCE CONFIRMED</div>
       <div class="status-title" id="successTitle">ATTENDANCE MARKED</div>
-      <p class="status-msg" id="successMsg">Your attendance for today has been recorded successfully.</p>
-      <button class="btn-secondary" id="successDoneBtn">DONE</button>
+      <p class="status-msg" id="successMsg" style="margin-bottom:0;">Your attendance for today has been recorded successfully.</p>
     </div>
 
     <!-- PROXY WARNING / DEVICE MISMATCH CARD -->
-    <div class="status-card danger" id="statusMismatchCard">
+    <div class="status-card danger" id="statusMismatchCard" style="display:none;">
       <div class="status-badge">SECURITY ALERT</div>
       <div class="status-title">DEVICE MISMATCH</div>
       <p class="status-msg" id="mismatchMsg">
@@ -188,14 +187,13 @@
       <button class="btn-secondary" id="mismatchDismissBtn">TRY AGAIN</button>
     </div>
 
-    <!-- ALREADY SUBMITTED CARD -->
-    <div class="status-card warning" id="statusAlreadySubmittedCard">
-      <div class="status-badge">COMPLETED</div>
-      <div class="status-title">ALREADY MARKED</div>
-      <p class="status-msg" id="alreadySubmittedMsg">
-        You have already submitted your attendance for today.
+    <!-- ALREADY SUBMITTED BANNER (PERSISTENT STATUS ABOVE SCHEDULE & FEEDBACK) -->
+    <div class="status-card warning" id="statusAlreadySubmittedCard" style="display:none;">
+      <div class="status-badge">ATTENDANCE RECORDED</div>
+      <div class="status-title">ALREADY MARKED TODAY</div>
+      <p class="status-msg" id="alreadySubmittedMsg" style="margin-bottom:0;">
+        You have already submitted your attendance for today. Check out the schedule and share your feedback below.
       </p>
-      <button class="btn-secondary" id="alreadySubmittedDismissBtn">BACK TO HOME</button>
     </div>
 
     <!-- PAST / FUTURE DAY NOTICE CARD (HARDLOCK) -->

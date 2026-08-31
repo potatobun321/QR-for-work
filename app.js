@@ -322,21 +322,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dayNoticeBox) dayNoticeBox.style.display = 'none';
 
     const activeCalendarDay = calculateActiveDay();
+    const scheduleCardEl = document.getElementById('scheduleCard');
+    const feedbackCardEl = document.getElementById('feedbackCard');
 
     // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
     if (currentActiveDay < activeCalendarDay) {
       registrationCard.style.display = 'none';
       oneTapCard.style.display = 'none';
       if (timeLockBox) timeLockBox.style.display = 'none';
+      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
+      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
 
       if (dayNoticeBox) {
         dayNoticeBox.style.display = 'block';
         if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} ATTENDANCE CLOSED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has concluded. Please select Day ${activeCalendarDay} to mark today's attendance.`;
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to view today's schedule and check-in.`;
       }
       return;
     }
+
+    // Always show schedule and feedback for active or upcoming days
+    if (scheduleCardEl) scheduleCardEl.style.display = 'block';
+    if (feedbackCardEl) feedbackCardEl.style.display = 'block';
 
     // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
     if (currentActiveDay > activeCalendarDay) {
@@ -347,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dayNoticeBox) {
         dayNoticeBox.style.display = 'block';
         if (dayNoticeTag) dayNoticeTag.textContent = 'UPCOMING DAY';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} (UPCOMING)`;
         if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} will unlock on ${DAY_THEMES[currentActiveDay].date}. Explore the session agenda below!`;
       }
       return;
@@ -365,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Already Submitted Check
     const loggedDays = getLoggedDays();
     if (currentUserProfile && loggedDays[currentActiveDay]) {
-      showStatusCard('alreadySubmitted', 'ALREADY MARKED', `You have already submitted attendance for ${DAY_THEMES[currentActiveDay].name}.`);
+      showStatusCard('alreadySubmitted', 'ALREADY MARKED TODAY', `Your attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has already been recorded.`);
       return;
     }
 
@@ -641,19 +649,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 6. Dismiss Status Buttons
-    if (successDoneBtn) {
-      successDoneBtn.addEventListener('click', () => {
-        evaluateUserFlow();
-      });
-    }
     if (mismatchDismissBtn) {
       mismatchDismissBtn.addEventListener('click', () => {
         showRegistrationForm();
-      });
-    }
-    if (alreadySubmittedDismissBtn) {
-      alreadySubmittedDismissBtn.addEventListener('click', () => {
-        evaluateUserFlow();
       });
     }
 
