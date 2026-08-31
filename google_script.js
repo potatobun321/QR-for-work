@@ -80,7 +80,10 @@ function flushSheet() {
 }
 
 function getFirstEmptyRow(sheet) {
-    var data = sheet.getRange("A1:B1000").getValues();
+    var maxRows = sheet.getMaxRows();
+    var checkRows = Math.min(maxRows, 1000);
+    if (checkRows <= 1) return 2;
+    var data = sheet.getRange(1, 1, checkRows, 2).getValues();
     for (var i = 1; i < data.length; i++) {
         var timestampCell = String(data[i][0] || "").trim();
         var phoneCell = String(data[i][1] || "").trim();
@@ -88,7 +91,7 @@ function getFirstEmptyRow(sheet) {
             return i + 1; // 1-indexed row
         }
     }
-    return data.length + 1;
+    return maxRows + 1;
 }
 
 function doGet(e) {

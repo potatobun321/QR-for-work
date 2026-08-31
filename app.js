@@ -455,16 +455,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const queryString = new URLSearchParams(params).toString();
       const requestUrl = `${activeApiUrl}?${queryString}`;
 
-      // 1. Try no-cors fetch (Zero CORS blocking on all browsers)
+      // 1. Submit via no-cors fetch (Zero CORS blocking on all browsers)
       await fetch(requestUrl, {
         method: 'GET',
         mode: 'no-cors',
         cache: 'no-cache'
       });
-
-      // 2. Trigger Image ping to guarantee request transmission
-      const imgPing = new Image();
-      imgPing.src = requestUrl;
 
       saveUserProfile(profile);
       markDayAsLogged(params.day);

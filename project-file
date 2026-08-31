@@ -28,7 +28,7 @@ Build a mobile-responsive, vibrant, blocky 6-Day Student Induction Program (SIP)
      - Full Name (Text input)
      - Mobile Number (10-Digit tel input, Primary Key)
      - Email Address (Email input)
-     - Branch / Department (Dropdown: "Artificial Intelligence", "Computer Science", "Civil Engineering")
+     - Branch / Department (Dropdown: "Artificial Intelligence", "Computer Science", "Civil Engineering", "Biomedical")
    - Submits natively into Google Sheets.
 
 4. 1-Tap Recurring Check-In (Days 2 to 6):
@@ -59,7 +59,7 @@ Target Sheet Tab Name: `Attendance`
 | Col B (2) | Phone Number | `Text (@)` | 10-Digit Mobile Number (Primary Key) |
 | Col C (3) | Full Name | `Text` | Student's Full Name |
 | Col D (4) | Email ID | `Text` | Student's Email Address |
-| Col E (5) | Branch | `Text` | Branch ("Artificial Intelligence", "Computer Science", "Civil Engineering") |
+| Col E (5) | Branch | `Text` | Branch ("Artificial Intelligence", "Computer Science", "Civil Engineering", "Biomedical") |
 | Col F (6) | Device ID | `Text` | Unique Smartphone UUID (`dev_...`) |
 | Col G (7) | Day 1 | `Checkbox (TRUE/FALSE)` | Day 1 Attendance Status |
 | Col H (8) | Day 2 | `Checkbox (TRUE/FALSE)` | Day 2 Attendance Status |
