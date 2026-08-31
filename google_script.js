@@ -17,6 +17,34 @@ function getAttendanceSheet(ss) {
     return sheet;
 }
 
+function getFeedbackSheet(ss) {
+    if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Feedback");
+    if (!sheet) {
+        sheet = ss.insertSheet("Feedback");
+        var headers = [
+            "Timestamp", 
+            "Category", 
+            "Message", 
+            "Name (Optional)", 
+            "Branch (Optional)", 
+            "Phone (Optional)", 
+            "Device ID"
+        ];
+        sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+        var headerRange = sheet.getRange(1, 1, 1, headers.length);
+        headerRange.setFontWeight("bold");
+        headerRange.setBackground("#1E293B");
+        headerRange.setFontColor("#FFFFFF");
+        headerRange.setFontSize(11);
+        sheet.setRowHeight(1, 36);
+        headerRange.setHorizontalAlignment("center");
+        sheet.setFrozenRows(1);
+        sheet.getRange("F:F").setNumberFormat("@");
+    }
+    return sheet;
+}
+
 function unhideAllRows(sheet) {
     try {
         var maxRows = sheet.getMaxRows();
@@ -214,7 +242,35 @@ function doGet(e) {
             return createJsonResponse({ status: "SUCCESS", message: "Branch updated successfully." });
         }
 
-        // 4. CHECK USER STATUS & PROXY VERIFICATION
+        // 4. ANONYMOUS STUDENT FEEDBACK & SUPPORT SUBMISSION
+        if (action === "feedback") {
+            var message = (params.message || "").trim();
+            if (!message) {
+                return createJsonResponse({ status: "ERROR", message: "Message cannot be empty." });
+            }
+
+            var feedbackSheet = getFeedbackSheet(ss);
+            var category = (params.category || "General").trim();
+            var name = (params.name || "Anonymous").trim();
+            var branch = (params.branch || "--").trim();
+            var feedbackPhone = (params.phone || "").trim().replace(/[^0-9]/g, "");
+            var devId = (params.deviceId || "").trim();
+
+            var feedbackRow = [
+                new Date(),
+                category,
+                message,
+                name || "Anonymous",
+                branch || "--",
+                feedbackPhone ? "'" + feedbackPhone : "--",
+                devId
+            ];
+
+            feedbackSheet.appendRow(feedbackRow);
+            return createJsonResponse({ status: "SUCCESS", message: "Feedback submitted successfully." });
+        }
+
+        // 5. CHECK USER STATUS & PROXY VERIFICATION
         if (action === "check" && phone) {
             var userRowIndex = findUserRowByPhone(data, phone);
             if (userRowIndex === -1) {

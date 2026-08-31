@@ -198,6 +198,117 @@
       <button class="btn-secondary" id="alreadySubmittedDismissBtn">BACK TO HOME</button>
     </div>
 
+    <!-- PAST / FUTURE DAY NOTICE CARD (HARDLOCK) -->
+    <div class="neo-box day-notice-box" id="dayNoticeBox" style="display:none;">
+      <div class="lock-tag" id="dayNoticeTag">DAY CONCLUDED</div>
+      <div class="lock-title" id="dayNoticeTitle">DAY 1 CONCLUDED</div>
+      <p class="lock-msg" id="dayNoticeMsg">Day 1 attendance is closed. You can view the schedule and submit feedback below.</p>
+    </div>
+
+    <!-- SECTION 4: INTERACTIVE EVENT SCHEDULE CARD -->
+    <section class="neo-box schedule-card" id="scheduleCard">
+      <div class="card-header">
+        <div class="card-icon">SCH</div>
+        <div>
+          <div class="card-title-text" id="scheduleCardTitle">DAY 2 SCHEDULE</div>
+          <p class="card-sub-text" id="scheduleCardDate">Tuesday, Sep 01 • Orientation Agenda</p>
+        </div>
+      </div>
+
+      <div class="schedule-timeline" id="scheduleTimeline">
+        <!-- Injected dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 5: ANONYMOUS FEEDBACK & OPEN MIC / HELP CARD -->
+    <section class="neo-box feedback-card" id="feedbackCard">
+      <div class="card-header">
+        <div class="card-icon" style="background-color: var(--theme-accent);">MIC</div>
+        <div>
+          <div class="card-title-text">FEEDBACK & SUPPORT</div>
+          <p class="card-sub-text">Share thoughts, get hostel help, or pitch open mic</p>
+        </div>
+      </div>
+
+      <!-- Privacy & Rules Notice -->
+      <div class="feedback-privacy-box">
+        <div class="privacy-tag">🔒 ANONYMOUS & CONFIDENTIAL</div>
+        <p class="privacy-text">
+          Submissions are anonymous by default to protect your privacy. If you are requesting <strong>Hostel or Personal Assistance</strong> and wish to be reached out to, you may voluntarily provide your name and contact details.
+        </p>
+      </div>
+
+      <div class="feedback-warning-box">
+        ⚠️ <strong>Note:</strong> Please use this feature constructively. Do not submit spam or abuse this box for pranks.
+      </div>
+
+      <form id="feedbackForm">
+        <!-- Category Selector -->
+        <div class="form-group">
+          <label class="form-label" for="feedbackCategory">Topic Category <span class="req">*</span></label>
+          <select id="feedbackCategory" name="category" class="form-control" required>
+            <option value="Day 1 Experience Feedback">Feedback on Day 1 Experience</option>
+            <option value="Hostel & Accommodation Help">Hostel & Accommodation Assistance</option>
+            <option value="Personal Help & Concerns">Personal Help & Confidential Concerns</option>
+            <option value="Open Mic Idea & Pitch">Open Mic Idea / Talent Pitch</option>
+            <option value="General Suggestion">General Suggestion / Query</option>
+          </select>
+        </div>
+
+        <!-- Message -->
+        <div class="form-group">
+          <label class="form-label" for="feedbackMessage">Your Message / Query <span class="req">*</span></label>
+          <textarea 
+            id="feedbackMessage" 
+            name="message" 
+            class="form-control feedback-textarea" 
+            rows="4" 
+            placeholder="Write your experience, hostel query, or what you'd like to perform at the open mic..." 
+            required
+            maxlength="1000"
+          ></textarea>
+        </div>
+
+        <!-- Optional Contact Accordion -->
+        <div class="optional-details-box">
+          <button type="button" class="optional-toggle-btn" id="toggleOptionalBtn">
+            + Add Contact Details (Optional, for follow-up)
+          </button>
+          <div class="optional-fields" id="optionalFields" style="display:none;">
+            <div class="form-group" style="margin-top:0.5rem;">
+              <label class="form-label" for="feedbackName">Your Name (Optional)</label>
+              <input type="text" id="feedbackName" name="name" class="form-control" placeholder="e.g. Rahul Sharma" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="feedbackBranch">Branch (Optional)</label>
+              <select id="feedbackBranch" name="branch" class="form-control">
+                <option value="">-- Select Branch (Optional) --</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Biomedical">Biomedical</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="feedbackPhone">Contact Number (Optional)</label>
+              <input type="tel" id="feedbackPhone" name="phone" class="form-control" placeholder="10-digit mobile" maxlength="10" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Feedback Button -->
+        <button type="submit" class="btn-primary" id="submitFeedbackBtn" style="margin-top:0.75rem;">
+          <span id="feedbackSpinner" class="loading-spinner" style="display:none;"></span>
+          <span id="feedbackBtnText">SUBMIT FEEDBACK / REQUEST</span>
+        </button>
+      </form>
+
+      <!-- Feedback Success Toast / Banner -->
+      <div class="feedback-success-banner" id="feedbackSuccessBanner" style="display:none;">
+        ✓ Thank you! Your feedback/request has been securely submitted.
+      </div>
+    </section>
+
     <!-- MINIMAL FOOTER -->
     <footer class="app-footer" id="appFooter">
       <p>© 2026 Student Induction Program</p>

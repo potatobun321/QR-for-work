@@ -24,6 +24,65 @@ document.addEventListener('DOMContentLoaded', () => {
     6: { name: 'Day 6', date: 'Sep 05', fullDate: '2026-09-05', color: '#B57EDC' }  // Vibrant Violet
   };
 
+  const SCHEDULE_DATA = {
+    1: {
+      title: 'DAY 1 SCHEDULE (CONCLUDED)',
+      date: 'Monday, Aug 31 • Induction Inauguration',
+      sessions: [
+        { time: '10:00 AM - 11:30 AM', title: 'Grand Inauguration & Welcome Address', speaker: 'Hon\'ble Dignitaries & Management' },
+        { time: '11:30 AM - 01:00 PM', title: 'Campus Orientation & Code of Conduct', speaker: 'Dean of Student Welfare' },
+        { time: '02:00 PM - 04:00 PM', title: 'Department Tour & Interaction', speaker: 'Heads of Departments' }
+      ]
+    },
+    2: {
+      title: 'DAY 2 SCHEDULE',
+      date: 'Tuesday, Sep 01 • Orientation Agenda',
+      sessions: [
+        { time: '09:00 AM - 10:00 AM', title: 'Yoga and Ayurveda', speaker: 'Shri Hemraj Gurjar' },
+        { time: '10:00 AM - 11:00 AM', title: 'Journey of Becoming an Entrepreneur', speaker: 'Dr. Anil Salecha, Entrepreneur' },
+        { time: '11:00 AM - 12:00 PM', title: 'Shaping Futures: From Campus to Career', speaker: 'Shri Suresh Choudhary' },
+        { time: '12:00 PM - 01:00 PM', title: 'Contemporary Youth Discourse', speaker: 'Dr. Amit Jhalani, Assistant Professor, SKIT Jaipur' },
+        { time: '01:00 PM Onwards', title: 'Fun Activities, Games & Open Mic', speaker: 'Student Induction Committee & Peers' }
+      ]
+    },
+    3: {
+      title: 'DAY 3 SCHEDULE (UPCOMING)',
+      date: 'Wednesday, Sep 02 • Technical Workshops',
+      sessions: [
+        { time: '09:30 AM - 11:00 AM', title: 'Emerging Technologies & AI Landscape', speaker: 'Industry Guest Speaker' },
+        { time: '11:15 AM - 01:00 PM', title: 'Hands-on Labs & Coding Foundations', speaker: 'Faculty Mentors' },
+        { time: '02:00 PM - 04:00 PM', title: 'Team Building & Creative Challenges', speaker: 'Student Clubs' }
+      ]
+    },
+    4: {
+      title: 'DAY 4 SCHEDULE (UPCOMING)',
+      date: 'Thursday, Sep 03 • Innovation & Research',
+      sessions: [
+        { time: '09:30 AM - 11:30 AM', title: 'Design Thinking & Project Ideation', speaker: 'Innovation Cell' },
+        { time: '12:00 PM - 01:30 PM', title: 'Library & Online Research Tools Walkthrough', speaker: 'Central Library Staff' },
+        { time: '02:30 PM - 04:00 PM', title: 'Cultural Rehearsals & Jam Sessions', speaker: 'Cultural Society' }
+      ]
+    },
+    5: {
+      title: 'DAY 5 SCHEDULE (UPCOMING)',
+      date: 'Friday, Sep 04 • Health, Sports & Well-being',
+      sessions: [
+        { time: '09:30 AM - 11:00 AM', title: 'Mental Wellness & Stress Management', speaker: 'Counseling Cell' },
+        { time: '11:30 AM - 01:30 PM', title: 'Inter-Department Sports & Fun Matches', speaker: 'Sports Directorate' },
+        { time: '02:30 PM - 04:00 PM', title: 'Clubs & Societies Expo', speaker: 'Student Council' }
+      ]
+    },
+    6: {
+      title: 'DAY 6 SCHEDULE (UPCOMING)',
+      date: 'Saturday, Sep 05 • Valedictory & Fest',
+      sessions: [
+        { time: '10:00 AM - 12:00 PM', title: 'Open Mic Performances & Talent Showcase', speaker: 'Freshers & Student Stars' },
+        { time: '12:30 PM - 02:00 PM', title: 'Valedictory Ceremony & Prize Distribution', speaker: 'Chief Guests & Director' },
+        { time: '02:30 PM - 05:00 PM', title: 'Celebration & Induction DJ / Musical Jam', speaker: 'Music Club' }
+      ]
+    }
+  };
+
   // --- STATE VARIABLES ---
   let currentDeviceId = getOrCreateDeviceId();
   let currentActiveDay = calculateActiveDay();
@@ -41,6 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const timeLockBox = document.getElementById('timeLockBox');
   const timeLockTitle = document.getElementById('timeLockTitle');
   const timeLockMsg = document.getElementById('timeLockMsg');
+
+  const dayNoticeBox = document.getElementById('dayNoticeBox');
+  const dayNoticeTag = document.getElementById('dayNoticeTag');
+  const dayNoticeTitle = document.getElementById('dayNoticeTitle');
+  const dayNoticeMsg = document.getElementById('dayNoticeMsg');
 
   const registrationCard = document.getElementById('registrationCard');
   const attendanceForm = document.getElementById('attendanceForm');
@@ -72,6 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveBranchUpdateBtn = document.getElementById('saveBranchUpdateBtn');
   const branchFixSpinner = document.getElementById('branchFixSpinner');
   const branchFixBtnText = document.getElementById('branchFixBtnText');
+
+  const scheduleCardTitle = document.getElementById('scheduleCardTitle');
+  const scheduleCardDate = document.getElementById('scheduleCardDate');
+  const scheduleTimeline = document.getElementById('scheduleTimeline');
+
+  const feedbackForm = document.getElementById('feedbackForm');
+  const feedbackCategory = document.getElementById('feedbackCategory');
+  const feedbackMessage = document.getElementById('feedbackMessage');
+  const toggleOptionalBtn = document.getElementById('toggleOptionalBtn');
+  const optionalFields = document.getElementById('optionalFields');
+  const feedbackName = document.getElementById('feedbackName');
+  const feedbackBranch = document.getElementById('feedbackBranch');
+  const feedbackPhone = document.getElementById('feedbackPhone');
+  const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
+  const feedbackSpinner = document.getElementById('feedbackSpinner');
+  const feedbackBtnText = document.getElementById('feedbackBtnText');
+  const feedbackSuccessBanner = document.getElementById('feedbackSuccessBanner');
 
   const statusSuccessCard = document.getElementById('statusSuccessCard');
   const successTitle = document.getElementById('successTitle');
@@ -195,7 +276,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    renderSchedule(dayNum);
     evaluateUserFlow();
+  }
+
+  // --- SCHEDULE RENDERER ---
+  function renderSchedule(dayNum) {
+    const data = SCHEDULE_DATA[dayNum] || SCHEDULE_DATA[2];
+    if (scheduleCardTitle) scheduleCardTitle.textContent = data.title;
+    if (scheduleCardDate) scheduleCardDate.textContent = data.date;
+
+    if (scheduleTimeline) {
+      scheduleTimeline.innerHTML = '';
+      data.sessions.forEach(sess => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.innerHTML = `
+          <span class="timeline-time-badge">${sess.time}</span>
+          <div class="timeline-title">${sess.title}</div>
+          <div class="timeline-speaker">🎙️ ${sess.speaker}</div>
+        `;
+        scheduleTimeline.appendChild(item);
+      });
+    }
   }
 
   // --- USER PROFILE STORAGE ---
@@ -216,8 +319,41 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- USER FLOW CONTROL ---
   function evaluateUserFlow() {
     hideAllStatusCards();
+    if (dayNoticeBox) dayNoticeBox.style.display = 'none';
 
-    // 1. Time-Lock Check (Must be >= 9:30 AM on event day)
+    const activeCalendarDay = calculateActiveDay();
+
+    // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
+    if (currentActiveDay < activeCalendarDay) {
+      registrationCard.style.display = 'none';
+      oneTapCard.style.display = 'none';
+      if (timeLockBox) timeLockBox.style.display = 'none';
+
+      if (dayNoticeBox) {
+        dayNoticeBox.style.display = 'block';
+        if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} ATTENDANCE CLOSED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has concluded. Please select Day ${activeCalendarDay} to mark today's attendance.`;
+      }
+      return;
+    }
+
+    // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
+    if (currentActiveDay > activeCalendarDay) {
+      registrationCard.style.display = 'none';
+      oneTapCard.style.display = 'none';
+      if (timeLockBox) timeLockBox.style.display = 'none';
+
+      if (dayNoticeBox) {
+        dayNoticeBox.style.display = 'block';
+        if (dayNoticeTag) dayNoticeTag.textContent = 'UPCOMING DAY';
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} will unlock on ${DAY_THEMES[currentActiveDay].date}. Explore the session agenda below!`;
+      }
+      return;
+    }
+
+    // 3. Active Calendar Day Time-Lock Check
     const lockStatus = isAttendanceUnlocked(currentActiveDay);
     if (!lockStatus.unlocked) {
       showTimeLockCard(lockStatus.reason);
@@ -226,14 +362,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (timeLockBox) timeLockBox.style.display = 'none';
     }
 
-    // 2. Already Submitted Check
+    // 4. Already Submitted Check
     const loggedDays = getLoggedDays();
     if (currentUserProfile && loggedDays[currentActiveDay]) {
       showStatusCard('alreadySubmitted', 'ALREADY MARKED', `You have already submitted attendance for ${DAY_THEMES[currentActiveDay].name}.`);
       return;
     }
 
-    // 3. Flow Selector (1-Tap vs Registration Form)
+    // 5. Flow Selector (1-Tap vs Registration Form)
     if (currentUserProfile && currentUserProfile.phone) {
       showOneTapCard();
     } else {
@@ -424,6 +560,71 @@ document.addEventListener('DOMContentLoaded', () => {
           saveBranchUpdateBtn.disabled = false;
           if (branchFixSpinner) branchFixSpinner.style.display = 'none';
           if (branchFixBtnText) branchFixBtnText.style.display = 'inline-block';
+        }
+      });
+    }
+
+    // 5. Feedback Form Submit & Optional Toggle
+    if (toggleOptionalBtn && optionalFields) {
+      toggleOptionalBtn.addEventListener('click', () => {
+        const isHidden = optionalFields.style.display === 'none' || !optionalFields.style.display;
+        optionalFields.style.display = isHidden ? 'block' : 'none';
+        toggleOptionalBtn.textContent = isHidden ? '- Hide Contact Details' : '+ Add Contact Details (Optional, for follow-up)';
+      });
+    }
+
+    if (feedbackForm) {
+      feedbackForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const category = feedbackCategory ? feedbackCategory.value : 'General';
+        const message = feedbackMessage ? feedbackMessage.value.trim() : '';
+        const name = feedbackName ? feedbackName.value.trim() : '';
+        const branch = feedbackBranch ? feedbackBranch.value : '';
+        const phone = feedbackPhone ? feedbackPhone.value.trim().replace(/[^0-9]/g, '') : '';
+
+        if (!message) {
+          alert('Please write a message before submitting.');
+          return;
+        }
+
+        // Loading state
+        submitFeedbackBtn.disabled = true;
+        if (feedbackSpinner) feedbackSpinner.style.display = 'inline-block';
+        if (feedbackBtnText) feedbackBtnText.style.display = 'none';
+
+        try {
+          const queryString = new URLSearchParams({
+            action: 'feedback',
+            category: category,
+            message: message,
+            name: name || 'Anonymous',
+            branch: branch || '--',
+            phone: phone || '--',
+            deviceId: currentDeviceId
+          }).toString();
+
+          await fetch(`${activeApiUrl}?${queryString}`, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-cache'
+          });
+
+          // Reset form
+          feedbackMessage.value = '';
+          if (feedbackSuccessBanner) {
+            feedbackSuccessBanner.style.display = 'block';
+            setTimeout(() => {
+              feedbackSuccessBanner.style.display = 'none';
+            }, 5000);
+          }
+        } catch (err) {
+          console.warn('Feedback submission error:', err);
+          alert('Feedback submitted.');
+        } finally {
+          submitFeedbackBtn.disabled = false;
+          if (feedbackSpinner) feedbackSpinner.style.display = 'none';
+          if (feedbackBtnText) feedbackBtnText.style.display = 'inline-block';
         }
       });
     }
