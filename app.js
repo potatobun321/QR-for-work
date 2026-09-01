@@ -218,8 +218,50 @@ document.addEventListener('DOMContentLoaded', () => {
     return 1;
   }
 
-  // Check if attendance is unlocked for selected day (Temporarily all unlocked for testing)
+  // Check if attendance is unlocked for selected day & 9:30 AM - 11:30 AM window
   function isAttendanceUnlocked(dayNum) {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const currentDate = String(now.getDate()).padStart(2, '0');
+    const todayYMD = `${currentYear}-${currentMonth}-${currentDate}`;
+
+    const targetDayInfo = DAY_THEMES[dayNum];
+    if (!targetDayInfo) return { unlocked: true };
+
+    const targetYMD = targetDayInfo.fullDate;
+
+    // 1. Future Date Check
+    if (targetYMD > todayYMD) {
+      return { 
+        unlocked: false, 
+        reason: `Attendance for ${targetDayInfo.name} unlocks on ${targetDayInfo.date}.` 
+      };
+    }
+
+    // 2. Same Day 9:30 AM - 11:30 AM Time Window Check
+    if (targetYMD === todayYMD) {
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const currentMinutes = hours * 60 + minutes;
+
+      // Before 9:30 AM (9 * 60 + 30 = 570 mins)
+      if (currentMinutes < 570) {
+        return { 
+          unlocked: false, 
+          reason: `Orientation starts at 9:30 AM today! Attendance unlocks at 9:30 AM.` 
+        };
+      }
+
+      // After 11:30 AM (11 * 60 + 30 = 690 mins)
+      if (currentMinutes > 690) {
+        return { 
+          unlocked: false, 
+          reason: `Attendance window for today closed at 11:30 AM. You can view the session schedule and submit feedback below.` 
+        };
+      }
+    }
+
     return { unlocked: true };
   }
 
@@ -295,18 +337,70 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
   }
 
-  // --- USER FLOW CONTROL (ALL DAYS UNLOCKED FOR TESTING) ---
+  // --- USER FLOW CONTROL ---
   function evaluateUserFlow() {
     hideAllStatusCards();
     if (dayNoticeBox) dayNoticeBox.style.display = 'none';
-    if (timeLockBox) timeLockBox.style.display = 'none';
 
+    const activeCalendarDay = calculateActiveDay();
     const scheduleCardEl = document.getElementById('scheduleCard');
     const feedbackCardEl = document.getElementById('feedbackCard');
+
+    // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
+    if (currentActiveDay < activeCalendarDay) {
+      registrationCard.style.display = 'none';
+      oneTapCard.style.display = 'none';
+      if (timeLockBox) timeLockBox.style.display = 'none';
+      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
+      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
+
+      if (dayNoticeBox) {
+        dayNoticeBox.style.display = 'block';
+        if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to view today's schedule and check-in.`;
+      }
+      return;
+    }
+
+    // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
+    if (currentActiveDay > activeCalendarDay) {
+      registrationCard.style.display = 'none';
+      oneTapCard.style.display = 'none';
+      if (timeLockBox) timeLockBox.style.display = 'none';
+      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
+      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
+
+      if (dayNoticeBox) {
+        dayNoticeBox.style.display = 'block';
+        if (dayNoticeTag) dayNoticeTag.textContent = 'LOCKED';
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `This session and its schedule will be accessible on ${DAY_THEMES[currentActiveDay].date} during event hours.`;
+      }
+      return;
+    }
+
+    // Only show schedule and feedback on today's active day
     if (scheduleCardEl) scheduleCardEl.style.display = 'block';
     if (feedbackCardEl) feedbackCardEl.style.display = 'block';
 
-    // Show 1-Tap (with branch fix) if profile exists, else show Registration
+    // 3. Active Calendar Day Time-Lock Check (9:30 AM - 11:30 AM)
+    const lockStatus = isAttendanceUnlocked(currentActiveDay);
+    if (!lockStatus.unlocked) {
+      showTimeLockCard(lockStatus.reason);
+      return;
+    } else {
+      if (timeLockBox) timeLockBox.style.display = 'none';
+    }
+
+    // 4. Already Submitted Check
+    const loggedDays = getLoggedDays();
+    if (currentUserProfile && loggedDays[currentActiveDay]) {
+      showStatusCard('alreadySubmitted', 'ALREADY MARKED TODAY', `Your attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has already been recorded.`);
+      return;
+    }
+
+    // 5. Flow Selector (1-Tap vs Registration Form)
     if (currentUserProfile && currentUserProfile.phone) {
       showOneTapCard();
     } else {
