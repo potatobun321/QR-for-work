@@ -325,22 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scheduleCardEl = document.getElementById('scheduleCard');
     const feedbackCardEl = document.getElementById('feedbackCard');
 
-    // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
-    if (currentActiveDay < activeCalendarDay) {
-      registrationCard.style.display = 'none';
-      oneTapCard.style.display = 'none';
-      if (timeLockBox) timeLockBox.style.display = 'none';
-      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
-      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
-
-      if (dayNoticeBox) {
-        dayNoticeBox.style.display = 'block';
-        if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to view today's schedule and check-in.`;
-      }
-      return;
-    }
+    // (Day 1 hardlock temporarily opened for branch change testing)
 
     // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
     if (currentActiveDay > activeCalendarDay) {
