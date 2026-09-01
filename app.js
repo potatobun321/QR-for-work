@@ -128,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const oneTapSubmitBtn = document.getElementById('oneTapSubmitBtn');
   const oneTapSpinner = document.getElementById('oneTapSpinner');
   const oneTapBtnText = document.getElementById('oneTapBtnText');
-  const switchUserBtn = document.getElementById('switchUserBtn');
 
   const toggleBranchFixBtn = document.getElementById('toggleBranchFixBtn');
   const branchFixForm = document.getElementById('branchFixForm');
@@ -567,18 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 5. Switch Account Button
-    if (switchUserBtn) {
-      switchUserBtn.addEventListener('click', () => {
-        if (confirm('Switching user will clear the currently active profile on this device. Continue?')) {
-          localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
-          currentUserProfile = null;
-          showRegistrationForm();
-        }
-      });
-    }
-
-    // 6. Dismiss Status Buttons
+    // 5. Dismiss Status Buttons
     if (mismatchDismissBtn) {
       mismatchDismissBtn.addEventListener('click', () => {
         showRegistrationForm();
