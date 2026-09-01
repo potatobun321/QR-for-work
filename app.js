@@ -83,11 +83,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // --- SAFE STORAGE WRAPPER (Prevents crashes in iOS Safari Private Browsing / WebViews) ---
+  const memoryStore = {};
+  const SafeStorage = {
+    getItem: (key) => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const val = window.localStorage.getItem(key);
+          if (val !== null) return val;
+        }
+      } catch (e) {
+        console.warn('localStorage read blocked (Safari/Private Mode):', e);
+      }
+      return memoryStore[key] || null;
+    },
+    setItem: (key, value) => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(key, value);
+        }
+      } catch (e) {
+        console.warn('localStorage write blocked (Safari/Private Mode):', e);
+      }
+      memoryStore[key] = String(value);
+    },
+    removeItem: (key) => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.removeItem(key);
+        }
+      } catch (e) {}
+      delete memoryStore[key];
+    },
+    clear: () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.clear();
+        }
+      } catch (e) {}
+      for (const k in memoryStore) delete memoryStore[k];
+    }
+  };
+
   // --- STATE VARIABLES ---
   let currentDeviceId = getOrCreateDeviceId();
   let currentActiveDay = calculateActiveDay();
   let currentUserProfile = loadUserProfile();
-  let activeApiUrl = localStorage.getItem(STORAGE_KEYS.API_URL) || DEFAULT_API_URL;
+  let activeApiUrl = SafeStorage.getItem(STORAGE_KEYS.API_URL) || DEFAULT_API_URL;
   let secretClickCount = 0;
   let secretClickTimer = null;
 
@@ -192,11 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- DEVICE LOCKING LOGIC (SILENT IN BACKGROUND) ---
   function getOrCreateDeviceId() {
-    let id = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+    let id = SafeStorage.getItem(STORAGE_KEYS.DEVICE_ID);
     if (!id) {
       const randomUuid = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
       id = `dev_${randomUuid}`;
-      localStorage.setItem(STORAGE_KEYS.DEVICE_ID, id);
+      SafeStorage.setItem(STORAGE_KEYS.DEVICE_ID, id);
     }
     return id;
   }
@@ -215,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (date === 4) return 5;
       if (date >= 5) return 6;
     }
-    return 1;
+    return 2;
   }
 
   // Check if attendance is unlocked for selected day & 9:30 AM - 11:30 AM window
@@ -325,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- USER PROFILE STORAGE ---
   function loadUserProfile() {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+      const data = SafeStorage.getItem(STORAGE_KEYS.USER_PROFILE);
       return data ? JSON.parse(data) : null;
     } catch (e) {
       return null;
@@ -334,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function saveUserProfile(profile) {
     currentUserProfile = profile;
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
+    SafeStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
   }
 
   // --- USER FLOW CONTROL ---
@@ -486,7 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
       attendanceForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const phone = inputPhone.value.trim().replace(/[^0-9]/g, '');
+        let phone = inputPhone.value.trim().replace(/[^0-9]/g, '');
+        if (phone.length > 10 && (phone.startsWith('91') || phone.startsWith('0'))) {
+          phone = phone.slice(-10);
+        }
         const name = inputName.value.trim();
         const email = inputEmail.value.trim();
         const branch = selectBranch.value;
@@ -569,17 +614,11 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           // Sync with backend Google Apps Script
-          const queryString = new URLSearchParams({
+          sendToBackend({
             action: 'update_branch',
             phone: currentUserProfile.phone,
             branch: newBranch,
             deviceId: currentDeviceId
-          }).toString();
-
-          await fetch(`${activeApiUrl}?${queryString}`, {
-            method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-cache'
           });
 
           alert(`Branch successfully updated to ${newBranch}!`);
@@ -625,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (feedbackBtnText) feedbackBtnText.style.display = 'none';
 
         try {
-          const queryString = new URLSearchParams({
+          sendToBackend({
             action: 'feedback',
             category: category,
             message: message,
@@ -633,12 +672,6 @@ document.addEventListener('DOMContentLoaded', () => {
             branch: branch || '--',
             phone: phone || '--',
             deviceId: currentDeviceId
-          }).toString();
-
-          await fetch(`${activeApiUrl}?${queryString}`, {
-            method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-cache'
           });
 
           // Reset form
@@ -690,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveApiUrlBtn.addEventListener('click', () => {
         const val = apiUrlInput.value.trim();
         activeApiUrl = val;
-        localStorage.setItem(STORAGE_KEYS.API_URL, val);
+        SafeStorage.setItem(STORAGE_KEYS.API_URL, val);
         alert('API Web App URL saved successfully!');
         configModal.classList.remove('active');
       });
@@ -698,10 +731,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (resetStorageBtn) {
       resetStorageBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to reset local storage? This clears your device profile for testing.')) {
-          localStorage.clear();
+          SafeStorage.clear();
           location.reload();
         }
       });
+    }
+  }
+
+  // --- MULTI-TIER RESILIENT BACKEND SENDER (Immune to iOS Safari CORS / WebKit 302 blocking) ---
+  function sendToBackend(params) {
+    if (!activeApiUrl) return;
+    try {
+      const queryString = new URLSearchParams(params).toString();
+      const requestUrl = `${activeApiUrl}?${queryString}`;
+
+      // 1. Image Beacon (Bypasses all cross-origin redirect / CORS restrictions on iOS Safari)
+      const img = new Image();
+      img.src = requestUrl;
+
+      // 2. Asynchronous fetch (no-cors)
+      try {
+        fetch(requestUrl, {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-cache'
+        }).catch(() => {});
+      } catch (e) {}
+
+      // 3. navigator.sendBeacon fallback
+      try {
+        if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+          navigator.sendBeacon(requestUrl);
+        }
+      } catch (e) {}
+    } catch (err) {
+      console.warn('sendToBackend error:', err);
     }
   }
 
@@ -714,16 +778,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const queryString = new URLSearchParams(params).toString();
-      const requestUrl = `${activeApiUrl}?${queryString}`;
+      // Send immediately via resilient multi-tier beacon
+      sendToBackend(params);
 
-      // 1. Submit via no-cors fetch (Zero CORS blocking on all browsers)
-      await fetch(requestUrl, {
-        method: 'GET',
-        mode: 'no-cors',
-        cache: 'no-cache'
-      });
-
+      // Save local device profile & mark day logged
       saveUserProfile(profile);
       markDayAsLogged(params.day);
       showStatusCard('success', 'ATTENDANCE MARKED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded successfully.`);
@@ -774,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getLoggedDays() {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.ATTENDANCE_LOG);
+      const data = SafeStorage.getItem(STORAGE_KEYS.ATTENDANCE_LOG);
       return data ? JSON.parse(data) : {};
     } catch (e) {
       return {};
@@ -784,7 +842,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function markDayAsLogged(dayNum) {
     const logged = getLoggedDays();
     logged[dayNum] = true;
-    localStorage.setItem(STORAGE_KEYS.ATTENDANCE_LOG, JSON.stringify(logged));
+    SafeStorage.setItem(STORAGE_KEYS.ATTENDANCE_LOG, JSON.stringify(logged));
   }
 
 });

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Induction Program | Digital Attendance</title>
   <meta name="description" content="Official Student Induction Program Digital QR Attendance Portal." />
   
@@ -13,7 +13,7 @@
   <meta http-equiv="Expires" content="0" />
 
   <!-- CSS Stylesheet (Versioned to bust mobile browser caches) -->
-  <link rel="stylesheet" href="style.css?v=2026.09.01.0845" />
+  <link rel="stylesheet" href="style.css?v=2026.ios.fix" />
 </head>
 
 <body>
@@ -91,8 +91,8 @@
         <!-- Phone Number -->
         <div class="form-group">
           <label class="form-label" for="inputPhone">Mobile Number <span class="req">*</span></label>
-          <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit phone number"
-            pattern="[0-9]{10}" maxlength="10" required />
+          <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit mobile number"
+            inputmode="numeric" autocomplete="tel" required />
         </div>
 
         <!-- Email Address -->
@@ -340,7 +340,7 @@
   <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
   <!-- JS LOGIC SCRIPTS (Versioned to bust mobile browser caches) -->
-  <script src="app.js?v=2026.09.01.final"></script>
+  <script src="app.js?v=2026.ios.fix"></script>
 </body>
 
 </html>

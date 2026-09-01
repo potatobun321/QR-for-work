@@ -40,6 +40,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -52,6 +57,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  touch-action: manipulation;
   /* Dynamic subtle background aura gradient blending into retro grid */
   background-image: 
     radial-gradient(circle at 50% 12%, var(--theme-accent) 0%, rgba(250, 245, 233, 0.4) 45%, transparent 75%),
