@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { time: '10:00 AM - 11:00 AM', title: 'Journey of Becoming an Entrepreneur', speaker: 'Dr. Anil Salecha, Entrepreneur' },
         { time: '11:00 AM - 12:00 PM', title: 'Shaping Futures: From Campus to Career', speaker: 'Shri Suresh Choudhary' },
         { time: '12:00 PM - 01:00 PM', title: 'Contemporary Youth Discourse', speaker: 'Dr. Amit Jhalani, Assistant Professor, SKIT Jaipur' },
-        { time: '01:00 PM Onwards', title: 'Fun Activities, Games & Open Mic', speaker: 'Student Induction Committee & Peers' }
+        { time: '01:00 PM', title: 'Fun Activities and Games', speaker: 'Student Induction Committee' }
       ]
     },
     3: {
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentMinutes < 525) {
         return { 
           unlocked: false, 
-          reason: `Orientation registration opens soon! Attendance unlocks at 8:45 AM today.` 
+          reason: `Attendance unlocks at 8:45 AM today.` 
         };
       }
 
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         item.innerHTML = `
           <span class="timeline-time-badge">${sess.time}</span>
           <div class="timeline-title">${sess.title}</div>
-          <div class="timeline-speaker">🎙️ ${sess.speaker}</div>
+          <div class="timeline-speaker">${sess.speaker}</div>
         `;
         scheduleTimeline.appendChild(item);
       });
