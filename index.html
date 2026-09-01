@@ -6,9 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Student Induction Program | Digital Attendance</title>
   <meta name="description" content="Official Student Induction Program Digital QR Attendance Portal." />
+  
+  <!-- Anti-Cache Meta Tags for Instant Live Updates -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
-  <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- CSS Stylesheet (Versioned to bust mobile browser caches) -->
+  <link rel="stylesheet" href="style.css?v=2.0" />
 </head>
 
 <body>
@@ -336,8 +341,8 @@
   <!-- INVISIBLE IFRAME FALLBACK -->
   <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
-  <!-- JS LOGIC SCRIPTS -->
-  <script src="app.js"></script>
+  <!-- JS LOGIC SCRIPTS (Versioned to bust mobile browser caches) -->
+  <script src="app.js?v=2.0"></script>
 </body>
 
 </html>
