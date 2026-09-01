@@ -342,24 +342,26 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Always show schedule and feedback for active or upcoming days
-    if (scheduleCardEl) scheduleCardEl.style.display = 'block';
-    if (feedbackCardEl) feedbackCardEl.style.display = 'block';
-
     // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
     if (currentActiveDay > activeCalendarDay) {
       registrationCard.style.display = 'none';
       oneTapCard.style.display = 'none';
       if (timeLockBox) timeLockBox.style.display = 'none';
+      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
+      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
 
       if (dayNoticeBox) {
         dayNoticeBox.style.display = 'block';
-        if (dayNoticeTag) dayNoticeTag.textContent = 'UPCOMING DAY';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} (UPCOMING)`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} will unlock on ${DAY_THEMES[currentActiveDay].date}. Explore the session agenda below!`;
+        if (dayNoticeTag) dayNoticeTag.textContent = 'LOCKED';
+        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `This session and its schedule will be accessible on ${DAY_THEMES[currentActiveDay].date} during event hours.`;
       }
       return;
     }
+
+    // Only show schedule and feedback on today's active day
+    if (scheduleCardEl) scheduleCardEl.style.display = 'block';
+    if (feedbackCardEl) feedbackCardEl.style.display = 'block';
 
     // 3. Active Calendar Day Time-Lock Check
     const lockStatus = isAttendanceUnlocked(currentActiveDay);
