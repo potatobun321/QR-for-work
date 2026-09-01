@@ -239,17 +239,17 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // 2. Same Day 9:30 AM - 11:30 AM Time Window Check
+    // 2. Same Day 8:45 AM - 11:30 AM Time Window Check
     if (targetYMD === todayYMD) {
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const currentMinutes = hours * 60 + minutes;
 
-      // Before 9:30 AM (9 * 60 + 30 = 570 mins)
-      if (currentMinutes < 570) {
+      // Before 8:45 AM (8 * 60 + 45 = 525 mins)
+      if (currentMinutes < 525) {
         return { 
           unlocked: false, 
-          reason: `Orientation starts at 9:30 AM today! Attendance unlocks at 9:30 AM.` 
+          reason: `Orientation registration opens soon! Attendance unlocks at 8:45 AM today.` 
         };
       }
 
