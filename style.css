@@ -568,7 +568,7 @@ select.form-control {
   text-align: center;
 }
 
-/* Schedule Card & Timeline */
+/* Schedule Card & Timeline (DISABLED/HIDDEN)
 .schedule-card {
   margin-top: 0.5rem;
 }
@@ -624,6 +624,7 @@ select.form-control {
   align-items: center;
   gap: 4px;
 }
+*/
 
 /* Feedback & Support Card */
 .feedback-card {

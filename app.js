@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentMinutes > 690) {
         return { 
           unlocked: false, 
-          reason: `Attendance window for today closed at 11:30 AM. You can view the session schedule and submit feedback below.` 
+          reason: `Attendance window for today closed at 11:30 AM. You can submit feedback below.` 
         };
       }
     }
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dayNoticeBox.style.display = 'block';
         if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
         if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to view today's schedule and check-in.`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to check-in for today.`;
       }
       return;
     }
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dayNoticeBox.style.display = 'block';
         if (dayNoticeTag) dayNoticeTag.textContent = 'LOCKED';
         if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `This session and its schedule will be accessible on ${DAY_THEMES[currentActiveDay].date} during event hours.`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `This session will be accessible on ${DAY_THEMES[currentActiveDay].date} during event hours.`;
       }
       return;
     }
