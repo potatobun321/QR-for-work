@@ -24,65 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     6: { name: 'Day 6', date: 'Sep 05', fullDate: '2026-09-05', color: '#B57EDC' }  // Vibrant Violet
   };
 
-  const SCHEDULE_DATA = {
-    1: {
-      title: 'DAY 1 SCHEDULE (CONCLUDED)',
-      date: 'Monday, Aug 31 • Induction Inauguration',
-      sessions: [
-        { time: '10:00 AM - 11:30 AM', title: 'Grand Inauguration & Welcome Address', speaker: 'Hon\'ble Dignitaries & Management' },
-        { time: '11:30 AM - 01:00 PM', title: 'Campus Orientation & Code of Conduct', speaker: 'Dean of Student Welfare' },
-        { time: '02:00 PM - 04:00 PM', title: 'Department Tour & Interaction', speaker: 'Heads of Departments' }
-      ]
-    },
-    2: {
-      title: 'DAY 2 SCHEDULE',
-      date: 'Tuesday, Sep 01 • Orientation Agenda',
-      sessions: [
-        { time: '09:00 AM - 10:00 AM', title: 'Yoga and Ayurveda', speaker: 'Shri Hemraj Gurjar' },
-        { time: '10:00 AM - 11:00 AM', title: 'Journey of Becoming an Entrepreneur', speaker: 'Dr. Anil Salecha, Entrepreneur' },
-        { time: '11:00 AM - 12:00 PM', title: 'Shaping Futures: From Campus to Career', speaker: 'Shri Suresh Choudhary' },
-        { time: '12:00 PM - 01:00 PM', title: 'Contemporary Youth Discourse', speaker: 'Dr. Amit Jhalani, Assistant Professor, SKIT Jaipur' },
-        { time: '01:00 PM', title: 'Fun Activities and Games', speaker: 'Student Induction Committee' }
-      ]
-    },
-    3: {
-      title: 'DAY 3 SCHEDULE (UPCOMING)',
-      date: 'Wednesday, Sep 02 • Technical Workshops',
-      sessions: [
-        { time: '09:30 AM - 11:00 AM', title: 'Emerging Technologies & AI Landscape', speaker: 'Industry Guest Speaker' },
-        { time: '11:15 AM - 01:00 PM', title: 'Hands-on Labs & Coding Foundations', speaker: 'Faculty Mentors' },
-        { time: '02:00 PM - 04:00 PM', title: 'Team Building & Creative Challenges', speaker: 'Student Clubs' }
-      ]
-    },
-    4: {
-      title: 'DAY 4 SCHEDULE (UPCOMING)',
-      date: 'Thursday, Sep 03 • Innovation & Research',
-      sessions: [
-        { time: '09:30 AM - 11:30 AM', title: 'Design Thinking & Project Ideation', speaker: 'Innovation Cell' },
-        { time: '12:00 PM - 01:30 PM', title: 'Library & Online Research Tools Walkthrough', speaker: 'Central Library Staff' },
-        { time: '02:30 PM - 04:00 PM', title: 'Cultural Rehearsals & Jam Sessions', speaker: 'Cultural Society' }
-      ]
-    },
-    5: {
-      title: 'DAY 5 SCHEDULE (UPCOMING)',
-      date: 'Friday, Sep 04 • Health, Sports & Well-being',
-      sessions: [
-        { time: '09:30 AM - 11:00 AM', title: 'Mental Wellness & Stress Management', speaker: 'Counseling Cell' },
-        { time: '11:30 AM - 01:30 PM', title: 'Inter-Department Sports & Fun Matches', speaker: 'Sports Directorate' },
-        { time: '02:30 PM - 04:00 PM', title: 'Clubs & Societies Expo', speaker: 'Student Council' }
-      ]
-    },
-    6: {
-      title: 'DAY 6 SCHEDULE (UPCOMING)',
-      date: 'Saturday, Sep 05 • Valedictory & Fest',
-      sessions: [
-        { time: '10:00 AM - 12:00 PM', title: 'Open Mic Performances & Talent Showcase', speaker: 'Freshers & Student Stars' },
-        { time: '12:30 PM - 02:00 PM', title: 'Valedictory Ceremony & Prize Distribution', speaker: 'Chief Guests & Director' },
-        { time: '02:30 PM - 05:00 PM', title: 'Celebration & Induction DJ / Musical Jam', speaker: 'Music Club' }
-      ]
-    }
-  };
-
   // --- SAFE STORAGE WRAPPER (Prevents crashes in iOS Safari Private Browsing / WebViews) ---
   const memoryStore = {};
   const SafeStorage = {
@@ -177,10 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveBranchUpdateBtn = document.getElementById('saveBranchUpdateBtn');
   const branchFixSpinner = document.getElementById('branchFixSpinner');
   const branchFixBtnText = document.getElementById('branchFixBtnText');
-
-  const scheduleCardTitle = document.getElementById('scheduleCardTitle');
-  const scheduleCardDate = document.getElementById('scheduleCardDate');
-  const scheduleTimeline = document.getElementById('scheduleTimeline');
 
   const feedbackForm = document.getElementById('feedbackForm');
   const feedbackCategory = document.getElementById('feedbackCategory');
@@ -339,29 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    renderSchedule(dayNum);
     evaluateUserFlow();
-  }
-
-  // --- SCHEDULE RENDERER ---
-  function renderSchedule(dayNum) {
-    const data = SCHEDULE_DATA[dayNum] || SCHEDULE_DATA[2];
-    if (scheduleCardTitle) scheduleCardTitle.textContent = data.title;
-    if (scheduleCardDate) scheduleCardDate.textContent = data.date;
-
-    if (scheduleTimeline) {
-      scheduleTimeline.innerHTML = '';
-      data.sessions.forEach(sess => {
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-        item.innerHTML = `
-          <span class="timeline-time-badge">${sess.time}</span>
-          <div class="timeline-title">${sess.title}</div>
-          <div class="timeline-speaker">${sess.speaker}</div>
-        `;
-        scheduleTimeline.appendChild(item);
-      });
-    }
   }
 
   // --- USER PROFILE STORAGE ---
@@ -385,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dayNoticeBox) dayNoticeBox.style.display = 'none';
 
     const activeCalendarDay = calculateActiveDay();
-    const scheduleCardEl = document.getElementById('scheduleCard');
     const feedbackCardEl = document.getElementById('feedbackCard');
 
     // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
@@ -393,14 +307,13 @@ document.addEventListener('DOMContentLoaded', () => {
       registrationCard.style.display = 'none';
       oneTapCard.style.display = 'none';
       if (timeLockBox) timeLockBox.style.display = 'none';
-      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
       if (feedbackCardEl) feedbackCardEl.style.display = 'none';
 
       if (dayNoticeBox) {
         dayNoticeBox.style.display = 'block';
         if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
         if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance and sessions for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) have ended. Please select Day ${activeCalendarDay} to check-in for today.`;
+        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has ended. Please select Day ${activeCalendarDay} to check-in for today.`;
       }
       return;
     }
@@ -410,7 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
       registrationCard.style.display = 'none';
       oneTapCard.style.display = 'none';
       if (timeLockBox) timeLockBox.style.display = 'none';
-      if (scheduleCardEl) scheduleCardEl.style.display = 'none';
       if (feedbackCardEl) feedbackCardEl.style.display = 'none';
 
       if (dayNoticeBox) {
@@ -422,8 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Only show schedule and feedback on today's active day
-    if (scheduleCardEl) scheduleCardEl.style.display = 'block';
+    // Only show feedback on today's active day
     if (feedbackCardEl) feedbackCardEl.style.display = 'block';
 
     // 3. Active Calendar Day Time-Lock Check (9:30 AM - 11:30 AM)
