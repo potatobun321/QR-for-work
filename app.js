@@ -1,30 +1,21 @@
 /**
  * ==============================================================================
- * STUDENT INDUCTION PROGRAM - FRONTEND LOGIC (app.js)
+ * VISHWAM SPEAKS - EVENT REGISTRATION PORTAL (app.js)
  * ==============================================================================
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // --- CONFIGURATION & CONSTANTS ---
-  const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxAkqAEFdImcBK84eDabGiCf4WSocQELZUPIQRt1Nw68yJBDmuc4SyMfLs_3ZVWLPdm/exec';
+
+  // --- STORAGE KEYS & CONSTANTS ---
   const STORAGE_KEYS = {
-    DEVICE_ID: 'qr_attendance_device_id',
-    USER_PROFILE: 'qr_attendance_user_profile',
-    API_URL: 'qr_attendance_api_url',
-    ATTENDANCE_LOG: 'qr_attendance_logged_days'
+    API_URL: 'vishwam_registration_api_url',
+    CURRENT_PHASE: 'vishwam_registration_phase',
+    USER_REGISTRATION: 'vishwam_user_registration'
   };
 
-  const DAY_THEMES = {
-    1: { name: 'Day 1', date: 'Aug 31', fullDate: '2026-08-31', color: '#FFDE59' }, // Electric Yellow
-    2: { name: 'Day 2', date: 'Sep 01', fullDate: '2026-09-01', color: '#FF66C4' }, // Hot Pink
-    3: { name: 'Day 3', date: 'Sep 02', fullDate: '2026-09-02', color: '#00F0FF' }, // Electric Cyan
-    4: { name: 'Day 4', date: 'Sep 03', fullDate: '2026-09-03', color: '#70E000' }, // Lime Green
-    5: { name: 'Day 5', date: 'Sep 04', fullDate: '2026-09-04', color: '#FF914D' }, // Bright Orange
-    6: { name: 'Day 6', date: 'Sep 05', fullDate: '2026-09-05', color: '#B57EDC' }  // Vibrant Violet
-  };
+  const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbzT1iHGKacgQ3EzfuycYp6X4AqknYB0H9UUH_InmSVLMNSWvvfnkQLQHvAzDdr9Kgzw/exec';
 
-  // --- SAFE STORAGE WRAPPER (Prevents crashes in iOS Safari Private Browsing / WebViews) ---
+  // --- SAFE STORAGE WRAPPER ---
   const memoryStore = {};
   const SafeStorage = {
     getItem: (key) => {
@@ -33,9 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const val = window.localStorage.getItem(key);
           if (val !== null) return val;
         }
-      } catch (e) {
-        console.warn('localStorage read blocked (Safari/Private Mode):', e);
-      }
+      } catch (e) {}
       return memoryStore[key] || null;
     },
     setItem: (key, value) => {
@@ -43,594 +32,368 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof window !== 'undefined' && window.localStorage) {
           window.localStorage.setItem(key, value);
         }
-      } catch (e) {
-        console.warn('localStorage write blocked (Safari/Private Mode):', e);
-      }
+      } catch (e) {}
       memoryStore[key] = String(value);
-    },
-    removeItem: (key) => {
-      try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          window.localStorage.removeItem(key);
-        }
-      } catch (e) {}
-      delete memoryStore[key];
-    },
-    clear: () => {
-      try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          window.localStorage.clear();
-        }
-      } catch (e) {}
-      for (const k in memoryStore) delete memoryStore[k];
     }
   };
 
-  // --- STATE VARIABLES ---
-  let currentDeviceId = getOrCreateDeviceId();
-  let currentActiveDay = calculateActiveDay();
-  let currentUserProfile = loadUserProfile();
+  // --- STATE ---
   let activeApiUrl = SafeStorage.getItem(STORAGE_KEYS.API_URL) || DEFAULT_API_URL;
-  let secretClickCount = 0;
-  let secretClickTimer = null;
+  let currentPhase = parseInt(SafeStorage.getItem(STORAGE_KEYS.CURRENT_PHASE) || '1', 10);
 
-  // --- DOM ELEMENT REFERENCES ---
-  const appHeaderTitleEl = document.getElementById('appHeaderTitle');
-  const appDaySubtitleEl = document.getElementById('appDaySubtitle');
-  const activeDayTextBadgeEl = document.getElementById('activeDayTextBadge');
-  const stepperBarEl = document.getElementById('stepperBar');
-  
-  const timeLockBox = document.getElementById('timeLockBox');
-  const timeLockTitle = document.getElementById('timeLockTitle');
-  const timeLockMsg = document.getElementById('timeLockMsg');
+  // --- DOM REFERENCES ---
+  const stepIndicator1 = document.getElementById('stepIndicator1');
+  const stepIndicator2 = document.getElementById('stepIndicator2');
+  const stepIndicator3 = document.getElementById('stepIndicator3');
+  const divider1 = document.getElementById('divider1');
+  const divider2 = document.getElementById('divider2');
 
-  const dayNoticeBox = document.getElementById('dayNoticeBox');
-  const dayNoticeTag = document.getElementById('dayNoticeTag');
-  const dayNoticeTitle = document.getElementById('dayNoticeTitle');
-  const dayNoticeMsg = document.getElementById('dayNoticeMsg');
+  const phase1Card = document.getElementById('phase1Card');
+  const phase2Card = document.getElementById('phase2Card');
+  const phase3Card = document.getElementById('phase3Card');
+  const statusSuccessCard = document.getElementById('statusSuccessCard');
 
-  const registrationCard = document.getElementById('registrationCard');
-  const attendanceForm = document.getElementById('attendanceForm');
-  const formActionInput = document.getElementById('formActionInput');
-  const formDayInput = document.getElementById('formDayInput');
-  const formDeviceIdInput = document.getElementById('formDeviceIdInput');
-  
-  const inputName = document.getElementById('inputName');
-  const inputPhone = document.getElementById('inputPhone');
-  const inputEmail = document.getElementById('inputEmail');
-  const selectBranch = document.getElementById('selectBranch');
-  
+  const btnNextPhase2 = document.getElementById('btnNextPhase2');
+  const btnNextPhase3 = document.getElementById('btnNextPhase3');
+  const btnBackPhase1 = document.getElementById('btnBackPhase1');
+  const btnBackPhase2 = document.getElementById('btnBackPhase2');
+
+  const eventRegistrationForm = document.getElementById('eventRegistrationForm');
   const submitRegBtn = document.getElementById('submitRegBtn');
   const btnSpinner = document.getElementById('btnSpinner');
   const btnText = document.getElementById('btnText');
+  const btnRegisterNew = document.getElementById('btnRegisterNew');
 
-  const oneTapCard = document.getElementById('oneTapCard');
-  const welcomeNameText = document.getElementById('welcomeNameText');
-  const welcomePhoneText = document.getElementById('welcomePhoneText');
-  const welcomeBranchText = document.getElementById('welcomeBranchText');
-  const oneTapSubmitBtn = document.getElementById('oneTapSubmitBtn');
-  const oneTapSpinner = document.getElementById('oneTapSpinner');
-  const oneTapBtnText = document.getElementById('oneTapBtnText');
+  // Track cards & segment boxes
+  const trackCardCouncil = document.getElementById('trackCardCouncil');
+  const trackCardArt = document.getElementById('trackCardArt');
+  const trackCardWorkshop = document.getElementById('trackCardWorkshop');
+  const segmentCouncil = document.getElementById('segmentCouncil');
+  const segmentArt = document.getElementById('segmentArt');
+  const segmentWorkshop = document.getElementById('segmentWorkshop');
 
-  const toggleBranchFixBtn = document.getElementById('toggleBranchFixBtn');
-  const branchFixForm = document.getElementById('branchFixForm');
-  const updateBranchSelect = document.getElementById('updateBranchSelect');
-  const saveBranchUpdateBtn = document.getElementById('saveBranchUpdateBtn');
-  const branchFixSpinner = document.getElementById('branchFixSpinner');
-  const branchFixBtnText = document.getElementById('branchFixBtnText');
-
-  const feedbackForm = document.getElementById('feedbackForm');
-  const feedbackCategory = document.getElementById('feedbackCategory');
-  const feedbackMessage = document.getElementById('feedbackMessage');
-  const toggleOptionalBtn = document.getElementById('toggleOptionalBtn');
-  const optionalFields = document.getElementById('optionalFields');
-  const feedbackName = document.getElementById('feedbackName');
-  const feedbackBranch = document.getElementById('feedbackBranch');
-  const feedbackPhone = document.getElementById('feedbackPhone');
-  const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
-  const feedbackSpinner = document.getElementById('feedbackSpinner');
-  const feedbackBtnText = document.getElementById('feedbackBtnText');
-  const feedbackSuccessBanner = document.getElementById('feedbackSuccessBanner');
-
-  const statusSuccessCard = document.getElementById('statusSuccessCard');
-  const successTitle = document.getElementById('successTitle');
-  const successMsg = document.getElementById('successMsg');
-  const successDoneBtn = document.getElementById('successDoneBtn');
-
-  const statusMismatchCard = document.getElementById('statusMismatchCard');
-  const mismatchMsg = document.getElementById('mismatchMsg');
-  const mismatchDismissBtn = document.getElementById('mismatchDismissBtn');
-
-  const statusAlreadySubmittedCard = document.getElementById('statusAlreadySubmittedCard');
-  const alreadySubmittedMsg = document.getElementById('alreadySubmittedMsg');
-  const alreadySubmittedDismissBtn = document.getElementById('alreadySubmittedDismissBtn');
-
+  // Modal
+  const apiConfigTrigger = document.getElementById('apiConfigTrigger');
   const configModal = document.getElementById('configModal');
   const closeConfigModalBtn = document.getElementById('closeConfigModalBtn');
   const apiUrlInput = document.getElementById('apiUrlInput');
   const saveApiUrlBtn = document.getElementById('saveApiUrlBtn');
-  const resetStorageBtn = document.getElementById('resetStorageBtn');
-  const appFooter = document.getElementById('appFooter');
 
   // --- INITIALIZATION ---
-  initApp();
+  init();
 
-  function initApp() {
-    if (formDeviceIdInput) {
-      formDeviceIdInput.value = currentDeviceId;
-    }
-
-    if (apiUrlInput) {
-      apiUrlInput.value = activeApiUrl;
-    }
-
-    setDayTheme(currentActiveDay);
-    setupEventListeners();
-    evaluateUserFlow();
+  function init() {
+    if (apiUrlInput) apiUrlInput.value = activeApiUrl;
+    
+    setupTrackSelectors();
+    setupPhaseNavigation();
+    setupFormSubmission();
+    setupModal();
+    
+    // Set initial phase screen
+    setPhase(currentPhase);
   }
 
-  // --- DEVICE LOCKING LOGIC (SILENT IN BACKGROUND) ---
-  function getOrCreateDeviceId() {
-    let id = SafeStorage.getItem(STORAGE_KEYS.DEVICE_ID);
-    if (!id) {
-      const randomUuid = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-      id = `dev_${randomUuid}`;
-      SafeStorage.setItem(STORAGE_KEYS.DEVICE_ID, id);
+  // --- PHASE STEPPER NAVIGATION ENGINE ---
+  function setPhase(phaseNum) {
+    if (phaseNum < 1) phaseNum = 1;
+    if (phaseNum > 3) phaseNum = 3;
+    
+    currentPhase = phaseNum;
+    SafeStorage.setItem(STORAGE_KEYS.CURRENT_PHASE, phaseNum);
+
+    // Hide all phase cards & status card
+    phase1Card.style.display = 'none';
+    phase2Card.style.display = 'none';
+    phase3Card.style.display = 'none';
+    statusSuccessCard.style.display = 'none';
+
+    // Update Stepper Bar Indicators
+    updateStepperUI(phaseNum);
+
+    // Show target phase card
+    if (phaseNum === 1) {
+      phase1Card.style.display = 'block';
+    } else if (phaseNum === 2) {
+      phase2Card.style.display = 'block';
+    } else if (phaseNum === 3) {
+      phase3Card.style.display = 'block';
     }
-    return id;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // --- DAY CALCULATOR & TIME-LOCK ENGINE ---
-  function calculateActiveDay() {
-    const today = new Date();
-    const month = today.getMonth() + 1; // 1-12
-    const date = today.getDate();
-
-    if (month === 8 && date >= 31) return 1;
-    if (month === 9) {
-      if (date === 1) return 2;
-      if (date === 2) return 3;
-      if (date === 3) return 4;
-      if (date === 4) return 5;
-      if (date >= 5) return 6;
-    }
-    return 2;
-  }
-
-  // Check if attendance is unlocked for selected day & 9:30 AM - 11:30 AM window
-  function isAttendanceUnlocked(dayNum) {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
-    const currentDate = String(now.getDate()).padStart(2, '0');
-    const todayYMD = `${currentYear}-${currentMonth}-${currentDate}`;
-
-    const targetDayInfo = DAY_THEMES[dayNum];
-    if (!targetDayInfo) return { unlocked: true };
-
-    const targetYMD = targetDayInfo.fullDate;
-
-    // 1. Future Date Check
-    if (targetYMD > todayYMD) {
-      return { 
-        unlocked: false, 
-        reason: `Attendance for ${targetDayInfo.name} unlocks on ${targetDayInfo.date}.` 
-      };
+  function updateStepperUI(phaseNum) {
+    // Phase 1
+    stepIndicator1.classList.remove('active', 'completed');
+    if (phaseNum === 1) {
+      stepIndicator1.classList.add('active');
+    } else if (phaseNum > 1) {
+      stepIndicator1.classList.add('completed');
     }
 
-    // 2. Same Day 8:45 AM - 11:30 AM Time Window Check
-    if (targetYMD === todayYMD) {
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const currentMinutes = hours * 60 + minutes;
-
-      // Before 8:45 AM (8 * 60 + 45 = 525 mins)
-      if (currentMinutes < 525) {
-        return { 
-          unlocked: false, 
-          reason: `Attendance unlocks at 8:45 AM today.` 
-        };
-      }
-
-      // After 11:30 AM (11 * 60 + 30 = 690 mins)
-      if (currentMinutes > 690) {
-        return { 
-          unlocked: false, 
-          reason: `Attendance window for today closed at 11:30 AM. You can submit feedback below.` 
-        };
-      }
+    // Divider 1
+    if (divider1) {
+      if (phaseNum > 1) divider1.classList.add('completed');
+      else divider1.classList.remove('completed');
     }
 
-    return { unlocked: true };
-  }
-
-  function setDayTheme(dayNum) {
-    currentActiveDay = dayNum;
-    const theme = DAY_THEMES[dayNum] || DAY_THEMES[1];
-
-    document.documentElement.style.setProperty('--theme-accent', theme.color);
-
-    if (appDaySubtitleEl) {
-      appDaySubtitleEl.textContent = `${theme.name.toUpperCase()} ATTENDANCE (${theme.date})`;
-    }
-    if (activeDayTextBadgeEl) {
-      activeDayTextBadgeEl.textContent = `${theme.name.toUpperCase()} OF 6`;
-    }
-    if (formDayInput) {
-      formDayInput.value = dayNum;
-    }
-    if (btnText) {
-      btnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE`;
-    }
-    if (oneTapBtnText) {
-      oneTapBtnText.textContent = `MARK ${theme.name.toUpperCase()} ATTENDANCE`;
+    // Phase 2
+    stepIndicator2.classList.remove('active', 'completed');
+    if (phaseNum === 2) {
+      stepIndicator2.classList.add('active');
+    } else if (phaseNum > 2) {
+      stepIndicator2.classList.add('completed');
+    } else if (phaseNum < 2) {
+      stepIndicator2.classList.remove('active', 'completed');
     }
 
-    const stepButtons = stepperBarEl ? stepperBarEl.querySelectorAll('.step-btn') : [];
-    stepButtons.forEach(btn => {
-      const bDay = parseInt(btn.getAttribute('data-day'), 10);
-      if (bDay === dayNum) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
+    // Divider 2
+    if (divider2) {
+      if (phaseNum > 2) divider2.classList.add('completed');
+      else divider2.classList.remove('completed');
+    }
 
-    evaluateUserFlow();
-  }
-
-  // --- USER PROFILE STORAGE ---
-  function loadUserProfile() {
-    try {
-      const data = SafeStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-      return data ? JSON.parse(data) : null;
-    } catch (e) {
-      return null;
+    // Phase 3
+    stepIndicator3.classList.remove('active', 'completed');
+    if (phaseNum === 3) {
+      stepIndicator3.classList.add('active');
     }
   }
 
-  function saveUserProfile(profile) {
-    currentUserProfile = profile;
-    SafeStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
-  }
-
-  // --- USER FLOW CONTROL ---
-  function evaluateUserFlow() {
-    hideAllStatusCards();
-    if (dayNoticeBox) dayNoticeBox.style.display = 'none';
-
-    const activeCalendarDay = calculateActiveDay();
-    const feedbackCardEl = document.getElementById('feedbackCard');
-
-    // 1. HARDLOCK CHECK: Previous Concluded Days (e.g. Day 1 when today is Day 2)
-    if (currentActiveDay < activeCalendarDay) {
-      registrationCard.style.display = 'none';
-      oneTapCard.style.display = 'none';
-      if (timeLockBox) timeLockBox.style.display = 'none';
-      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
-
-      if (dayNoticeBox) {
-        dayNoticeBox.style.display = 'block';
-        if (dayNoticeTag) dayNoticeTag.textContent = 'DAY CONCLUDED';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} CONCLUDED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `Attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has ended. Please select Day ${activeCalendarDay} to check-in for today.`;
-      }
-      return;
+  function setupPhaseNavigation() {
+    if (btnNextPhase2) {
+      btnNextPhase2.addEventListener('click', () => setPhase(2));
+    }
+    if (btnNextPhase3) {
+      btnNextPhase3.addEventListener('click', () => setPhase(3));
+    }
+    if (btnBackPhase1) {
+      btnBackPhase1.addEventListener('click', () => setPhase(1));
+    }
+    if (btnBackPhase2) {
+      btnBackPhase2.addEventListener('click', () => setPhase(2));
     }
 
-    // 2. HARDLOCK CHECK: Future Upcoming Days (e.g. Days 3-6)
-    if (currentActiveDay > activeCalendarDay) {
-      registrationCard.style.display = 'none';
-      oneTapCard.style.display = 'none';
-      if (timeLockBox) timeLockBox.style.display = 'none';
-      if (feedbackCardEl) feedbackCardEl.style.display = 'none';
-
-      if (dayNoticeBox) {
-        dayNoticeBox.style.display = 'block';
-        if (dayNoticeTag) dayNoticeTag.textContent = 'LOCKED';
-        if (dayNoticeTitle) dayNoticeTitle.textContent = `${DAY_THEMES[currentActiveDay].name.toUpperCase()} LOCKED`;
-        if (dayNoticeMsg) dayNoticeMsg.textContent = `This session will be accessible on ${DAY_THEMES[currentActiveDay].date} during event hours.`;
-      }
-      return;
+    // Allow clicking on completed stepper items to jump back
+    if (stepIndicator1) {
+      stepIndicator1.addEventListener('click', () => setPhase(1));
     }
-
-    // Only show feedback on today's active day
-    if (feedbackCardEl) feedbackCardEl.style.display = 'block';
-
-    // 3. Active Calendar Day Time-Lock Check (9:30 AM - 11:30 AM)
-    const lockStatus = isAttendanceUnlocked(currentActiveDay);
-    if (!lockStatus.unlocked) {
-      showTimeLockCard(lockStatus.reason);
-      return;
-    } else {
-      if (timeLockBox) timeLockBox.style.display = 'none';
-    }
-
-    // 4. Already Submitted Check
-    const loggedDays = getLoggedDays();
-    if (currentUserProfile && loggedDays[currentActiveDay]) {
-      showStatusCard('alreadySubmitted', 'ALREADY MARKED TODAY', `Your attendance for ${DAY_THEMES[currentActiveDay].name} (${DAY_THEMES[currentActiveDay].date}) has already been recorded.`);
-      return;
-    }
-
-    // 5. Flow Selector (1-Tap vs Registration Form)
-    if (currentUserProfile && currentUserProfile.phone) {
-      showOneTapCard();
-    } else {
-      showRegistrationForm();
-    }
-  }
-
-  function showTimeLockCard(reason) {
-    registrationCard.style.display = 'none';
-    oneTapCard.style.display = 'none';
-    hideAllStatusCards();
-    if (timeLockBox) {
-      timeLockBox.style.display = 'block';
-      if (timeLockMsg) timeLockMsg.textContent = reason;
-    }
-  }
-
-  function showRegistrationForm() {
-    if (timeLockBox) timeLockBox.style.display = 'none';
-    registrationCard.style.display = 'block';
-    oneTapCard.style.display = 'none';
-    hideAllStatusCards();
-
-    if (currentUserProfile) {
-      if (inputName) inputName.value = currentUserProfile.name || '';
-      if (inputPhone) inputPhone.value = currentUserProfile.phone || '';
-      if (inputEmail) inputEmail.value = currentUserProfile.email || '';
-      if (selectBranch) selectBranch.value = currentUserProfile.branch || '';
-    }
-  }
-
-  function showOneTapCard() {
-    if (timeLockBox) timeLockBox.style.display = 'none';
-    registrationCard.style.display = 'none';
-    oneTapCard.style.display = 'block';
-    hideAllStatusCards();
-
-    if (welcomeNameText) welcomeNameText.textContent = `Welcome back, ${currentUserProfile.name || 'Student'}!`;
-    if (welcomePhoneText) welcomePhoneText.textContent = `Phone: ${currentUserProfile.phone || '--'}`;
-    if (welcomeBranchText) welcomeBranchText.textContent = `Branch: ${currentUserProfile.branch || '--'}`;
-  }
-
-  function hideAllStatusCards() {
-    if (statusSuccessCard) statusSuccessCard.style.display = 'none';
-    if (statusMismatchCard) statusMismatchCard.style.display = 'none';
-    if (statusAlreadySubmittedCard) statusAlreadySubmittedCard.style.display = 'none';
-  }
-
-  function showStatusCard(type, title, message) {
-    if (timeLockBox) timeLockBox.style.display = 'none';
-    registrationCard.style.display = 'none';
-    oneTapCard.style.display = 'none';
-    hideAllStatusCards();
-
-    if (type === 'success') {
-      if (successTitle) successTitle.textContent = title || 'ATTENDANCE MARKED!';
-      if (successMsg) successMsg.textContent = message || 'Attendance successfully saved.';
-      if (statusSuccessCard) statusSuccessCard.style.display = 'block';
-    } else if (type === 'mismatch') {
-      if (mismatchMsg) mismatchMsg.textContent = message || 'Device mismatch detected.';
-      if (statusMismatchCard) statusMismatchCard.style.display = 'block';
-    } else if (type === 'alreadySubmitted') {
-      if (alreadySubmittedMsg) alreadySubmittedMsg.textContent = message || 'You have already marked attendance for today.';
-      if (statusAlreadySubmittedCard) statusAlreadySubmittedCard.style.display = 'block';
-    }
-  }
-
-  // --- ATTENDANCE SUBMISSION HANDLING ---
-  function setupEventListeners() {
-    // 1. Stepper Bar Clicks
-    if (stepperBarEl) {
-      stepperBarEl.addEventListener('click', (e) => {
-        const btn = e.target.closest('.step-btn');
-        if (btn) {
-          const dayNum = parseInt(btn.getAttribute('data-day'), 10);
-          setDayTheme(dayNum);
-        }
+    if (stepIndicator2) {
+      stepIndicator2.addEventListener('click', () => {
+        if (currentPhase >= 2) setPhase(2);
       });
     }
+    if (stepIndicator3) {
+      stepIndicator3.addEventListener('click', () => {
+        if (currentPhase >= 3) setPhase(3);
+      });
+    }
+  }
 
-    // 2. Registration Form Submit
-    if (attendanceForm) {
-      attendanceForm.addEventListener('submit', async (e) => {
+  // --- DYNAMIC TRACK SEGMENTATION ENGINE ---
+  function setupTrackSelectors() {
+    const trackRadios = document.querySelectorAll('input[name="participation_type"]');
+
+    trackRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const selectedValue = e.target.value;
+        updateTrackSegments(selectedValue);
+      });
+    });
+
+    // Also support clicking directly on track cards
+    [trackCardCouncil, trackCardArt, trackCardWorkshop].forEach(card => {
+      if (card) {
+        card.addEventListener('click', () => {
+          const radio = card.querySelector('input[type="radio"]');
+          if (radio) {
+            radio.checked = true;
+            updateTrackSegments(radio.value);
+          }
+        });
+      }
+    });
+  }
+
+  function updateTrackSegments(trackValue) {
+    // Remove active styles from all track cards
+    [trackCardCouncil, trackCardArt, trackCardWorkshop].forEach(card => {
+      if (card) card.classList.remove('active');
+    });
+
+    // Hide all dynamic segment boxes
+    segmentCouncil.style.display = 'none';
+    segmentArt.style.display = 'none';
+    segmentWorkshop.style.display = 'none';
+
+    if (trackValue === 'Council') {
+      if (trackCardCouncil) trackCardCouncil.classList.add('active');
+      segmentCouncil.style.display = 'block';
+    } else if (trackValue === 'Art Work') {
+      if (trackCardArt) trackCardArt.classList.add('active');
+      segmentArt.style.display = 'block';
+    } else if (trackValue === 'Workshop') {
+      if (trackCardWorkshop) trackCardWorkshop.classList.add('active');
+      segmentWorkshop.style.display = 'block';
+    }
+  }
+
+  // --- FORM SUBMISSION & BACKEND SYNC ---
+  function setupFormSubmission() {
+    if (eventRegistrationForm) {
+      eventRegistrationForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        let phone = inputPhone.value.trim().replace(/[^0-9]/g, '');
+
+        if (!activeApiUrl) {
+          configModal.classList.add('active');
+          alert('Please enter your Google Apps Script Web App URL first!');
+          return;
+        }
+
+        const formData = new FormData(eventRegistrationForm);
+        const payload = {};
+        formData.forEach((value, key) => {
+          payload[key] = value.trim();
+        });
+
+        // Additional track fallbacks if not filled
+        payload.action = 'register';
+        payload.timestamp = new Date().toISOString();
+
+        if (payload.art_participation_mode && (!payload.participation_mode || payload.participation_type === 'Art Work')) {
+          payload.participation_mode = payload.art_participation_mode;
+        }
+
+        // Phone number validation
+        let phone = (payload.contact_number || '').replace(/[^0-9]/g, '');
         if (phone.length > 10 && (phone.startsWith('91') || phone.startsWith('0'))) {
           phone = phone.slice(-10);
         }
-        const name = inputName.value.trim();
-        const email = inputEmail.value.trim();
-        const branch = selectBranch.value;
-
         if (phone.length !== 10) {
-          alert('Please enter a valid 10-digit mobile number.');
+          alert('Please enter a valid 10-digit mobile phone number.');
+          return;
+        }
+        payload.contact_number = phone;
+
+        // UTR Validation
+        if (!payload.utr_upi_transaction_id) {
+          alert('Please enter a valid UTR / UPI Transaction ID.');
           return;
         }
 
-        const profile = { name, phone, email, branch };
-        setLoadingState(true, 'reg');
-
-        await processAttendanceSubmission({
-          action: 'register',
-          phone: phone,
-          name: name,
-          email: email,
-          branch: branch,
-          day: currentActiveDay,
-          deviceId: currentDeviceId
-        }, profile);
-
-        setLoadingState(false, 'reg');
-      });
-    }
-
-    // 3. 1-Tap Button Click
-    if (oneTapSubmitBtn) {
-      oneTapSubmitBtn.addEventListener('click', async () => {
-        if (!currentUserProfile || !currentUserProfile.phone) {
-          showRegistrationForm();
-          return;
-        }
-
-        setLoadingState(true, 'oneTap');
-
-        await processAttendanceSubmission({
-          action: 'attend',
-          phone: currentUserProfile.phone,
-          name: currentUserProfile.name,
-          email: currentUserProfile.email,
-          branch: currentUserProfile.branch,
-          day: currentActiveDay,
-          deviceId: currentDeviceId
-        }, currentUserProfile);
-
-        setLoadingState(false, 'oneTap');
-      });
-    }
-
-    // 4. Branch Correction (Biomedical Fix)
-    if (toggleBranchFixBtn && branchFixForm) {
-      toggleBranchFixBtn.addEventListener('click', () => {
-        const isHidden = branchFixForm.style.display === 'none' || !branchFixForm.style.display;
-        branchFixForm.style.display = isHidden ? 'block' : 'none';
-        if (isHidden && currentUserProfile && currentUserProfile.branch) {
-          if (updateBranchSelect) updateBranchSelect.value = currentUserProfile.branch;
-        }
-      });
-    }
-
-    if (saveBranchUpdateBtn) {
-      saveBranchUpdateBtn.addEventListener('click', async () => {
-        if (!currentUserProfile || !currentUserProfile.phone) return;
-
-        const newBranch = updateBranchSelect.value;
-        if (!newBranch) return;
-
-        // UI loading state
-        saveBranchUpdateBtn.disabled = true;
-        if (branchFixSpinner) branchFixSpinner.style.display = 'inline-block';
-        if (branchFixBtnText) branchFixBtnText.style.display = 'none';
+        setLoading(true);
 
         try {
-          currentUserProfile.branch = newBranch;
-          saveUserProfile(currentUserProfile);
-
-          if (welcomeBranchText) {
-            welcomeBranchText.textContent = `Branch: ${newBranch}`;
-          }
-
-          // Sync with backend Google Apps Script
-          sendToBackend({
-            action: 'update_branch',
-            phone: currentUserProfile.phone,
-            branch: newBranch,
-            deviceId: currentDeviceId
-          });
-
-          alert(`Branch successfully updated to ${newBranch}!`);
-          if (branchFixForm) branchFixForm.style.display = 'none';
+          await sendToBackend(payload);
+          
+          // Save local profile
+          SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(payload));
+          
+          showSuccessScreen(payload);
         } catch (err) {
-          console.warn('Branch update failed:', err);
-          alert('Could not update branch to server. Please check internet connection.');
+          console.warn('Backend submission error:', err);
+          fallbackIframeSubmission(payload);
+          showSuccessScreen(payload);
         } finally {
-          saveBranchUpdateBtn.disabled = false;
-          if (branchFixSpinner) branchFixSpinner.style.display = 'none';
-          if (branchFixBtnText) branchFixBtnText.style.display = 'inline-block';
+          setLoading(false);
         }
       });
     }
 
-    // 5. Feedback Form Submit & Optional Toggle
-    if (toggleOptionalBtn && optionalFields) {
-      toggleOptionalBtn.addEventListener('click', () => {
-        const isHidden = optionalFields.style.display === 'none' || !optionalFields.style.display;
-        optionalFields.style.display = isHidden ? 'block' : 'none';
-        toggleOptionalBtn.textContent = isHidden ? '- Hide Contact Details' : '+ Add Contact Details (Optional, for follow-up)';
+    if (btnRegisterNew) {
+      btnRegisterNew.addEventListener('click', () => {
+        if (eventRegistrationForm) eventRegistrationForm.reset();
+        setPhase(1);
       });
     }
+  }
 
-    if (feedbackForm) {
-      feedbackForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  function setLoading(isLoading) {
+    if (submitRegBtn) submitRegBtn.disabled = isLoading;
+    if (btnSpinner) btnSpinner.style.display = isLoading ? 'inline-block' : 'none';
+    if (btnText) btnText.style.display = isLoading ? 'none' : 'inline-block';
+  }
 
-        const category = feedbackCategory ? feedbackCategory.value : 'General';
-        const message = feedbackMessage ? feedbackMessage.value.trim() : '';
-        const name = feedbackName ? feedbackName.value.trim() : '';
-        const branch = feedbackBranch ? feedbackBranch.value : '';
-        const phone = feedbackPhone ? feedbackPhone.value.trim().replace(/[^0-9]/g, '') : '';
+  async function sendToBackend(payload) {
+    const queryString = new URLSearchParams(payload).toString();
+    const requestUrl = `${activeApiUrl}?${queryString}`;
 
-        if (!message) {
-          alert('Please write a message before submitting.');
-          return;
-        }
+    // Multi-tier resilient dispatch (Image beacon + fetch no-cors + sendBeacon)
+    const img = new Image();
+    img.src = requestUrl;
 
-        // Loading state
-        submitFeedbackBtn.disabled = true;
-        if (feedbackSpinner) feedbackSpinner.style.display = 'inline-block';
-        if (feedbackBtnText) feedbackBtnText.style.display = 'none';
-
-        try {
-          sendToBackend({
-            action: 'feedback',
-            category: category,
-            message: message,
-            name: name || 'Anonymous',
-            branch: branch || '--',
-            phone: phone || '--',
-            deviceId: currentDeviceId
-          });
-
-          // Reset form
-          feedbackMessage.value = '';
-          if (feedbackSuccessBanner) {
-            feedbackSuccessBanner.style.display = 'block';
-            setTimeout(() => {
-              feedbackSuccessBanner.style.display = 'none';
-            }, 5000);
-          }
-        } catch (err) {
-          console.warn('Feedback submission error:', err);
-          alert('Feedback submitted.');
-        } finally {
-          submitFeedbackBtn.disabled = false;
-          if (feedbackSpinner) feedbackSpinner.style.display = 'none';
-          if (feedbackBtnText) feedbackBtnText.style.display = 'inline-block';
-        }
+    try {
+      await fetch(requestUrl, {
+        method: 'GET',
+        mode: 'no-cors',
+        cache: 'no-cache'
       });
-    }
+    } catch (e) {}
 
-    // 5. Dismiss Status Buttons
-    if (mismatchDismissBtn) {
-      mismatchDismissBtn.addEventListener('click', () => {
-        showRegistrationForm();
-      });
-    }
-
-    // 6. Secret Admin Modal Trigger (5 fast clicks on Header Title or Footer)
-    const triggerSecretAdmin = () => {
-      secretClickCount++;
-      clearTimeout(secretClickTimer);
-      secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 2000);
-      if (secretClickCount >= 5) {
-        secretClickCount = 0;
-        configModal.classList.add('active');
+    try {
+      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+        navigator.sendBeacon(requestUrl);
       }
-    };
+    } catch (e) {}
+  }
 
-    if (appHeaderTitleEl) appHeaderTitleEl.addEventListener('click', triggerSecretAdmin);
-    if (appFooter) appFooter.addEventListener('click', triggerSecretAdmin);
+  function fallbackIframeSubmission(payload) {
+    const form = document.createElement('form');
+    form.action = activeApiUrl;
+    form.method = 'GET';
+    form.target = 'hidden_iframe';
 
-    if (closeConfigModalBtn) {
+    for (const key in payload) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = payload[key];
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  }
+
+  function showSuccessScreen(payload) {
+    phase1Card.style.display = 'none';
+    phase2Card.style.display = 'none';
+    phase3Card.style.display = 'none';
+    statusSuccessCard.style.display = 'block';
+
+    const summaryBox = document.getElementById('userSummaryBox');
+    if (summaryBox) {
+      summaryBox.innerHTML = `
+        <strong>Participant:</strong> ${payload.full_name || 'Participant'}<br>
+        <strong>Email:</strong> ${payload.email_address || '--'}<br>
+        <strong>Track:</strong> ${payload.participation_type || 'Council'}<br>
+        <strong>UTR Ref:</strong> ${payload.utr_upi_transaction_id || '--'}<br>
+        <strong>Status:</strong> Confirmation Pending Verification
+      `;
+    }
+
+    // Mark stepper complete
+    stepIndicator3.classList.add('completed');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // --- API CONFIG MODAL ---
+  function setupModal() {
+    if (apiConfigTrigger && configModal) {
+      apiConfigTrigger.addEventListener('click', () => {
+        configModal.classList.add('active');
+      });
+    }
+
+    if (closeConfigModalBtn && configModal) {
       closeConfigModalBtn.addEventListener('click', () => {
         configModal.classList.remove('active');
       });
     }
-    if (saveApiUrlBtn) {
+
+    if (saveApiUrlBtn && apiUrlInput) {
       saveApiUrlBtn.addEventListener('click', () => {
         const val = apiUrlInput.value.trim();
         activeApiUrl = val;
@@ -639,121 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         configModal.classList.remove('active');
       });
     }
-    if (resetStorageBtn) {
-      resetStorageBtn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to reset local storage? This clears your device profile for testing.')) {
-          SafeStorage.clear();
-          location.reload();
-        }
-      });
-    }
-  }
-
-  // --- MULTI-TIER RESILIENT BACKEND SENDER (Immune to iOS Safari CORS / WebKit 302 blocking) ---
-  function sendToBackend(params) {
-    if (!activeApiUrl) return;
-    try {
-      const queryString = new URLSearchParams(params).toString();
-      const requestUrl = `${activeApiUrl}?${queryString}`;
-
-      // 1. Image Beacon (Bypasses all cross-origin redirect / CORS restrictions on iOS Safari)
-      const img = new Image();
-      img.src = requestUrl;
-
-      // 2. Asynchronous fetch (no-cors)
-      try {
-        fetch(requestUrl, {
-          method: 'GET',
-          mode: 'no-cors',
-          cache: 'no-cache'
-        }).catch(() => {});
-      } catch (e) {}
-
-      // 3. navigator.sendBeacon fallback
-      try {
-        if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-          navigator.sendBeacon(requestUrl);
-        }
-      } catch (e) {}
-    } catch (err) {
-      console.warn('sendToBackend error:', err);
-    }
-  }
-
-  // --- API BACKEND COMMUNICATOR ---
-  async function processAttendanceSubmission(params, profile) {
-    if (!activeApiUrl) {
-      configModal.classList.add('active');
-      alert('Please configure your Google Apps Script Web App URL first!');
-      return;
-    }
-
-    try {
-      // Send immediately via resilient multi-tier beacon
-      sendToBackend(params);
-
-      // Save local device profile & mark day logged
-      saveUserProfile(profile);
-      markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE MARKED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded successfully.`);
-
-    } catch (err) {
-      console.warn('Network error, triggering iframe fallback:', err);
-      fallbackIframeSubmission(params, profile);
-    }
-  }
-
-  function fallbackIframeSubmission(params, profile) {
-    const form = document.createElement('form');
-    form.action = activeApiUrl;
-    form.method = 'GET';
-    form.target = 'hidden_iframe';
-
-    for (const key in params) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = params[key];
-      form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-
-    setTimeout(() => {
-      saveUserProfile(profile);
-      markDayAsLogged(params.day);
-      showStatusCard('success', 'ATTENDANCE SUBMITTED!', `Your attendance for ${DAY_THEMES[params.day].name} has been recorded.`);
-    }, 1200);
-  }
-
-  // --- HELPER UTILITIES ---
-  function setLoadingState(isLoading, mode) {
-    if (mode === 'reg') {
-      submitRegBtn.disabled = isLoading;
-      if (btnSpinner) btnSpinner.style.display = isLoading ? 'inline-block' : 'none';
-      if (btnText) btnText.style.display = isLoading ? 'none' : 'inline-block';
-    } else if (mode === 'oneTap') {
-      oneTapSubmitBtn.disabled = isLoading;
-      if (oneTapSpinner) oneTapSpinner.style.display = isLoading ? 'inline-block' : 'none';
-      if (oneTapBtnText) oneTapBtnText.style.display = isLoading ? 'none' : 'inline-block';
-    }
-  }
-
-  function getLoggedDays() {
-    try {
-      const data = SafeStorage.getItem(STORAGE_KEYS.ATTENDANCE_LOG);
-      return data ? JSON.parse(data) : {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function markDayAsLogged(dayNum) {
-    const logged = getLoggedDays();
-    logged[dayNum] = true;
-    SafeStorage.setItem(STORAGE_KEYS.ATTENDANCE_LOG, JSON.stringify(logged));
   }
 
 });

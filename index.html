@@ -4,319 +4,605 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Induction Program | Digital Attendance</title>
-  <meta name="description" content="Official Student Induction Program Digital QR Attendance Portal." />
-  
-  <!-- Anti-Cache Meta Tags for Instant Live Updates -->
+  <title>JAI Conclave 2026 | VISHWAM Registration Portal</title>
+  <meta name="description" content="Official Registration Portal for JAI Conclave 2026 by VISHWAM." />
+
+  <!-- Google Fonts for Modern Aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Anti-Cache Meta Tags -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <!-- CSS Stylesheet (Versioned to bust mobile browser caches) -->
-  <link rel="stylesheet" href="style.css?v=2026.purge.noschedule" />
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=2026.jaiconclave.v2" />
 </head>
 
 <body>
 
   <div class="app-container">
 
-    <!-- PURE MINIMAL HEADER CARD -->
+    <!-- HEADER BRANDING WITH EXACT PNG LOGO (NO CIRCLE MASK) -->
     <header class="app-header" id="appHeader">
-      <h1 class="app-title" id="appHeaderTitle">STUDENT INDUCTION PROGRAM</h1>
+      <div class="logo-wrapper">
+        <img src="Vishwam logo.png" alt="VISHWAM Logo" class="brand-logo" />
+      </div>
+      <div class="header-badge">FLAGSHIP YOUTH DIPLOMACY FORUM</div>
+      <h1 class="app-title" id="appHeaderTitle">JAI CONCLAVE 2026</h1>
+      <div class="header-org">BY VISHWAM</div>
     </header>
 
-    <!-- 6-DAY STEPPER TIMELINE TOOLBAR -->
-    <div class="neo-box stepper-container" id="stepperContainer">
-      <div class="stepper-title">
-        <span>PROGRAM DATES</span>
-        <span id="activeDayTextBadge" class="day-badge-pill">DAY 1 OF 6</span>
-      </div>
+    <!-- EVENT CONCLAVE OVERVIEW BANNER -->
+    <section class="glass-card overview-card">
+      <h2 class="overview-title">About JAI Conclave 2026</h2>
+      <p class="overview-text">
+        <strong>JAI Conclave 2026</strong> is the flagship youth diplomacy and public policy forum of <strong>VISHWAM</strong>, dedicated to fostering informed dialogue, leadership, and intellectual engagement among students, scholars, young professionals, policymakers, diplomats, academicians, and industry leaders.
+      </p>
+      <p class="overview-text">
+        The conclave provides a distinguished platform for discussions on governance, public policy, diplomacy, international affairs, economics, and leadership, encouraging the exchange of ideas and collaboration between emerging and established leaders.
+      </p>
+    </section>
+
+    <!-- 3-PHASE STEPPER CONTROLLER -->
+    <div class="glass-card stepper-container" id="stepperContainer">
       <div class="stepper-bar" id="stepperBar">
-        <button class="step-btn active" id="stepDay1" data-day="1">
-          <span class="step-num">D1</span>
-          <span class="step-date">Aug 31</span>
-        </button>
-        <button class="step-btn" id="stepDay2" data-day="2">
-          <span class="step-num">D2</span>
-          <span class="step-date">Sep 01</span>
-        </button>
-        <button class="step-btn" id="stepDay3" data-day="3">
-          <span class="step-num">D3</span>
-          <span class="step-date">Sep 02</span>
-        </button>
-        <button class="step-btn" id="stepDay4" data-day="4">
-          <span class="step-num">D4</span>
-          <span class="step-date">Sep 03</span>
-        </button>
-        <button class="step-btn" id="stepDay5" data-day="5">
-          <span class="step-num">D5</span>
-          <span class="step-date">Sep 04</span>
-        </button>
-        <button class="step-btn" id="stepDay6" data-day="6">
-          <span class="step-num">D6</span>
-          <span class="step-date">Sep 05</span>
-        </button>
+
+        <div class="step-item active" id="stepIndicator1" data-phase="1">
+          <div class="step-circle">
+            <span class="step-number">1</span>
+            <span class="step-check">✓</span>
+          </div>
+          <div class="step-label">
+            <span class="step-title">Instagram</span>
+            <span class="step-sub">Follow Handle</span>
+          </div>
+        </div>
+
+        <div class="step-divider" id="divider1"></div>
+
+        <div class="step-item" id="stepIndicator2" data-phase="2">
+          <div class="step-circle">
+            <span class="step-number">2</span>
+            <span class="step-check">✓</span>
+          </div>
+          <div class="step-label">
+            <span class="step-title">LinkedIn</span>
+            <span class="step-sub">Follow Profile</span>
+          </div>
+        </div>
+
+        <div class="step-divider" id="divider2"></div>
+
+        <div class="step-item" id="stepIndicator3" data-phase="3">
+          <div class="step-circle">
+            <span class="step-number">3</span>
+            <span class="step-check">✓</span>
+          </div>
+          <div class="step-label">
+            <span class="step-title">Registration</span>
+            <span class="step-sub">Form & Track</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- TIME-LOCK BANNER -->
-    <div class="neo-box time-lock-box" id="timeLockBox" style="display:none;">
-      <div class="lock-tag">LOCKED</div>
-      <div class="lock-title" id="timeLockTitle">ATTENDANCE LOCKED</div>
-      <p class="lock-msg" id="timeLockMsg">Attendance unlocks at 8:45 AM on the event date.</p>
-    </div>
-
-    <!-- SECTION 1: REGISTRATION FORM -->
-    <section class="neo-box" id="registrationCard">
-      <div class="card-header">
-        <div class="card-icon" id="formCardIcon">REG</div>
+    <!-- =================================================================== -->
+    <!-- PHASE 1: INSTAGRAM FOLLOW CARD -->
+    <!-- =================================================================== -->
+    <section class="glass-card phase-card" id="phase1Card">
+      <div class="card-badge instagram-badge">PHASE 1 OF 3</div>
+      <div class="social-header">
+        <div class="social-icon instagram-icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </div>
         <div>
-          <div class="card-title-text" id="formCardTitle">STUDENT REGISTRATION</div>
-          <p class="card-sub-text">Enter details to mark attendance</p>
+          <h2 class="card-title">Follow Us On Instagram</h2>
+          <p class="card-subtitle">Stay updated with JAI Conclave announcements, council reveals & guidelines</p>
         </div>
       </div>
 
-      <form id="attendanceForm" autocomplete="on">
-        <!-- Hidden Inputs -->
-        <input type="hidden" name="action" id="formActionInput" value="register" />
-        <input type="hidden" name="day" id="formDayInput" value="1" />
-        <input type="hidden" name="deviceId" id="formDeviceIdInput" value="" />
-
-        <!-- Full Name -->
-        <div class="form-group">
-          <label class="form-label" for="inputName">Full Name <span class="req">*</span></label>
-          <input type="text" id="inputName" name="name" class="form-control" placeholder="e.g. Rahul Sharma" required />
+      <div class="social-action-box">
+        <div class="handle-pill">
+          <span class="handle-icon">📸</span>
+          <span class="handle-text">@vishwamspeaks</span>
         </div>
+        
+        <a href="https://www.instagram.com/vishwamspeaks/" target="_blank" rel="noopener noreferrer" class="btn-social btn-instagram" id="btnFollowInstagram">
+          <span>FOLLOW ON INSTAGRAM</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
 
-        <!-- Phone Number -->
-        <div class="form-group">
-          <label class="form-label" for="inputPhone">Mobile Number <span class="req">*</span></label>
-          <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit mobile number"
-            inputmode="numeric" autocomplete="tel" required />
-        </div>
-
-        <!-- Email Address -->
-        <div class="form-group">
-          <label class="form-label" for="inputEmail">Email Address <span class="req">*</span></label>
-          <input type="email" id="inputEmail" name="email" class="form-control" placeholder="e.g. rahul@example.com"
-            required />
-        </div>
-
-        <!-- Branch Dropdown -->
-        <div class="form-group">
-          <label class="form-label" for="selectBranch">Branch / Department <span class="req">*</span></label>
-          <select id="selectBranch" name="branch" class="form-control" required>
-            <option value="" disabled selected>-- Select Branch --</option>
-            <option value="Artificial Intelligence">Artificial Intelligence</option>
-            <option value="Computer Science">Computer Science</option>
-            <option value="Civil Engineering">Civil Engineering</option>
-            <option value="Biomedical">Biomedical</option>
-          </select>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn-primary" id="submitRegBtn">
-          <span id="btnSpinner" class="loading-spinner" style="display:none;"></span>
-          <span id="btnText">MARK ATTENDANCE</span>
+      <div class="phase-footer">
+        <p class="verification-note">Click the button above to follow, then click below to proceed to Phase 2.</p>
+        <button type="button" class="btn-primary" id="btnNextPhase2">
+          <span>I HAVE FOLLOWED • GO TO PHASE 2</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
-      </form>
+      </div>
     </section>
 
-    <!-- SECTION 2: 1-TAP QUICK CHECK-IN CARD -->
-    <section class="neo-box" id="oneTapCard" style="display:none;">
-      <div class="card-header">
-        <div class="card-icon">TAP</div>
+    <!-- =================================================================== -->
+    <!-- PHASE 2: LINKEDIN FOLLOW CARD -->
+    <!-- =================================================================== -->
+    <section class="glass-card phase-card" id="phase2Card" style="display:none;">
+      <div class="card-badge linkedin-badge">PHASE 2 OF 3</div>
+      <div class="social-header">
+        <div class="social-icon linkedin-icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z"/>
+          </svg>
+        </div>
         <div>
-          <div class="card-title-text" id="oneTapCardTitle">QUICK CHECK-IN</div>
-          <p class="card-sub-text">1-Tap attendance for returning students</p>
+          <h2 class="card-title">Connect On LinkedIn</h2>
+          <p class="card-subtitle">Connect for official updates, networking & certificate validation</p>
         </div>
       </div>
 
-      <div class="welcome-user-box" id="welcomeUserBox">
-        <div class="user-name-title" id="welcomeNameText">Welcome Back!</div>
-        <div class="user-meta-line" id="welcomePhoneText">Phone: --</div>
-        <div class="user-meta-line" id="welcomeBranchText">Branch: --</div>
+      <div class="social-action-box">
+        <div class="handle-pill">
+          <span class="handle-icon">💼</span>
+          <span class="handle-text">Vishwam Speaks</span>
+        </div>
+
+        <a href="https://www.linkedin.com/in/vishwam-speaks-4bb7933b5" target="_blank" rel="noopener noreferrer" class="btn-social btn-linkedin" id="btnFollowLinkedin">
+          <span>CONNECT ON LINKEDIN</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
       </div>
 
-      <button type="button" class="btn-primary" id="oneTapSubmitBtn">
-        <span id="oneTapSpinner" class="loading-spinner" style="display:none;"></span>
-        <span id="oneTapBtnText">MARK ATTENDANCE</span>
-      </button>
-
-      <!-- BRANCH CORRECTION SECTION (BIOMEDICAL FIX) -->
-      <div class="branch-fix-box" id="branchFixBox">
-        <button type="button" class="branch-fix-toggle-btn" id="toggleBranchFixBtn">
-          Incorrect branch selected yesterday? Fix here
-        </button>
-        <div class="branch-fix-form" id="branchFixForm" style="display:none;">
-          <div class="branch-fix-warning">
-            IMPORTANT: This correction is specifically intended for Biomedical students who had to pick another branch yesterday. Please refrain from changing if your branch is already correct.
-          </div>
-          <div class="form-group" style="margin-bottom: 0.5rem;">
-            <label class="form-label" for="updateBranchSelect">Select Correct Branch</label>
-            <select id="updateBranchSelect" class="form-control" style="padding: 7px 10px; font-size: 0.85rem;">
-              <option value="Biomedical" selected>Biomedical</option>
-              <option value="Artificial Intelligence">Artificial Intelligence</option>
-              <option value="Computer Science">Computer Science</option>
-              <option value="Civil Engineering">Civil Engineering</option>
-            </select>
-          </div>
-          <button type="button" class="btn-secondary" id="saveBranchUpdateBtn" style="font-size:0.8rem; padding: 8px 12px; background: #000000; color: #FFFFFF;">
-            <span id="branchFixSpinner" class="loading-spinner" style="display:none; width:12px; height:12px; border-color:rgba(255,255,255,0.3); border-top-color:#fff;"></span>
-            <span id="branchFixBtnText">CONFIRM & UPDATE BRANCH</span>
+      <div class="phase-footer">
+        <div class="btn-group-nav">
+          <button type="button" class="btn-secondary" id="btnBackPhase1">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>BACK</span>
+          </button>
+          <button type="button" class="btn-primary" id="btnNextPhase3">
+            <span>I HAVE CONNECTED • GO TO REGISTRATION</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 3: STATUS BANNER CARDS -->
-
-    <!-- SUCCESS BANNER (PERSISTENT STATUS ABOVE FEEDBACK) -->
-    <div class="status-card success" id="statusSuccessCard" style="display:none;">
-      <div class="status-badge">ATTENDANCE CONFIRMED</div>
-      <div class="status-title" id="successTitle">ATTENDANCE MARKED</div>
-      <p class="status-msg" id="successMsg" style="margin-bottom:0;">Your attendance for today has been recorded successfully.</p>
-    </div>
-
-    <!-- PROXY WARNING / DEVICE MISMATCH CARD -->
-    <div class="status-card danger" id="statusMismatchCard" style="display:none;">
-      <div class="status-badge">SECURITY ALERT</div>
-      <div class="status-title">DEVICE MISMATCH</div>
-      <p class="status-msg" id="mismatchMsg">
-        This phone number is registered to a different device.
-      </p>
-      <button class="btn-secondary" id="mismatchDismissBtn">TRY AGAIN</button>
-    </div>
-
-    <!-- ALREADY SUBMITTED BANNER (PERSISTENT STATUS ABOVE FEEDBACK) -->
-    <div class="status-card warning" id="statusAlreadySubmittedCard" style="display:none;">
-      <div class="status-badge">ATTENDANCE RECORDED</div>
-      <div class="status-title">ALREADY MARKED TODAY</div>
-      <p class="status-msg" id="alreadySubmittedMsg" style="margin-bottom:0;">
-        You have already submitted your attendance for today. Share your feedback below.
-      </p>
-    </div>
-
-    <!-- PAST / FUTURE DAY NOTICE CARD (HARDLOCK) -->
-    <div class="neo-box day-notice-box" id="dayNoticeBox" style="display:none;">
-      <div class="lock-tag" id="dayNoticeTag">DAY CONCLUDED</div>
-      <div class="lock-title" id="dayNoticeTitle">DAY 1 CONCLUDED</div>
-      <p class="lock-msg" id="dayNoticeMsg">Day 1 attendance is closed. You can submit feedback below.</p>
-    </div>
-
-    <!-- SECTION 5: ANONYMOUS FEEDBACK & OPEN MIC / HELP CARD -->
-    <section class="neo-box feedback-card" id="feedbackCard">
-      <div class="card-header">
-        <div class="card-icon" style="background-color: var(--theme-accent);">MIC</div>
-        <div>
-          <div class="card-title-text">FEEDBACK & SUPPORT</div>
-          <p class="card-sub-text">Share thoughts, get hostel help, or pitch open mic</p>
-        </div>
+    <!-- =================================================================== -->
+    <!-- PHASE 3: EVENT REGISTRATION FORM & TRACK SEGMENTATION -->
+    <!-- =================================================================== -->
+    <section class="glass-card phase-card" id="phase3Card" style="display:none;">
+      <div class="card-badge registration-badge">PHASE 3 OF 3</div>
+      
+      <div class="form-header">
+        <h2 class="card-title">JAI Conclave 2026 Registration Form</h2>
+        <p class="card-subtitle">Fill in your details accurately as you would like them to appear on official records and certificates.</p>
       </div>
 
-      <!-- Privacy & Rules Notice -->
-      <div class="feedback-privacy-box">
-        <div class="privacy-tag">ANONYMOUS & CONFIDENTIAL</div>
-        <p class="privacy-text">
-          Submissions are anonymous by default to protect your privacy. If you are requesting <strong>Hostel or Personal Assistance</strong> and wish to be reached out to, you may voluntarily provide your name and contact details.
-        </p>
-      </div>
-
-      <div class="feedback-warning-box">
-        <strong>Note:</strong> Please use this feature constructively. Do not submit spam or abuse this box for pranks.
-      </div>
-
-      <form id="feedbackForm">
-        <!-- Category Selector -->
-        <div class="form-group">
-          <label class="form-label" for="feedbackCategory">Topic Category <span class="req">*</span></label>
-          <select id="feedbackCategory" name="category" class="form-control" required>
-            <option value="Day 1 Experience Feedback">Feedback on Day 1 Experience</option>
-            <option value="Hostel & Accommodation Help">Hostel & Accommodation Assistance</option>
-            <option value="Personal Help & Concerns">Personal Help & Confidential Concerns</option>
-            <option value="Open Mic Idea & Pitch">Open Mic Idea / Talent Pitch</option>
-            <option value="General Suggestion">General Suggestion / Query</option>
-          </select>
+      <!-- PARTICIPATION TRACKS SUMMARY INFO -->
+      <div class="track-summary-box">
+        <h3 class="track-summary-title">How To Participate</h3>
+        
+        <div class="track-info-item">
+          <div class="track-info-head">1. Thematic Councils (Deliberation Track)</div>
+          <p class="track-info-body">Designed on structured deliberative formats similar to high-level academic simulations. Participants will engage in moderated discussions, debates, negotiations, and policy-driven dialogue across thematic councils.</p>
+          <div class="track-tag">Best suited for: Public policy, international relations, governance, law & debate</div>
         </div>
 
-        <!-- Message -->
-        <div class="form-group">
-          <label class="form-label" for="feedbackMessage">Your Message / Query <span class="req">*</span></label>
-          <textarea 
-            id="feedbackMessage" 
-            name="message" 
-            class="form-control feedback-textarea" 
-            rows="4" 
-            placeholder="Write your experience, hostel query, or what you'd like to perform at the open mic..." 
-            required
-            maxlength="1000"
-          ></textarea>
+        <div class="track-info-item">
+          <div class="track-info-head">2. Art Orbit (Creative Track)</div>
+          <p class="track-info-body">A curated space for artistic expression across mediums. Participants may exhibit artwork or opt for a live workshop for their creative skills. Formats: Painting, sketching, digital art, photography, calligraphy, sculpture, performance art, visual forms.</p>
         </div>
 
-        <!-- Optional Contact Accordion -->
-        <div class="optional-details-box">
-          <button type="button" class="optional-toggle-btn" id="toggleOptionalBtn">
-            + Add Contact Details (Optional, for follow-up)
-          </button>
-          <div class="optional-fields" id="optionalFields" style="display:none;">
-            <div class="form-group" style="margin-top:0.5rem;">
-              <label class="form-label" for="feedbackName">Your Name (Optional)</label>
-              <input type="text" id="feedbackName" name="name" class="form-control" placeholder="e.g. Rahul Sharma" />
+        <div class="track-info-item">
+          <div class="track-info-head">3. MINT (Entrepreneurship Track)</div>
+          <p class="track-info-body">A platform for emerging entrepreneurs. Selected participants receive visibility, interaction opportunities, and a platform to present, promote, and offer products or services.</p>
+          <div class="track-tag">Ideal for: Student founders, innovators, creators & early-stage ventures</div>
+        </div>
+
+        <!-- ANCILLARY ACTIVITIES -->
+        <div class="ancillary-box">
+          <div class="ancillary-title">✨ Ancillary Activities (Open to All Participants)</div>
+          <div class="ancillary-grid">
+            <div class="ancillary-item">
+              <strong>1. SHABRI:</strong> A Civilizational Cultural Evening reflecting devotion, inclusion, and cultural continuity.
             </div>
+            <div class="ancillary-item">
+              <strong>2. FoE Mic:</strong> Open Mic for Emerging Youth Voices — spoken word, poetry, and fearless expression.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="eventRegistrationForm" autocomplete="on">
+
+        <!-- SECTION 1: PARTICIPANT INFORMATION -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">1</span>
+            <span>Participant Information</span>
+          </div>
+
+          <div class="form-grid">
+            <!-- Full Name -->
+            <div class="form-group full-width">
+              <label class="form-label" for="full_name">Full Name <span class="req">*</span></label>
+              <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Full name as required on certificates" required />
+            </div>
+
+            <!-- Email Address -->
             <div class="form-group">
-              <label class="form-label" for="feedbackBranch">Branch (Optional)</label>
-              <select id="feedbackBranch" name="branch" class="form-control">
-                <option value="">-- Select Branch (Optional) --</option>
-                <option value="Artificial Intelligence">Artificial Intelligence</option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="Civil Engineering">Civil Engineering</option>
-                <option value="Biomedical">Biomedical</option>
+              <label class="form-label" for="email_address">Email Address <span class="req">*</span></label>
+              <input type="email" id="email_address" name="email_address" class="form-control" placeholder="e.g. rahul@example.com" required />
+            </div>
+
+            <!-- Contact Number -->
+            <div class="form-group">
+              <label class="form-label" for="contact_number">Contact Number (WhatsApp) <span class="req">*</span></label>
+              <input type="tel" id="contact_number" name="contact_number" class="form-control" placeholder="10-digit phone number" maxlength="10" inputmode="numeric" required />
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+              <label class="form-label" for="gender">Gender <span class="req">*</span></label>
+              <select id="gender" name="gender" class="form-control" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
               </select>
             </div>
+
+            <!-- Age -->
             <div class="form-group">
-              <label class="form-label" for="feedbackPhone">Contact Number (Optional)</label>
-              <input type="tel" id="feedbackPhone" name="phone" class="form-control" placeholder="10-digit mobile" maxlength="10" />
+              <label class="form-label" for="age">Age <span class="req">*</span></label>
+              <input type="number" id="age" name="age" class="form-control" placeholder="e.g. 20" min="12" max="99" required />
+            </div>
+
+            <!-- College / University -->
+            <div class="form-group full-width">
+              <label class="form-label" for="college_university">College / University / School Name <span class="req">*</span></label>
+              <input type="text" id="college_university" name="college_university" class="form-control" placeholder="e.g. University Name / School Name" required />
+            </div>
+
+            <!-- College Year / Class -->
+            <div class="form-group">
+              <label class="form-label" for="current_college_year_or_class">Current Year / Class <span class="req">*</span></label>
+              <select id="current_college_year_or_class" name="current_college_year_or_class" class="form-control" required>
+                <option value="" disabled selected>Select Year/Class</option>
+                <option value="1st Year">1st Year (Undergraduate)</option>
+                <option value="2nd Year">2nd Year (Undergraduate)</option>
+                <option value="3rd Year">3rd Year (Undergraduate)</option>
+                <option value="4th Year">4th Year (Undergraduate)</option>
+                <option value="Postgraduate">Postgraduate / Masters</option>
+                <option value="School Student (Class 11-12)">School Student (Class 11-12)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <!-- City & State -->
+            <div class="form-group">
+              <label class="form-label" for="city_state">City & State <span class="req">*</span></label>
+              <input type="text" id="city_state" name="city_state" class="form-control" placeholder="e.g. New Delhi, Delhi" required />
+            </div>
+
+            <!-- Accommodation Required -->
+            <div class="form-group full-width">
+              <label class="form-label" for="accommodation_required">Do you require accommodation during the event? <span class="req">*</span></label>
+              <select id="accommodation_required" name="accommodation_required" class="form-control" required>
+                <option value="No" selected>No - I will arrange my own staying</option>
+                <option value="Yes">Yes - Accommodation required (Stay assistance)</option>
+              </select>
+              <small class="field-help">Accommodation facilities are available for participants travelling from outside. If Yes, contact <strong>9119311122</strong> for availability & booking.</small>
             </div>
           </div>
         </div>
 
-        <!-- Submit Feedback Button -->
-        <button type="submit" class="btn-primary" id="submitFeedbackBtn" style="margin-top:0.75rem;">
-          <span id="feedbackSpinner" class="loading-spinner" style="display:none;"></span>
-          <span id="feedbackBtnText">SUBMIT FEEDBACK / REQUEST</span>
-        </button>
-      </form>
+        <!-- SECTION 2: PARTICIPATION TRACK SELECTION -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">2</span>
+            <span>How Would You Like To Participate?</span>
+          </div>
 
-      <!-- Feedback Success Toast / Banner -->
-      <div class="feedback-success-banner" id="feedbackSuccessBanner" style="display:none;">
-        Thank you! Your feedback/request has been securely submitted.
-      </div>
+          <label class="form-label" style="margin-bottom:0.75rem;">Select your primary conclave track <span class="req">*</span></label>
+
+          <div class="track-selector-grid">
+            <!-- Track 1: Thematic Councils -->
+            <label class="track-card active" id="trackCardCouncil">
+              <input type="radio" name="participation_type" value="Council" checked required />
+              <div class="track-icon">🏛️</div>
+              <div class="track-info">
+                <div class="track-title">Thematic Councils</div>
+                <div class="track-desc">Deliberation, Academic Simulations, Policy Debates</div>
+              </div>
+            </label>
+
+            <!-- Track 2: Art Orbit -->
+            <label class="track-card" id="trackCardArt">
+              <input type="radio" name="participation_type" value="Art Work" />
+              <div class="track-icon">🎨</div>
+              <div class="track-info">
+                <div class="track-title">Art Orbit</div>
+                <div class="track-desc">Creative Track, Artwork Exhibition & Live Workshops</div>
+              </div>
+            </label>
+
+            <!-- Track 3: MINT -->
+            <label class="track-card" id="trackCardWorkshop">
+              <input type="radio" name="participation_type" value="Workshop" />
+              <div class="track-icon">🚀</div>
+              <div class="track-info">
+                <div class="track-title">MINT</div>
+                <div class="track-desc">Entrepreneurship Track, Startup Stalls & Pitching</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- SECTION 3: DYNAMIC DEDICATED TRACK FIELDS -->
+
+        <!-- SEGMENT A: THEMATIC COUNCILS FIELDS -->
+        <div class="form-section segment-box" id="segmentCouncil">
+          <div class="section-title segment-title">
+            <span class="segment-badge">THEMATIC COUNCILS</span>
+            <span>Council Specifics</span>
+          </div>
+          <p class="segment-notice">
+            Participants select only one council during registration. Portfolios & Agendas will be shared via email prior to the conclave. For assistance, contact <strong>9928767135</strong>.
+          </p>
+
+          <div class="form-grid" style="margin-top:1rem;">
+            <!-- Prior MUN Experience -->
+            <div class="form-group full-width">
+              <label class="form-label" for="prior_mun_experience">Do you have prior Model United Nations (MUN) experience? <span class="req">*</span></label>
+              <select id="prior_mun_experience" name="prior_mun_experience" class="form-control">
+                <option value="First Timer (0 MUNs)" selected>First Timer (0 MUNs)</option>
+                <option value="1 - 3 MUNs">1 - 3 MUNs</option>
+                <option value="4 - 8 MUNs">4 - 8 MUNs</option>
+                <option value="9+ MUNs (Veteran)">9+ MUNs (Veteran)</option>
+              </select>
+            </div>
+
+            <!-- Preferred Council (13 EXACT OPTIONS FROM SCREENSHOT) -->
+            <div class="form-group full-width">
+              <label class="form-label" for="preferred_council">Select your preferred Council <span class="req">*</span></label>
+              <select id="preferred_council" name="preferred_council" class="form-control">
+                <option value="1. Council for Peace and Security" selected>1. Council for Peace and Security</option>
+                <option value="2. Council for Climate and Planetary Resilience">2. Council for Climate and Planetary Resilience</option>
+                <option value="3. Council for Digital Ethics and Innovation">3. Council for Digital Ethics and Innovation</option>
+                <option value="4. Council for Human Dignity">4. Council for Human Dignity</option>
+                <option value="5. Next Gen Council">5. Next Gen Council</option>
+                <option value="6. Council for Global Governance">6. Council for Global Governance</option>
+                <option value="7. Council for Health and Wellbeing">7. Council for Health and Wellbeing</option>
+                <option value="8. Council for Economic Justice">8. Council for Economic Justice</option>
+                <option value="9. Council for Education and Culture">9. Council for Education and Culture</option>
+                <option value="10. Council of Nation - Builders">10. Council of Nation - Builders</option>
+                <option value="11. Council of History">11. Council of History</option>
+                <option value="12. Press X (including three categories: journalists, photographers, cartoonists)">12. Press X (including three categories: journalists, photographers, cartoonists)</option>
+                <option value="13. 'राजनीति'">13. 'राजनीति'</option>
+              </select>
+            </div>
+
+            <!-- Participation Mode -->
+            <div class="form-group full-width">
+              <label class="form-label" for="participation_mode">Participation Mode <span class="req">*</span></label>
+              <select id="participation_mode" name="participation_mode" class="form-control">
+                <option value="Delegate (Offline)" selected>Delegate (Offline Mode)</option>
+                <option value="Delegate (Online)">Delegate (Online Virtual Mode)</option>
+                <option value="Executive Board Applicant">Executive Board Applicant</option>
+                <option value="Observer">Observer</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEGMENT B: ART ORBIT FIELDS -->
+        <div class="form-section segment-box" id="segmentArt" style="display:none;">
+          <div class="section-title segment-title">
+            <span class="segment-badge art-badge">ART ORBIT</span>
+            <span>Creative Track Details</span>
+          </div>
+          <p class="segment-notice">
+            Participants may exhibit artwork, present a live workshop, or both. Display area provided in exhibition space. For queries, contact <strong>9928767135</strong>.
+          </p>
+
+          <div class="form-grid" style="margin-top:1rem;">
+            <div class="form-group full-width">
+              <label class="form-label" for="art_specifications">What is your preferred mode of participation? <span class="req">*</span></label>
+              <select id="art_specifications" name="art_specifications" class="form-control">
+                <option value="Exhibit Artwork" selected>Exhibit Artwork (Painting / Sketching / Digital / Photo)</option>
+                <option value="Live Workshop">Present a Live Workshop</option>
+                <option value="Both Exhibit & Workshop">Both Exhibit Artwork & Present Live Workshop</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEGMENT C: MINT ENTREPRENEURSHIP FIELDS -->
+        <div class="form-section segment-box" id="segmentWorkshop" style="display:none;">
+          <div class="section-title segment-title">
+            <span class="segment-badge venture-badge">MINT TRACK</span>
+            <span>Entrepreneurship Details</span>
+          </div>
+          <p class="segment-notice">
+            Base registration includes common exhibition space. For separate stall/custom setup, contact <strong>9928767135</strong> after registration.
+          </p>
+
+          <div class="form-grid" style="margin-top:1rem;">
+            <!-- Venture Name -->
+            <div class="form-group">
+              <label class="form-label" for="venture_name">Name of the venture <span class="req">*</span></label>
+              <input type="text" id="venture_name" name="venture_name" class="form-control" placeholder="Name of your startup or venture" />
+            </div>
+
+            <!-- Founder or Team Name -->
+            <div class="form-group">
+              <label class="form-label" for="founder_or_team_name">Name of the founder(s)/team <span class="req">*</span></label>
+              <input type="text" id="founder_or_team_name" name="founder_or_team_name" class="form-control" placeholder="Founder & team member names" />
+            </div>
+
+            <!-- Venture Overview -->
+            <div class="form-group full-width">
+              <label class="form-label" for="venture_overview">Provide a concise overview of your venture <span class="req">*</span></label>
+              <textarea id="venture_overview" name="venture_overview" class="form-control" rows="3" placeholder="Brief overview of product, service, or venture pitch..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: REGISTRATION PAYMENT -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">3</span>
+            <span>Registration Payment</span>
+          </div>
+
+          <!-- PAYMENT BOX WITH QR -->
+          <div class="payment-info-box">
+            <div class="payment-header-flex">
+              <div>
+                <div class="fee-badge">REGISTRATION FEE: ₹2,500/-</div>
+                <div class="payment-info-text" style="margin-top:0.4rem;">
+                  Pay the registration fee using the QR code below through any UPI app (PhonePe, Google Pay, Paytm, BHIM).
+                </div>
+              </div>
+
+              <!-- QR CODE DISPLAY -->
+              <div class="qr-container">
+                <img src="qr.png" alt="Payment UPI QR Code" class="payment-qr-img" />
+                <span class="qr-caption">Scan with any UPI App</span>
+              </div>
+            </div>
+
+            <div class="payment-steps-box">
+              <strong>After completing the payment:</strong>
+              <ol class="payment-steps-list">
+                <li>Open the successful transaction in your UPI app.</li>
+                <li>Locate the <strong>UTR / UPI Transaction ID / Transaction Reference Number</strong>.</li>
+                <li>Enter the UTR in the field below.</li>
+                <li>Upload a screenshot of the transaction showing Status: Successful, Amount: ₹2,500/-, UTR ID, Date/Time & Recipient.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <!-- Payment Email -->
+            <div class="form-group">
+              <label class="form-label" for="payment_email">Payment Email ID <span class="req">*</span></label>
+              <input type="email" id="payment_email" name="payment_email" class="form-control" placeholder="Email used for payment" required />
+            </div>
+
+            <!-- UTR / UPI Transaction ID -->
+            <div class="form-group">
+              <label class="form-label" for="utr_upi_transaction_id">Enter your UTR / UPI Transaction ID <span class="req">*</span></label>
+              <input type="text" id="utr_upi_transaction_id" name="utr_upi_transaction_id" class="form-control" placeholder="e.g. 423589104812" maxlength="24" required />
+              <small class="field-help">Enter UTR exactly as shown in your payment app. Do NOT enter UPI ID, phone number, or bank account.</small>
+            </div>
+
+            <!-- Payment Transaction Screenshot Link -->
+            <div class="form-group full-width">
+              <label class="form-label" for="payment_transaction_screenshot">Upload Transaction Screenshot Link <span class="req">*</span></label>
+              <input type="url" id="payment_transaction_screenshot" name="payment_transaction_screenshot" class="form-control" placeholder="Google Drive / Imgur / Image upload link" required />
+              <small class="field-help">Screenshot MUST show Successful status, ₹2,500/- amount, UTR ID, Date & Recipient details.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5: REFERRAL & IDENTITY DOCUMENTATION -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">4</span>
+            <span>Referrals & Identity Upload</span>
+          </div>
+
+          <div class="form-grid">
+            <!-- Referral Source -->
+            <div class="form-group">
+              <label class="form-label" for="referral_source">How did you hear about JAI Conclave? <span class="req">*</span></label>
+              <select id="referral_source" name="referral_source" class="form-control" required>
+                <option value="Instagram" selected>Instagram (@vishwamspeaks)</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Campus Ambassador">Campus Ambassador / Shakti Member</option>
+                <option value="Friend / Classmate">Friend / Classmate</option>
+                <option value="WhatsApp Group">WhatsApp Group</option>
+                <option value="College Notice">College Notice / Poster</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <!-- Shakti Referral Code -->
+            <div class="form-group">
+              <label class="form-label" for="shakti_referral_code">ShaktiCode / Referral Code (If Referred)</label>
+              <input type="text" id="shakti_referral_code" name="shakti_referral_code" class="form-control" placeholder="If referred by a Shakti member" />
+            </div>
+
+            <!-- ID Document Link -->
+            <div class="form-group full-width">
+              <label class="form-label" for="id_document">Upload your ID Link (School ID / College ID / Aadhar Card) <span class="req">*</span></label>
+              <input type="url" id="id_document" name="id_document" class="form-control" placeholder="Google Drive or Imgur link of School ID / College ID / Aadhar card" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBMIT REGISTRATION BUTTON -->
+        <div class="form-action-bar">
+          <button type="button" class="btn-secondary" id="btnBackPhase2">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>BACK</span>
+          </button>
+
+          <button type="submit" class="btn-primary btn-submit" id="submitRegBtn">
+            <span id="btnSpinner" class="loading-spinner" style="display:none;"></span>
+            <span id="btnText">SUBMIT REGISTRATION</span>
+          </button>
+        </div>
+
+      </form>
     </section>
 
+    <!-- =================================================================== -->
+    <!-- STATUS BANNER: SUCCESS & CONFIRMATION -->
+    <!-- =================================================================== -->
+    <div class="glass-card status-card success" id="statusSuccessCard" style="display:none;">
+      <div class="status-icon">🎉</div>
+      <h2 class="status-title">JAI CONCLAVE REGISTRATION SUBMITTED!</h2>
+      <p class="status-msg" id="successMsg">
+        Thank you for registering for JAI Conclave 2026 | VISHWAM. Your registration details, UTR ID, and document links have been recorded into our system.
+      </p>
+      <div class="user-summary-box" id="userSummaryBox"></div>
+      <button class="btn-primary" id="btnRegisterNew" style="margin-top:1.25rem;">REGISTER ANOTHER PARTICIPANT</button>
+    </div>
+
     <!-- MINIMAL FOOTER -->
-    <footer class="app-footer" id="appFooter" style="height: 1rem;"></footer>
+    <footer class="app-footer" id="appFooter">
+      <p>© JAI Conclave | VISHWAM • Official Event Portal</p>
+      <button type="button" class="api-config-trigger" id="apiConfigTrigger">⚙️ API Settings</button>
+    </footer>
 
   </div>
 
-  <!-- HIDDEN SECRET API CONFIG MODAL -->
+  <!-- API CONFIGURATION MODAL -->
   <div class="modal-overlay" id="configModal">
-    <div class="modal-box">
+    <div class="modal-box glass-card">
       <div class="modal-header">
-        <div class="modal-title">API CONFIGURATION</div>
-        <button class="close-modal-btn" id="closeConfigModalBtn">X</button>
+        <h3 class="modal-title">Google Apps Script API Config</h3>
+        <button class="close-modal-btn" id="closeConfigModalBtn">✕</button>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="margin-top:1rem;">
         <label class="form-label" for="apiUrlInput">Google Apps Script Web App URL</label>
-        <input type="url" id="apiUrlInput" class="form-control"
-          placeholder="https://script.google.com/macros/s/.../exec" />
+        <input type="url" id="apiUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" />
+        <small style="color:var(--text-muted); font-size:0.75rem; margin-top:4px; display:block;">
+          Paste your newly deployed Google Apps Script Web App URL here.
+        </small>
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
-        <button class="btn-primary" id="saveApiUrlBtn" style="font-size:0.95rem;">SAVE API URL</button>
-        <button class="btn-secondary btn-danger" id="resetStorageBtn" style="font-size:0.85rem;">
-          Reset Local Device Storage
-        </button>
+      <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1.25rem;">
+        <button class="btn-primary" id="saveApiUrlBtn">SAVE API URL</button>
       </div>
     </div>
   </div>
@@ -324,8 +610,8 @@
   <!-- INVISIBLE IFRAME FALLBACK -->
   <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
-  <!-- JS LOGIC SCRIPTS (Versioned to bust mobile browser caches) -->
-  <script src="app.js?v=2026.purge.noschedule"></script>
+  <!-- FRONTEND LOGIC -->
+  <script src="app.js?v=2026.jaiconclave.v2"></script>
 </body>
 
 </html>
