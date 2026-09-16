@@ -1,12 +1,13 @@
 /**
  * ==============================================================================
- * VISHWAM | JAI CONCLAVE 2026 - EVENT REGISTRATION PORTAL (app.js)
+ * VISHWAM | JAI CONCLAVE 2026 - OFFICIAL REGISTRATION PORTAL (app.js)
  * ==============================================================================
- * Streamlined 4-Phase Architecture:
- * Phase 1: Instagram Community Connect
- * Phase 2: LinkedIn Community Connect
- * Phase 3: Participant Registration Form (Thematic Councils, Art Orbit, MINT)
- * Phase 4: Dedicated Final Payment & Desk Space Verification Screen
+ * Coherent 5-Phase Architecture:
+ * - Phase 1: Instagram Community Connect
+ * - Phase 2: LinkedIn Community Connect
+ * - Phase 3: Participant Registration Form
+ * - Phase 4: Dedicated UPI Payment Screen (QR Code, Deep Link, Fee ₹2,500)
+ * - Phase 5: Official Digital Delegate Pass & Thank You Confirmation
  * ==============================================================================
  */
 
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const phase2Card = document.getElementById('phase2Card');
   const phase3Card = document.getElementById('phase3Card');
   const phase4Card = document.getElementById('phase4Card');
+  const thankYouCard = document.getElementById('thankYouCard');
 
   // Phase 1: Instagram
   const btnFollowInstagram = document.getElementById('btnFollowInstagram');
@@ -131,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnClearFile = document.getElementById('btnClearFile');
   const idDocumentInput = document.getElementById('id_document');
 
-  // Phase 4: Payment & Verification Elements
+  // Phase 4: Payment Screen Elements
   const phase4RegId = document.getElementById('phase4RegId');
   const btnCopyRegId = document.getElementById('btnCopyRegId');
   const btnCopyRegIdText = document.getElementById('btnCopyRegIdText');
@@ -146,10 +148,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnQuickEditUpi = document.getElementById('btnQuickEditUpi');
   const instRegId = document.getElementById('instRegId');
   const phase4UtrInput = document.getElementById('phase4UtrInput');
-  const btnSaveUtr = document.getElementById('btnSaveUtr');
-  const btnSaveUtrText = document.getElementById('btnSaveUtrText');
+  const btnConfirmPayment = document.getElementById('btnConfirmPayment');
   const utrUpdateStatus = document.getElementById('utrUpdateStatus');
-  const btnRegisterNew = document.getElementById('btnRegisterNew');
+  const btnBackToForm = document.getElementById('btnBackToForm');
+
+  // Phase 5: Thank You & Digital Delegate Pass Elements
+  const thankYouName = document.getElementById('thankYouName');
+  const passRegId = document.getElementById('passRegId');
+  const btnCopyPassId = document.getElementById('btnCopyPassId');
+  const btnCopyPassIdText = document.getElementById('btnCopyPassIdText');
+  const passName = document.getElementById('passName');
+  const passPhone = document.getElementById('passPhone');
+  const passTrack = document.getElementById('passTrack');
+  const passUtrItem = document.getElementById('passUtrItem');
+  const passUtrVal = document.getElementById('passUtrVal');
+  const passInstRegId = document.getElementById('passInstRegId');
+  const btnEditFromPass = document.getElementById('btnEditFromPass');
 
   // Settings Modal
   const apiConfigTrigger = document.getElementById('apiConfigTrigger');
@@ -172,25 +186,31 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPhoneValidator();
     setupPhaseNavigation();
     setupFormSubmission();
-    setupPhase4Interactions();
+    setupPaymentPhaseInteractions();
+    setupPassInteractions();
     setupModal();
 
-    // If an active registration exists, restore Phase 4 payment screen
+    // Check if participant has an active registration
     if (activeRegistration) {
-      renderPaymentScreen(activeRegistration);
-      setPhase(4);
+      if (activeRegistration.payment_confirmed) {
+        renderDelegatePass(activeRegistration);
+        setPhase(5);
+      } else {
+        renderPaymentScreen(activeRegistration);
+        setPhase(4);
+      }
     } else {
       if (currentPhase < 1 || currentPhase > 4) currentPhase = 1;
       setPhase(currentPhase);
     }
   }
 
-  // --- SOCIAL GATING & LOCK/UNLOCK ENGINE ---
+  // --- SOCIAL GATING ENGINE ---
   function setupSocialLocking() {
     const hasFollowedInsta = SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true';
     const hasConnectedLinkedin = SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true';
 
-    // Phase 1 Instagram state -> unlocks btnNextPhase2 (to LinkedIn)
+    // Phase 1 Instagram state
     if (hasFollowedInsta && btnNextPhase2) {
       btnNextPhase2.disabled = false;
       btnNextPhase2.classList.remove('btn-locked');
@@ -217,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Phase 2 LinkedIn state -> unlocks btnNextPhase3 (to Registration)
+    // Phase 2 LinkedIn state
     if (hasConnectedLinkedin && btnNextPhase3) {
       btnNextPhase3.disabled = false;
       btnNextPhase3.classList.remove('btn-locked');
@@ -245,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- OPTIONAL ID GALLERY / CAMERA FILE ENGINE WITH CLIENT DOWNSCALING ---
+  // --- OPTIONAL ID GALLERY / CAMERA DROPZONE ---
   function setupFileUpload() {
     if (!fileDropzone || !idFileUpload) return;
 
@@ -288,9 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function processFile(file) {
     if (!file) return;
 
-    // Max 10MB original file size
     if (file.size > 10 * 1024 * 1024) {
-      alert('File is larger than 10MB. Please choose a smaller image or paste a cloud link.');
+      alert('File is larger than 10MB. Please choose a smaller image.');
       return;
     }
 
@@ -299,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
-          // Client-side canvas downscale (max 1200px) to prevent layout break & memory lag
+          // Client-side canvas downscale (max 1200px)
           const maxDim = 1200;
           let width = img.width;
           let height = img.height;
@@ -319,7 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Compress to lightweight JPEG base64 (~100-200KB)
           const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
 
           selectedIdFile = {
@@ -334,7 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       reader.readAsDataURL(file);
     } else {
-      // PDF or non-image document
       const reader = new FileReader();
       reader.onload = (event) => {
         selectedIdFile = {
@@ -376,10 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- PHASE STEPPER NAVIGATION ENGINE ---
+  // --- PHASE NAVIGATION ENGINE ---
   function setPhase(phaseNum) {
     if (phaseNum < 1) phaseNum = 1;
-    if (phaseNum > 4) phaseNum = 4;
+    if (phaseNum > 5) phaseNum = 5;
 
     currentPhase = phaseNum;
     SafeStorage.setItem(STORAGE_KEYS.CURRENT_PHASE, phaseNum);
@@ -389,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phase2Card) phase2Card.style.display = 'none';
     if (phase3Card) phase3Card.style.display = 'none';
     if (phase4Card) phase4Card.style.display = 'none';
+    if (thankYouCard) thankYouCard.style.display = 'none';
 
     // Update Stepper Bar Indicators
     updateStepperUI(phaseNum);
@@ -402,6 +420,8 @@ document.addEventListener('DOMContentLoaded', () => {
       phase3Card.style.display = 'block';
     } else if (phaseNum === 4 && phase4Card) {
       phase4Card.style.display = 'block';
+    } else if (phaseNum === 5 && thankYouCard) {
+      thankYouCard.style.display = 'block';
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -444,32 +464,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepIndicator4) {
       stepIndicator4.classList.remove('active', 'completed');
       if (phaseNum === 4) stepIndicator4.classList.add('active');
+      else if (phaseNum === 5) stepIndicator4.classList.add('completed');
     }
   }
 
   function setupPhaseNavigation() {
-    // Phase 1 (Instagram) -> Phase 2 (LinkedIn)
+    // Phase 1 -> Phase 2
     if (btnNextPhase2) {
       btnNextPhase2.addEventListener('click', () => {
         if (!btnNextPhase2.disabled) setPhase(2);
       });
     }
 
-    // Phase 2 (LinkedIn) -> Phase 1 (Instagram)
+    // Phase 2 -> Phase 1
     if (btnBackPhase1) {
       btnBackPhase1.addEventListener('click', () => setPhase(1));
     }
 
-    // Phase 2 (LinkedIn) -> Phase 3 (Registration Form)
+    // Phase 2 -> Phase 3
     if (btnNextPhase3) {
       btnNextPhase3.addEventListener('click', () => {
         if (!btnNextPhase3.disabled) setPhase(3);
       });
     }
 
-    // Phase 3 (Registration Form) -> Phase 2 (LinkedIn)
+    // Phase 3 -> Phase 2
     if (btnBackPhase2) {
       btnBackPhase2.addEventListener('click', () => setPhase(2));
+    }
+
+    // Phase 4 -> Phase 3 (Edit registration details)
+    if (btnBackToForm) {
+      btnBackToForm.addEventListener('click', () => setPhase(3));
     }
 
     // Stepper click handlers
@@ -488,12 +514,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (stepIndicator4) {
       stepIndicator4.addEventListener('click', () => {
-        if (currentPhase === 4 || activeRegistration) setPhase(4);
+        if (activeRegistration) setPhase(4);
       });
     }
   }
 
-  // --- DYNAMIC TRACK SELECTORS (THEMATIC COUNCILS, ART ORBIT, MINT) ---
+  // --- DYNAMIC TRACK SELECTORS ---
   function setupTrackSelectors() {
     const trackRadios = document.querySelectorAll('input[name="participation_type"]');
 
@@ -567,11 +593,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return `JAI-26-${randNum}`;
   }
 
-  // --- FORM SUBMISSION & BACKEND SYNC ---
+  // --- FORM SUBMISSION & SINGLE POST DISPATCH ---
   function setupFormSubmission() {
     if (eventRegistrationForm) {
       eventRegistrationForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Prevent double submit
+        if (submitRegBtn && submitRegBtn.disabled) return;
 
         const formData = new FormData(eventRegistrationForm);
         const payload = {};
@@ -602,8 +631,8 @@ document.addEventListener('DOMContentLoaded', () => {
           payload.id_file_type = selectedIdFile.type;
         }
 
-        // Generate Registration ID
-        const regId = generateRegistrationId();
+        // Use existing registration ID if editing, or generate new one
+        const regId = (activeRegistration && activeRegistration.registration_id) ? activeRegistration.registration_id : generateRegistrationId();
         payload.registration_id = regId;
         payload.registration_fee = 'INR 2,500';
         payload.payment_confirmation = 'Pending';
@@ -617,8 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await sendToBackend(payload);
           }
         } catch (err) {
-          console.warn('Background sync note:', err);
-          if (activeApiUrl) fallbackIframeSubmission(payload);
+          console.warn('Backend sync note:', err);
         } finally {
           setLoading(false);
         }
@@ -627,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeRegistration = payload;
         SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(payload));
 
-        // Render Phase 4 Payment & Verification Screen
+        // Render Phase 4 Dedicated Payment Screen
         renderPaymentScreen(payload);
         setPhase(4);
       });
@@ -643,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function sendToBackend(payload) {
     if (!activeApiUrl) return;
 
-    // Send ONE single clean POST request (handles both JSON and base64)
+    // Send ONE single clean POST request (handles both JSON and base64 payloads)
     try {
       await fetch(activeApiUrl, {
         method: 'POST',
@@ -654,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       return;
     } catch (postErr) {
-      console.warn('POST failed, attempting single GET fallback:', postErr);
+      console.warn('POST failed, attempting fallback GET:', postErr);
     }
 
     // Only if POST threw an exception and there is no large base64 file, attempt single GET
@@ -672,12 +700,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- PHASE 4: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
+  // --- PHASE 4: DEDICATED PAYMENT SCREEN ---
   function renderPaymentScreen(payload) {
     const regId = payload.registration_id || 'JAI-26-0000';
-
-    const phase4ThankYouName = document.getElementById('phase4ThankYouName');
-    if (phase4ThankYouName) phase4ThankYouName.textContent = payload.full_name || 'Delegate';
 
     if (phase4RegId) phase4RegId.textContent = regId;
     if (instRegId) instRegId.textContent = regId;
@@ -688,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (displayUpiId) displayUpiId.textContent = activeUpiId;
 
     // Construct clean UPI Deep Link
-    // Format: upi://pay?pa=VPA&pn=NAME&am=2500&cu=INR&tn=REG_ID
     const cleanUpi = activeUpiId.trim();
     const cleanPn = 'VISHWAM';
     const upiUri = `upi://pay?pa=${encodeURIComponent(cleanUpi)}&pn=${encodeURIComponent(cleanPn)}&am=${encodeURIComponent(REGISTRATION_FEE)}&cu=INR&tn=${encodeURIComponent(regId)}`;
@@ -724,8 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- PHASE 4 INTERACTIVE CONTROLS ---
-  function setupPhase4Interactions() {
+  function setupPaymentPhaseInteractions() {
     // Copy Registration ID
     if (btnCopyRegId) {
       btnCopyRegId.addEventListener('click', () => {
@@ -751,65 +774,74 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Save Optional UTR Reference
-    if (btnSaveUtr && phase4UtrInput) {
-      btnSaveUtr.addEventListener('click', async () => {
-        const utrVal = phase4UtrInput.value.trim();
-        if (!utrVal) {
-          if (utrUpdateStatus) {
-            utrUpdateStatus.style.color = '#FFA01A';
-            utrUpdateStatus.textContent = 'Please enter your 12-digit UTR number.';
-          }
-          return;
-        }
+    // Primary Action: "I HAVE COMPLETED PAYMENT"
+    if (btnConfirmPayment) {
+      btnConfirmPayment.addEventListener('click', async () => {
+        const utrVal = phase4UtrInput ? phase4UtrInput.value.trim() : '';
 
-        if (btnSaveUtrText) btnSaveUtrText.textContent = 'SAVING...';
-        btnSaveUtr.disabled = true;
-
-        const updatePayload = {
-          action: 'update_utr',
-          registration_id: activeRegistration ? activeRegistration.registration_id : '',
-          contact_number: activeRegistration ? activeRegistration.contact_number : '',
-          utr_upi_transaction_id: utrVal
-        };
-
-        try {
-          if (activeApiUrl) await sendToBackend(updatePayload);
-          if (activeRegistration) {
+        if (activeRegistration) {
+          activeRegistration.payment_confirmed = true;
+          if (utrVal) {
             activeRegistration.utr_upi_transaction_id = utrVal;
-            SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(activeRegistration));
           }
-          if (utrUpdateStatus) {
-            utrUpdateStatus.style.color = '#10B981';
-            utrUpdateStatus.textContent = 'UTR recorded. Desk volunteer will verify your transaction.';
+          SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(activeRegistration));
+
+          // Sync UTR to backend if provided
+          if (utrVal && activeApiUrl) {
+            const updatePayload = {
+              action: 'update_utr',
+              registration_id: activeRegistration.registration_id,
+              contact_number: activeRegistration.contact_number,
+              utr_upi_transaction_id: utrVal
+            };
+            sendToBackend(updatePayload);
           }
-        } catch (e) {
-          if (utrUpdateStatus) {
-            utrUpdateStatus.style.color = '#10B981';
-            utrUpdateStatus.textContent = 'UTR recorded locally. Show this to the volunteer.';
-          }
-        } finally {
-          if (btnSaveUtrText) btnSaveUtrText.textContent = 'SAVED';
-          setTimeout(() => {
-            if (btnSaveUtrText) btnSaveUtrText.textContent = 'SAVE UTR';
-            btnSaveUtr.disabled = false;
-          }, 2500);
         }
+
+        // Render and transition to Phase 5 (Thank You & Digital Delegate Pass)
+        renderDelegatePass(activeRegistration);
+        setPhase(5);
+      });
+    }
+  }
+
+  // --- PHASE 5: THANK YOU & DIGITAL DELEGATE PASS ---
+  function renderDelegatePass(payload) {
+    if (!payload) return;
+
+    const regId = payload.registration_id || 'JAI-26-0000';
+
+    if (thankYouName) thankYouName.textContent = payload.full_name || 'Delegate';
+    if (passRegId) passRegId.textContent = regId;
+    if (passInstRegId) passInstRegId.textContent = regId;
+    if (passName) passName.textContent = payload.full_name || '--';
+    if (passPhone) passPhone.textContent = payload.contact_number || '--';
+    if (passTrack) passTrack.textContent = payload.participation_type || 'Thematic Councils';
+
+    if (passUtrItem && passUtrVal) {
+      if (payload.utr_upi_transaction_id) {
+        passUtrVal.textContent = payload.utr_upi_transaction_id;
+        passUtrItem.style.display = 'flex';
+      } else {
+        passUtrItem.style.display = 'none';
+      }
+    }
+  }
+
+  function setupPassInteractions() {
+    // Copy Pass ID
+    if (btnCopyPassId) {
+      btnCopyPassId.addEventListener('click', () => {
+        const textToCopy = passRegId ? passRegId.textContent : '';
+        copyToClipboard(textToCopy, btnCopyPassIdText, 'COPIED!', 'COPY ID');
       });
     }
 
-    // Register Another Participant
-    if (btnRegisterNew) {
-      btnRegisterNew.addEventListener('click', () => {
-        if (confirm('Start a new registration? The current screen will be cleared.')) {
-          SafeStorage.removeItem(STORAGE_KEYS.USER_REGISTRATION);
-          activeRegistration = null;
-          resetFile();
-          if (eventRegistrationForm) eventRegistrationForm.reset();
-          if (phase4UtrInput) phase4UtrInput.value = '';
-          if (utrUpdateStatus) utrUpdateStatus.textContent = '';
-          updateTrackSegments('Thematic Councils');
-          setPhase(1);
+    // Edit from Pass (Discreet text link)
+    if (btnEditFromPass) {
+      btnEditFromPass.addEventListener('click', () => {
+        if (confirm('Do you want to edit your registration details?')) {
+          setPhase(3);
         }
       });
     }
@@ -846,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(tempInput);
   }
 
-  // --- DYNAMIC REAL-TIME PHONE VALIDATOR ---
+  // --- PHONE VALIDATOR ---
   function setupPhoneValidator() {
     const contactInput = document.getElementById('contact_number');
     const phoneIndicator = document.getElementById('phoneIndicator');

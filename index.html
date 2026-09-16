@@ -18,7 +18,7 @@
   <meta http-equiv="Expires" content="0" />
 
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2026.jaiconclave.v8" />
+  <link rel="stylesheet" href="style.css?v=2026.jaiconclave.v9" />
 </head>
 
 <body>
@@ -73,7 +73,7 @@
             <span class="step-number">4</span>
             <span class="step-check">✓</span>
           </div>
-          <span class="step-title">Confirmation</span>
+          <span class="step-title">Payment</span>
         </div>
 
       </div>
@@ -109,7 +109,7 @@
       <div class="phase-footer">
         <p class="verification-note" id="instaLockNote">Please click the Instagram link above to unlock the next step.</p>
         <button type="button" class="btn-primary" id="btnNextPhase2" disabled>
-          <span id="btnNextPhase2Text">FOLLOW ON LINKEDIN</span>
+          <span id="btnNextPhase2Text">CONTINUE TO LINKEDIN</span>
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
@@ -164,7 +164,7 @@
       <div class="form-header">
         <h2 class="card-title">Participant Registration</h2>
         <p class="card-intro">
-          JAI Conclave 2026 is the flagship youth diplomacy and public policy forum organized by <strong>VISHWAM</strong>. It brings together students, young professionals, scholars, policymakers, and leaders across governance, diplomacy, economics, and contemporary issues.
+          JAI Conclave 2026 is the flagship youth diplomacy and public policy forum organized by <strong>VISHWAM</strong>, bringing together students, scholars, policymakers, and leaders across governance, diplomacy, economics, and contemporary issues.
         </p>
       </div>
 
@@ -401,7 +401,7 @@
         <!-- SECTION 4: REFERRAL & IDENTITY DOCUMENTATION -->
         <div class="form-section">
           <div class="section-title">
-            <span class="section-num">4</span>
+            <span class="section-num">3</span>
             <span>Referrals & Identity</span>
           </div>
 
@@ -447,15 +447,6 @@
                 </div>
               </div>
 
-              <!-- Direct Google Drive Folder Link -->
-              <div class="drive-folder-pill">
-                <span>📁 Official Upload Folder:</span>
-                <a href="https://drive.google.com/drive/folders/1zsI2DV10KLTwGixUYlzkxJZQ3wkZSmpr" target="_blank" rel="noopener noreferrer" class="drive-folder-link">
-                  <span>Open Drive Folder</span>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-              </div>
-
               <!-- Or Paste Cloud Link -->
               <div class="or-divider"><span>OR PASTE DRIVE / CLOUD LINK</span></div>
               <input type="url" id="id_document" name="id_document" class="form-control" placeholder="Google Drive, Imgur, or cloud URL (Optional)" />
@@ -489,7 +480,7 @@
 
           <button type="submit" class="btn-primary btn-submit" id="submitRegBtn">
             <span id="btnSpinner" class="loading-spinner" style="display:none;"></span>
-            <span id="btnText">CONFIRM & VIEW DELEGATE PASS</span>
+            <span id="btnText">PROCEED TO PAYMENT</span>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
@@ -498,13 +489,12 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- PHASE 4: PERSONALIZED THANK YOU & DESK VERIFICATION PORTAL -->
+    <!-- PHASE 4: DEDICATED PAYMENT SCREEN -->
     <!-- =================================================================== -->
     <section class="glass-card phase-card" id="phase4Card" style="display:none;">
-      <div class="thank-you-header">
-        <div class="thank-you-badge">🎉 REGISTRATION CONFIRMED</div>
-        <h2 class="card-title thank-you-title">Thank You, <span id="phase4ThankYouName">Delegate</span>!</h2>
-        <p class="card-subtitle">Your seat for <strong>JAI Conclave 2026</strong> has been recorded. Please complete your registration fee below and keep your Registration ID handy for desk check-in.</p>
+      <div class="form-header">
+        <h2 class="card-title">Registration Fee Payment</h2>
+        <p class="card-subtitle">Your registration has been recorded. Please complete the delegate fee of ₹2,500 using UPI below.</p>
       </div>
 
       <!-- REGISTRATION ID & DETAILS CARD -->
@@ -546,7 +536,7 @@
       <div class="fee-display-card">
         <div class="fee-amount-label">FINAL REGISTRATION FEE</div>
         <div class="fee-amount-value">₹2,500</div>
-        <div class="fee-amount-note">Includes access to selected track, keynote sessions, ancillary events, delegate kit & certificate</div>
+        <div class="fee-amount-note">Includes access to selected track, keynote sessions, cultural evenings, delegate kit & certificate</div>
       </div>
 
       <!-- ACTION 1: 1-TAP PAY VIA UPI DEEP LINK -->
@@ -567,13 +557,12 @@
         <!-- UPI ID COPY ROW -->
         <div class="upi-id-pill">
           <span class="upi-pill-label">UPI ID:</span>
-          <span class="upi-pill-value" id="displayUpiId">vishwam@upi</span>
+          <span class="upi-pill-value" id="displayUpiId">9928767135@upi</span>
           <button type="button" class="btn-copy-small" id="btnCopyUpiId">
             <span id="btnCopyUpiIdText">COPY</span>
           </button>
           <button type="button" class="btn-edit-upi" id="btnQuickEditUpi" title="Change UPI ID">EDIT</button>
         </div>
-        <p class="upi-id-note">Update with your active bank VPA in Settings to ensure scanning works seamlessly.</p>
       </div>
 
       <!-- DESK VERIFICATION INSTRUCTIONS -->
@@ -581,36 +570,114 @@
         <div class="desk-inst-title">Desk Verification Instructions</div>
         <ol class="desk-inst-list">
           <li>
-            <strong>Complete payment:</strong> Pay ₹2,500 using the UPI button above or by scanning the QR code.
+            <strong>1. Complete payment:</strong> Pay ₹2,500 using the UPI button above or by scanning the QR code.
           </li>
           <li>
-            <strong>Present at the registration desk:</strong> Show this screen displaying your <strong>Registration ID (<span id="instRegId">JAI-26-XXXX</span>)</strong> along with your UPI payment success screen to any of the 4 desk volunteers.
+            <strong>2. Confirm below:</strong> Enter your 12-digit UTR reference (if available) and click <em>"I Have Completed Payment"</em>.
           </li>
           <li>
-            <strong>Verification & kit collection:</strong> The volunteer will cross-verify the payment in the master Google Sheet, mark your status as verified, and issue your official conclave credential.
+            <strong>3. Collect badge:</strong> Present your Registration ID (<span id="instRegId">JAI-26-XXXX</span>) to any desk volunteer at the venue to receive your official delegate kit.
           </li>
         </ol>
       </div>
 
-      <!-- OPTIONAL UTR LOGGING ACCORDION -->
-      <details class="utr-accordion">
-        <summary class="utr-summary">Already paid? Add your UTR number (Optional)</summary>
-        <div class="utr-content">
-          <p class="utr-note">If you have completed the payment, you may optionally submit your 12-digit UPI transaction reference / UTR number for faster verification.</p>
-          <div class="utr-form-row">
-            <input type="text" id="phase4UtrInput" class="form-control" placeholder="12-digit UTR (e.g. 423589104812)" maxlength="24" />
-            <button type="button" class="btn-secondary" id="btnSaveUtr">
-              <span id="btnSaveUtrText">SAVE UTR</span>
-            </button>
-          </div>
-          <div id="utrUpdateStatus" class="field-help" style="margin-top:0.4rem;"></div>
+      <!-- UTR ENTRY & FINAL CONFIRMATION BUTTON -->
+      <div class="payment-confirm-box">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label" for="phase4UtrInput">UPI Transaction Reference / UTR Number <span class="opt-badge">(Optional)</span></label>
+          <input type="text" id="phase4UtrInput" class="form-control" placeholder="12-digit UTR (e.g. 423589104812)" maxlength="24" />
         </div>
-      </details>
 
-      <!-- SUPPORT & DESK CONTACT -->
+        <button type="button" class="btn-primary btn-confirm-payment" id="btnConfirmPayment">
+          <span>I HAVE COMPLETED PAYMENT</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        
+        <div id="utrUpdateStatus" class="field-help" style="margin-top:0.5rem; text-align:center;"></div>
+      </div>
+
+      <div class="form-action-bar" style="margin-top:1.25rem;">
+        <button type="button" class="btn-secondary" id="btnBackToForm">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>EDIT REGISTRATION</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- PHASE 5: DEDICATED THANK YOU & DIGITAL DELEGATE PASS -->
+    <!-- =================================================================== -->
+    <section class="glass-card phase-card thank-you-card" id="thankYouCard" style="display:none;">
+      <div class="thank-you-header">
+        <div class="thank-you-badge">🎉 REGISTRATION & PAYMENT SUBMITTED</div>
+        <h2 class="card-title thank-you-title">Thank You, <span id="thankYouName">Delegate</span>!</h2>
+        <p class="card-subtitle">We are excited to welcome you to <strong>JAI Conclave 2026</strong>. Your digital delegate receipt is generated below.</p>
+      </div>
+
+      <!-- OFFICIAL DIGITAL DELEGATE PASS -->
+      <div class="delegate-pass-card">
+        <div class="pass-top-bar">
+          <span class="pass-brand">JAI CONCLAVE 2026 • OFFICIAL PASS</span>
+          <span class="pass-badge-pill">DELEGATE</span>
+        </div>
+
+        <div class="pass-id-block">
+          <div class="pass-id-label">REGISTRATION ID</div>
+          <div class="pass-id-number" id="passRegId">JAI-26-0000</div>
+          <button type="button" class="btn-copy-small" id="btnCopyPassId">
+            <span id="btnCopyPassIdText">COPY ID</span>
+          </button>
+        </div>
+
+        <div class="pass-grid">
+          <div class="pass-grid-item">
+            <span class="pass-label">Participant Name</span>
+            <strong class="pass-val" id="passName">--</strong>
+          </div>
+          <div class="pass-grid-item">
+            <span class="pass-label">Contact Number</span>
+            <strong class="pass-val" id="passPhone">--</strong>
+          </div>
+          <div class="pass-grid-item">
+            <span class="pass-label">Participation Track</span>
+            <strong class="pass-val" id="passTrack">--</strong>
+          </div>
+          <div class="pass-grid-item">
+            <span class="pass-label">Registration Fee</span>
+            <strong class="pass-val gold-text">₹2,500 (Submitted)</strong>
+          </div>
+          <div class="pass-grid-item full-width" id="passUtrItem" style="display:none;">
+            <span class="pass-label">UTR Reference</span>
+            <strong class="pass-val" id="passUtrVal">--</strong>
+          </div>
+        </div>
+
+        <div class="pass-status-row">
+          <span class="status-indicator-dot"></span>
+          <span>Status: Submitted for Desk Verification</span>
+        </div>
+      </div>
+
+      <!-- DESK INSTRUCTIONS FOR VOLUNTEERS -->
+      <div class="desk-instructions-card" style="margin-top:1.25rem;">
+        <div class="desk-inst-title">What to Do Next (Desk Space Check-In)</div>
+        <ol class="desk-inst-list">
+          <li>
+            <strong>Keep this screen saved:</strong> Screenshot or keep this page bookmarked on your phone.
+          </li>
+          <li>
+            <strong>Present at venue desk:</strong> Show your <strong>Registration ID (<span id="passInstRegId">JAI-26-XXXX</span>)</strong> to any of the 4 volunteers at the conclave registration desk.
+          </li>
+          <li>
+            <strong>Collect kit & badge:</strong> The desk volunteer will verify your entry in the master Google Sheet and hand over your official delegate credential and welcome kit.
+          </li>
+        </ol>
+      </div>
+
+      <!-- SUPPORT & COMMUNITY LINKS -->
       <div class="delegate-support-box">
-        <div class="support-title">Need help with your registration or payment?</div>
-        <p class="support-text">Desk volunteers and event coordinators are available to assist you.</p>
+        <div class="support-title">Need Help or Have Questions?</div>
+        <p class="support-text">Our team is active and ready to help you with directions, accommodation, or queries.</p>
         <div class="support-actions">
           <a href="https://wa.me/919119311122?text=Hello%20VISHWAM,%20I%20have%20registered%20for%20JAI%20Conclave%202026." target="_blank" rel="noopener noreferrer" class="btn-support-wa">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
@@ -623,7 +690,7 @@
       </div>
 
       <div class="re-register-link-wrap">
-        <button type="button" class="btn-text-link" id="btnRegisterNew">Need to edit details or submit again?</button>
+        <button type="button" class="btn-text-link" id="btnEditFromPass">Need to edit details or re-register?</button>
       </div>
     </section>
 
@@ -653,9 +720,9 @@
 
       <div class="form-group" style="margin-top:1rem;">
         <label class="form-label" for="upiIdInput">Recipient UPI ID (VPA)</label>
-        <input type="text" id="upiIdInput" class="form-control" placeholder="e.g. vishwamspeaks@upi" />
+        <input type="text" id="upiIdInput" class="form-control" placeholder="e.g. 9928767135@upi" />
         <small style="color:var(--text-muted); font-size:0.75rem; margin-top:4px; display:block;">
-          UPI ID embedded in the dynamic QR code and "Pay via UPI App" deep link.
+          UPI ID embedded in dynamic QR and payment link.
         </small>
       </div>
 
@@ -672,7 +739,7 @@
   <script src="qrcode.min.js"></script>
 
   <!-- FRONTEND LOGIC -->
-  <script src="app.js?v=2026.jaiconclave.v8"></script>
+  <script src="app.js?v=2026.jaiconclave.v9"></script>
 </body>
 
 </html>

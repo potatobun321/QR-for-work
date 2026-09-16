@@ -1607,52 +1607,45 @@ select.form-control option {
   color: var(--crisp-white);
 }
 
-/* OPTIONAL UTR ACCORDION */
-.utr-accordion {
+/* PAYMENT CONFIRMATION ACTION BOX */
+.payment-confirm-box {
   background-color: var(--card-surface);
   border: 2px solid var(--border-input);
   border-radius: var(--radius-block-md);
-  padding: 0.85rem 1.15rem;
-  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.85rem;
 }
 
-.utr-summary {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--executive-gold);
-  cursor: pointer;
-  outline: none;
-  user-select: none;
+.btn-confirm-payment {
+  background-color: var(--success-emerald) !important;
+  border-color: #059669 !important;
+  color: #FFFFFF !important;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.02rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  padding: 1.1rem 1.5rem;
+  min-height: 54px;
 }
 
-.utr-content {
-  margin-top: 0.85rem;
-  padding-top: 0.85rem;
-  border-top: 2px dashed var(--border-input);
+.btn-confirm-payment:hover {
+  background-color: #059669 !important;
+  transform: translateY(-1px);
 }
 
-.utr-note {
-  font-size: 0.78rem;
-  color: var(--muted-text);
-  margin-bottom: 0.65rem;
-  line-height: 1.45;
+/* ==============================================================================
+   PHASE 5: DEDICATED THANK YOU & OFFICIAL DIGITAL DELEGATE PASS
+   ============================================================================== */
+.thank-you-card {
+  border-top: 4px solid var(--success-emerald);
 }
 
-.utr-form-row {
-  display: flex;
-  gap: 0.65rem;
+.thank-you-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-.utr-form-row .form-control {
-  flex: 1;
-}
-
-.utr-form-row .btn-secondary {
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-/* THANK YOU / CONFIRMATION HEADER */
 .thank-you-badge {
   display: inline-block;
   font-family: 'Outfit', sans-serif;
@@ -1661,8 +1654,8 @@ select.form-control option {
   letter-spacing: 0.12em;
   color: var(--success-emerald);
   background-color: rgba(16, 185, 129, 0.15);
-  border: 1px solid var(--success-emerald);
-  padding: 0.25rem 0.65rem;
+  border: 1.5px solid var(--success-emerald);
+  padding: 0.3rem 0.85rem;
   border-radius: var(--radius-block-sm);
   margin-bottom: 0.65rem;
   text-transform: uppercase;
@@ -1670,38 +1663,133 @@ select.form-control option {
 
 .thank-you-title {
   color: var(--crisp-white);
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   line-height: 1.25;
 }
 
-/* DRIVE FOLDER PILL */
-.drive-folder-pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.65rem;
-  padding: 0.55rem 0.85rem;
-  background-color: var(--midnight-base);
-  border: 1px dashed var(--border-input);
-  border-radius: var(--radius-block-sm);
-  font-size: 0.78rem;
-  color: var(--slate-body);
+/* OFFICIAL DIGITAL DELEGATE PASS CARD */
+.delegate-pass-card {
+  background-color: var(--card-surface);
+  border: 2px solid var(--executive-gold);
+  border-top: 4px solid var(--executive-gold);
+  border-radius: var(--radius-block-md);
+  padding: 1.5rem;
+  margin-top: 1.25rem;
+  box-shadow: var(--shadow-block);
 }
 
-.drive-folder-link {
-  display: inline-flex;
+.pass-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.85rem;
+  border-bottom: 1.5px dashed var(--border-input);
+  margin-bottom: 1.15rem;
+}
+
+.pass-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--executive-gold);
+  text-transform: uppercase;
+}
+
+.pass-badge-pill {
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 0.2rem 0.65rem;
+  background-color: var(--lotus-orange);
+  color: #FFFFFF;
+  border-radius: var(--radius-block-sm);
+  letter-spacing: 0.08em;
+}
+
+.pass-id-block {
+  text-align: center;
+  background-color: var(--midnight-base);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+  padding: 1.15rem 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  color: var(--executive-gold);
-  font-weight: 800;
-  text-decoration: none;
-  font-size: 0.78rem;
 }
 
-.drive-folder-link:hover {
-  text-decoration: underline;
+.pass-id-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--muted-text);
+  text-transform: uppercase;
+}
+
+.pass-id-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--crisp-white);
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+
+.pass-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.pass-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background-color: var(--midnight-base);
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-block-sm);
+  border: 1px solid var(--border-input);
+}
+
+.pass-grid-item.full-width {
+  grid-column: span 2;
+}
+
+.pass-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pass-val {
+  font-size: 0.925rem;
+  color: var(--crisp-white);
+}
+
+.pass-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  background-color: rgba(16, 185, 129, 0.15);
+  border: 1.5px solid var(--success-emerald);
+  border-radius: var(--radius-block-sm);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--success-emerald);
+  letter-spacing: 0.04em;
+}
+
+.status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--success-emerald);
+  border-radius: var(--radius-block-sm);
 }
 
 /* DELEGATE SUPPORT & COMMUNITY CARD */
