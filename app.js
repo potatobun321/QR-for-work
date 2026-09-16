@@ -314,8 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
         college_university: formData.get('college_university')?.toString().trim() || '',
         current_college_year_or_class: formData.get('current_college_year_or_class')?.toString().trim() || '',
         city_state: formData.get('city_state')?.toString().trim() || '',
-        referral_source: formData.get('referral_source')?.toString().trim() || 'Instagram',
-        shakti_referral_code: formData.get('shakti_referral_code')?.toString().trim() || '',
         timestamp: new Date().toISOString()
       };
 

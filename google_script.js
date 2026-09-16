@@ -13,21 +13,19 @@
 // Target Master Sheet Tab Name
 var SHEET_NAME = "Haifa_Registrations";
 
-// Standard Haifa House Schema (13 Columns)
+// Standard Haifa House Schema (11 Columns)
 var MASTER_HEADERS = [
   "Timestamp",                       // Col A (1)
   "Registration ID",                 // Col B (2)
   "Full Name",                       // Col C (3)
-  "Contact Number",                  // Col G (4)
-  "Email Address",                   // Col F (5)
-  "Gender",                          // Col D (6)
-  "Age",                             // Col E (7)
+  "Contact Number",                  // Col D (4)
+  "Email Address",                   // Col E (5)
+  "Gender",                          // Col F (6)
+  "Age",                             // Col G (7)
   "College / University",            // Col H (8)
   "Current College Year / Class",    // Col I (9)
   "City / State",                    // Col J (10)
-  "Referral Source",                 // Col K (11)
-  "Shakti Referral Code",            // Col L (12)
-  "Status / Notes"                   // Col M (13)
+  "Status / Notes"                   // Col K (11)
 ];
 
 function getRegistrationsSheet(ss) {
@@ -144,8 +142,6 @@ function processHaifaRegistration(params) {
   var college = params.college_university || "";
   var yearClass = params.current_college_year_or_class || "";
   var cityState = params.city_state || "";
-  var referralSource = params.referral_source || "Instagram";
-  var shaktiCode = params.shakti_referral_code || "";
   var statusNotes = "Free Entry Confirmed";
   var timestamp = new Date();
 
@@ -182,11 +178,6 @@ function processHaifaRegistration(params) {
     "city": cityState,
     "state": cityState,
     "location": cityState,
-    "referralsource": referralSource,
-    "source": referralSource,
-    "shaktireferralcode": shaktiCode,
-    "shakticode": shaktiCode,
-    "referralcode": shaktiCode,
     "statusnotes": statusNotes,
     "status": statusNotes,
     "notes": statusNotes
