@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const val = window.localStorage.getItem(key);
           if (val !== null) return val;
         }
-      } catch (e) {}
+      } catch (e) { }
       return memoryStore[key] || null;
     },
     setItem: (key, value) => {
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof window !== 'undefined' && window.localStorage) {
           window.localStorage.setItem(key, value);
         }
-      } catch (e) {}
+      } catch (e) { }
       memoryStore[key] = String(value);
     },
     removeItem: (key) => {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof window !== 'undefined' && window.localStorage) {
           window.localStorage.removeItem(key);
         }
-      } catch (e) {}
+      } catch (e) { }
       delete memoryStore[key];
     }
   };
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const rawReg = SafeStorage.getItem(STORAGE_KEYS.USER_REGISTRATION);
     if (rawReg) activeRegistration = JSON.parse(rawReg);
-  } catch (e) {}
+  } catch (e) { }
 
   // Selected file state for optional ID upload
   let selectedIdFile = {
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const utrUpdateStatus = document.getElementById('utrUpdateStatus');
   const btnRegisterNew = document.getElementById('btnRegisterNew');
 
-  // Modal
+  // Modal & Briefing Elements
   const apiConfigTrigger = document.getElementById('apiConfigTrigger');
   const configModal = document.getElementById('configModal');
   const closeConfigModalBtn = document.getElementById('closeConfigModalBtn');
@@ -146,13 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const upiIdInput = document.getElementById('upiIdInput');
   const saveConfigBtn = document.getElementById('saveConfigBtn');
 
+  const btnOpenBriefing = document.getElementById('btnOpenBriefing');
+  const briefingModal = document.getElementById('briefingModal');
+  const closeBriefingModalBtn = document.getElementById('closeBriefingModalBtn');
+
+  // Track Contextual Brief Elements
+  const trackBriefBadge = document.getElementById('trackBriefBadge');
+  const trackBriefText = document.getElementById('trackBriefText');
+  const trackBriefCard = document.getElementById('trackBriefCard');
+
   // --- INITIALIZATION ---
   init();
 
   function init() {
     if (apiUrlInput) apiUrlInput.value = activeApiUrl;
     if (upiIdInput) upiIdInput.value = activeUpiId;
-    
+
     setupSocialLocking();
     setupTrackSelectors();
     setupFileUpload();
@@ -161,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormSubmission();
     setupPhase4Interactions();
     setupModal();
+    setupBriefingModal();
 
     // If an active registration exists and current phase is 4, restore payment screen
     if (currentPhase === 4 && activeRegistration) {
@@ -322,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function setPhase(phaseNum) {
     if (phaseNum < 1) phaseNum = 1;
     if (phaseNum > 4) phaseNum = 4;
-    
+
     currentPhase = phaseNum;
     SafeStorage.setItem(STORAGE_KEYS.CURRENT_PHASE, phaseNum);
 
@@ -462,12 +472,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (trackValue === 'Council') {
       if (trackCardCouncil) trackCardCouncil.classList.add('active');
       if (segmentCouncil) segmentCouncil.style.display = 'block';
+      if (trackBriefBadge) {
+        trackBriefBadge.textContent = 'COUNCILS TRACK BRIEF';
+        trackBriefBadge.className = 'track-brief-badge council-badge';
+      }
+      if (trackBriefText) {
+        trackBriefText.textContent = 'Structured discussions, debates, negotiations, and policy-oriented deliberations through thematic councils. Intended for participants interested in public policy, international relations, governance, law, diplomacy, and debate.';
+      }
+      if (trackBriefCard) trackBriefCard.className = 'track-brief-card council-active';
     } else if (trackValue === 'Art Work') {
       if (trackCardArt) trackCardArt.classList.add('active');
       if (segmentArt) segmentArt.style.display = 'block';
+      if (trackBriefBadge) {
+        trackBriefBadge.textContent = 'ART ORBIT BRIEF';
+        trackBriefBadge.className = 'track-brief-badge art-badge';
+      }
+      if (trackBriefText) {
+        trackBriefText.textContent = 'A creative platform to showcase artistic work or participate in live workshops. Formats include painting, sketching, digital art, photography, calligraphy, sculpture, and performance art.';
+      }
+      if (trackBriefCard) trackBriefCard.className = 'track-brief-card art-active';
     } else if (trackValue === 'Workshop') {
       if (trackCardWorkshop) trackCardWorkshop.classList.add('active');
       if (segmentWorkshop) segmentWorkshop.style.display = 'block';
+      if (trackBriefBadge) {
+        trackBriefBadge.textContent = 'MINT TRACK BRIEF';
+        trackBriefBadge.className = 'track-brief-badge venture-badge';
+      }
+      if (trackBriefText) {
+        trackBriefText.textContent = 'A platform for student founders, young entrepreneurs, innovators, and creators to showcase products, services, or ventures, interact with attendees, and gain visibility.';
+      }
+      if (trackBriefCard) trackBriefCard.className = 'track-brief-card mint-active';
     }
   }
 
@@ -562,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify(payload)
         });
         return;
-      } catch (e) {}
+      } catch (e) { }
     }
 
     const queryString = new URLSearchParams(payload).toString();
@@ -577,13 +611,13 @@ document.addEventListener('DOMContentLoaded', () => {
         mode: 'no-cors',
         cache: 'no-cache'
       });
-    } catch (e) {}
+    } catch (e) { }
 
     try {
       if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
         navigator.sendBeacon(requestUrl);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function fallbackIframeSubmission(payload) {
@@ -773,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         if (textElement) textElement.textContent = defaultLabel;
       }, 2000);
-    } catch (e) {}
+    } catch (e) { }
     document.body.removeChild(tempInput);
   }
 
@@ -844,6 +878,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         alert('Settings saved. The active UPI QR code and payment link have been updated.');
         configModal.classList.remove('active');
+      });
+    }
+  }
+
+  // --- CONCLAVE BRIEFING MODAL ENGINE ---
+  function setupBriefingModal() {
+    if (btnOpenBriefing && briefingModal) {
+      btnOpenBriefing.addEventListener('click', () => {
+        briefingModal.classList.add('active');
+      });
+    }
+
+    if (closeBriefingModalBtn && briefingModal) {
+      closeBriefingModalBtn.addEventListener('click', () => {
+        briefingModal.classList.remove('active');
+      });
+    }
+
+    if (briefingModal) {
+      briefingModal.addEventListener('click', (e) => {
+        if (e.target === briefingModal) {
+          briefingModal.classList.remove('active');
+        }
       });
     }
   }

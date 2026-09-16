@@ -18,7 +18,7 @@
   <meta http-equiv="Expires" content="0" />
 
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2026.jaiconclave.v5" />
+  <link rel="stylesheet" href="style.css?v=2026.jaiconclave.v6" />
 </head>
 
 <body>
@@ -32,6 +32,10 @@
       </div>
       <h1 class="app-title" id="appHeaderTitle">JAI CONCLAVE 2026</h1>
       <div class="header-org">BY VISHWAM</div>
+      <button type="button" class="btn-briefing" id="btnOpenBriefing" title="Conclave & Track Briefing">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>CONCLAVE & TRACK BRIEFING</span>
+      </button>
     </header>
 
     <!-- 4-PHASE STEPPER CONTROLLER -->
@@ -300,6 +304,14 @@
               </div>
             </label>
           </div>
+
+          <!-- DYNAMIC CONTEXTUAL TRACK BRIEF -->
+          <div class="track-brief-card council-active" id="trackBriefCard">
+            <div class="track-brief-badge council-badge" id="trackBriefBadge">COUNCILS TRACK BRIEF</div>
+            <p class="track-brief-text" id="trackBriefText">
+              Structured discussions, debates, negotiations, and policy-oriented deliberations through thematic councils. Intended for participants interested in public policy, international relations, governance, law, diplomacy, and debate.
+            </p>
+          </div>
         </div>
 
         <!-- SECTION 3: DYNAMIC DEDICATED TRACK FIELDS -->
@@ -457,6 +469,34 @@
           </div>
         </div>
 
+        <!-- CULTURAL EVENINGS & EVENT ARCHITECTURE (COLLAPSIBLE / NON-INTRUSIVE) -->
+        <details class="cultural-accordion">
+          <summary class="cultural-summary">
+            <span class="cultural-summary-left">
+              <span class="cultural-summary-tag">INCLUDED</span>
+              <span class="cultural-summary-title">Special Cultural Evenings: SHABRI & FoE Mic</span>
+            </span>
+            <span class="cultural-chevron">▾</span>
+          </summary>
+          <div class="cultural-content">
+            <div class="cultural-cards-row">
+              <div class="cultural-card">
+                <div class="cultural-badge shabri-badge">CULTURAL EVENING</div>
+                <h4 class="cultural-name">SHABRI</h4>
+                <p class="cultural-text">A civilizational and cultural evening focused on devotion, inclusion, and cultural continuity.</p>
+              </div>
+              <div class="cultural-card">
+                <div class="cultural-badge foe-badge">OPEN-MIC PLATFORM</div>
+                <h4 class="cultural-name">FoE Mic</h4>
+                <p class="cultural-text">An open-mic platform for emerging youth voices featuring poetry, spoken word, storytelling, and creative expression.</p>
+              </div>
+            </div>
+            <div class="conclave-note">
+              Organized by VISHWAM — Combining policy discussions, youth participation, entrepreneurship, arts, culture, and creative expression within a single 3-day event.
+            </div>
+          </div>
+        </details>
+
         <!-- SUBMIT REGISTRATION BUTTON -->
         <div class="form-action-bar">
           <button type="button" class="btn-secondary" id="btnBackPhase2">
@@ -600,6 +640,70 @@
 
   </div>
 
+  <!-- CONCLAVE & TRACK BRIEFING MODAL (ON-DEMAND / ZERO CLUTTER) -->
+  <div class="modal-overlay" id="briefingModal">
+    <div class="modal-box briefing-modal-box glass-card">
+      <div class="modal-header">
+        <h3 class="modal-title">JAI Conclave 2026 Dossier</h3>
+        <button class="close-modal-btn" id="closeBriefingModalBtn">✕</button>
+      </div>
+
+      <div class="briefing-content-scroll">
+        <!-- Section 1: Overview -->
+        <div class="briefing-block">
+          <div class="briefing-block-label">CONCLAVE OVERVIEW</div>
+          <p class="briefing-text">
+            <strong>JAI Conclave 2026</strong> is the flagship youth diplomacy and public policy forum organized by <strong>VISHWAM</strong>.
+          </p>
+          <p class="briefing-text">
+            The conclave brings together students, young professionals, scholars, policymakers, diplomats, academicians, and industry leaders. Broad focus areas include governance, public policy, diplomacy, international affairs, economics, leadership, and contemporary issues.
+          </p>
+        </div>
+
+        <!-- Section 2: Tracks -->
+        <div class="briefing-block">
+          <div class="briefing-block-label">PARTICIPATION TRACKS</div>
+          
+          <div class="briefing-subcard track-card-councils">
+            <div class="briefing-track-head">1. Council Participation / Deliberation Track</div>
+            <p class="briefing-text">Participants take part in structured discussions, debates, negotiations, and policy-oriented deliberations through thematic councils. This track is primarily intended for participants interested in public policy, international relations, governance, law, diplomacy, and debate.</p>
+          </div>
+
+          <div class="briefing-subcard track-card-art">
+            <div class="briefing-track-head">2. Art Orbit / Creative Track</div>
+            <p class="briefing-text">A creative platform where participants can showcase their artistic work or participate in live workshops. Formats can include painting, sketching, digital art, photography, calligraphy, sculpture, performance art, and other creative forms.</p>
+          </div>
+
+          <div class="briefing-subcard track-card-mint">
+            <div class="briefing-track-head">3. MINT / Entrepreneurship Track</div>
+            <p class="briefing-text">A platform for student founders, young entrepreneurs, innovators, and creators to showcase their products, services, or ventures. Selected participants receive an opportunity to present their work, interact with attendees, and gain visibility.</p>
+          </div>
+        </div>
+
+        <!-- Section 3: Cultural Activities -->
+        <div class="briefing-block">
+          <div class="briefing-block-label">CULTURAL & YOUTH-EXPRESSION ACTIVITIES</div>
+          <div class="briefing-subcard cultural-card-shabri">
+            <div class="briefing-track-head cultural-title-gold">SHABRI</div>
+            <p class="briefing-text">A civilizational and cultural evening focused on devotion, inclusion, and cultural continuity.</p>
+          </div>
+
+          <div class="briefing-subcard cultural-card-foe">
+            <div class="briefing-track-head cultural-title-gold">FoE Mic</div>
+            <p class="briefing-text">An open-mic platform for emerging youth voices, featuring poetry, spoken word, storytelling, and other forms of expression.</p>
+          </div>
+        </div>
+
+        <!-- Section 4: Architecture -->
+        <div class="briefing-block architecture-block">
+          <p class="briefing-text">
+            <strong>VISHWAM</strong> is the organization behind JAI Conclave. JAI Conclave combines policy discussions, youth participation, entrepreneurship, arts, culture, and creative expression within a single three-day event.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONFIGURATION MODAL -->
   <div class="modal-overlay" id="configModal">
     <div class="modal-box glass-card">
@@ -637,7 +741,7 @@
   <script src="qrcode.min.js"></script>
 
   <!-- FRONTEND LOGIC -->
-  <script src="app.js?v=2026.jaiconclave.v5"></script>
+  <script src="app.js?v=2026.jaiconclave.v6"></script>
 </body>
 
 </html>

@@ -145,6 +145,30 @@ body {
   margin-top: 0.35rem;
 }
 
+.btn-briefing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  padding: 0.45rem 1rem;
+  background-color: var(--card-surface);
+  border: 1.5px solid var(--border-input);
+  color: var(--executive-gold);
+  border-radius: var(--radius-block-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-briefing:hover {
+  background-color: var(--card-surface-elevated);
+  border-color: var(--lotus-orange);
+  color: #FFFFFF;
+}
+
 /* BLOCKY 4-PHASE STEPPER BAR */
 .stepper-container {
   padding: 1.25rem 1.5rem;
@@ -686,6 +710,51 @@ select.form-control option {
   color: #C084FC;
 }
 
+/* DYNAMIC CONTEXTUAL TRACK BRIEF */
+.track-brief-card {
+  margin-top: 0.95rem;
+  padding: 0.95rem 1.15rem;
+  background-color: var(--midnight-base);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.track-brief-card.council-active {
+  border-color: var(--globe-teal);
+}
+
+.track-brief-card.art-active {
+  border-color: var(--lotus-orange);
+}
+
+.track-brief-card.mint-active {
+  border-color: var(--shakti-purple);
+}
+
+.track-brief-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-block-sm);
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.council-badge {
+  background-color: rgba(13, 148, 136, 0.2);
+  color: var(--globe-teal);
+  border: 1px solid var(--globe-teal);
+}
+
+.track-brief-text {
+  font-size: 0.825rem;
+  color: var(--slate-body);
+  line-height: 1.5;
+}
+
 /* DYNAMIC PHONE VALIDATOR FEEDBACK */
 .phone-indicator {
   font-size: 0.725rem;
@@ -848,6 +917,123 @@ select.form-control option {
 .or-divider span {
   padding: 0 0.75rem;
   letter-spacing: 0.08em;
+}
+
+/* CULTURAL EVENINGS ACCORDION (BLOCKY & NON-INTRUSIVE) */
+.cultural-accordion {
+  background-color: var(--card-surface);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-block-md);
+  padding: 0.85rem 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.cultural-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.cultural-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cultural-summary-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-block-sm);
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--executive-gold);
+  border: 1px solid var(--executive-gold);
+  letter-spacing: 0.06em;
+}
+
+.cultural-summary-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--crisp-white);
+}
+
+.cultural-chevron {
+  font-size: 0.85rem;
+  color: var(--muted-text);
+  transition: transform var(--transition-fast);
+}
+
+.cultural-accordion[open] .cultural-chevron {
+  transform: rotate(180deg);
+}
+
+.cultural-content {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 2px dashed var(--border-input);
+}
+
+.cultural-cards-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.cultural-card {
+  background-color: var(--midnight-base);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+  padding: 0.85rem;
+}
+
+.cultural-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-block-sm);
+  margin-bottom: 0.35rem;
+}
+
+.shabri-badge {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--executive-gold);
+  border: 1px solid var(--executive-gold);
+}
+
+.foe-badge {
+  background-color: rgba(234, 88, 12, 0.15);
+  color: var(--orange-glow);
+  border: 1px solid var(--orange-glow);
+}
+
+.cultural-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+  margin-bottom: 0.25rem;
+}
+
+.cultural-text {
+  font-size: 0.78rem;
+  color: var(--slate-body);
+  line-height: 1.45;
+}
+
+.conclave-note {
+  font-size: 0.78rem;
+  color: var(--muted-text);
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--midnight-base);
+  border-left: 3px solid var(--executive-gold);
+  border-radius: 0 var(--radius-block-sm) var(--radius-block-sm) 0;
+  line-height: 1.45;
 }
 
 .form-action-bar {
@@ -1321,6 +1507,94 @@ select.form-control option {
   cursor: pointer;
 }
 
+/* CONCLAVE BRIEFING DOSSIER MODAL */
+.briefing-modal-box {
+  max-width: 620px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.briefing-content-scroll {
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.briefing-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.briefing-block-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--executive-gold);
+  border-bottom: 2px solid var(--border-input);
+  padding-bottom: 0.35rem;
+}
+
+.briefing-text {
+  font-size: 0.86rem;
+  color: var(--slate-body);
+  line-height: 1.55;
+}
+
+.briefing-text strong {
+  color: var(--crisp-white);
+}
+
+.briefing-subcard {
+  background-color: var(--midnight-base);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.track-card-councils {
+  border-left: 4px solid var(--globe-teal);
+}
+
+.track-card-art {
+  border-left: 4px solid var(--lotus-orange);
+}
+
+.track-card-mint {
+  border-left: 4px solid var(--shakti-purple);
+}
+
+.cultural-card-shabri,
+.cultural-card-foe {
+  border-left: 4px solid var(--executive-gold);
+}
+
+.briefing-track-head {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+}
+
+.cultural-title-gold {
+  color: var(--executive-gold);
+}
+
+.architecture-block {
+  background-color: var(--card-surface);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+  padding: 0.85rem 1rem;
+}
+
 /* LOADING SPINNER */
 .loading-spinner {
   width: 20px;
@@ -1470,6 +1744,11 @@ select.form-control option {
 
   .card-subtitle {
     font-size: 0.825rem;
+  }
+
+  .cultural-cards-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem;
   }
 
   .app-footer {
