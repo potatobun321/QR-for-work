@@ -303,6 +303,12 @@ body {
   text-transform: uppercase;
 }
 
+.briefing-badge {
+  background-color: rgba(234, 88, 12, 0.2);
+  color: var(--lotus-orange);
+  border: 1px solid var(--lotus-orange);
+}
+
 .instagram-badge {
   background-color: rgba(234, 88, 12, 0.2);
   color: var(--lotus-orange);
@@ -327,7 +333,280 @@ body {
   border: 1px solid var(--success-emerald);
 }
 
-/* SOCIAL HEADERS & ACTIONS (PHASE 1 & PHASE 2) */
+/* FIRST-HAND CONCLAVE BRIEFING & TRACKS (PHASE 1) */
+.briefing-firsthand-card {
+  border: 2px solid var(--border-input);
+  border-top: 4px solid var(--lotus-orange);
+  background-color: var(--navy-primary);
+  box-shadow: var(--shadow-block);
+}
+
+.briefing-hero {
+  padding-bottom: 1.25rem;
+  border-bottom: 1.5px solid var(--border-input);
+  margin-bottom: 1.5rem;
+}
+
+.briefing-org-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--executive-gold);
+  letter-spacing: 0.1em;
+  margin-top: 0.4rem;
+  margin-bottom: 0.85rem;
+  text-transform: uppercase;
+}
+
+.briefing-lead {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--slate-body);
+}
+
+.briefing-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.15rem;
+}
+
+.section-badge-pill {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--lotus-orange);
+  text-transform: uppercase;
+}
+
+.briefing-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+  line-height: 1.3;
+}
+
+.firsthand-tracks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  margin-bottom: 1.75rem;
+}
+
+.firsthand-track-card {
+  background-color: var(--midnight-base);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-block-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: border-color var(--transition-fast);
+}
+
+.firsthand-track-card:hover {
+  border-color: var(--border-hover);
+}
+
+.track-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.track-number-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--muted-text);
+  letter-spacing: 0.08em;
+}
+
+.track-theme-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-block-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.council-tag {
+  background-color: rgba(13, 148, 136, 0.18);
+  color: var(--globe-teal);
+  border: 1px solid var(--globe-teal);
+}
+
+.art-tag {
+  background-color: rgba(234, 88, 12, 0.18);
+  color: var(--lotus-orange);
+  border: 1px solid var(--lotus-orange);
+}
+
+.mint-tag {
+  background-color: rgba(124, 58, 237, 0.18);
+  color: var(--shakti-purple);
+  border: 1px solid var(--shakti-purple);
+}
+
+.firsthand-track-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+  line-height: 1.35;
+}
+
+.firsthand-track-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--slate-body);
+}
+
+.track-highlights-box {
+  margin-top: 0.35rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--card-surface);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-block-sm);
+}
+
+.highlights-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  color: var(--executive-gold);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.highlights-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.highlights-chips span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--midnight-base);
+  border: 1px solid var(--border-input);
+  color: var(--slate-body);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-block-sm);
+}
+
+/* FIRSTHAND CULTURAL PANEL */
+.firsthand-cultural-panel {
+  background-color: var(--card-surface);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-block-md);
+  padding: 1.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.cultural-panel-head {
+  margin-bottom: 1.15rem;
+}
+
+.cultural-tag-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--executive-gold);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+}
+
+.cultural-panel-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+}
+
+.cultural-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.firsthand-cultural-card {
+  background-color: var(--midnight-base);
+  border: 1.5px solid var(--border-input);
+  border-left: 4px solid var(--executive-gold);
+  border-radius: var(--radius-block-sm);
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cultural-pill-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--executive-gold);
+  text-transform: uppercase;
+}
+
+.cultural-item-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--crisp-white);
+}
+
+.cultural-item-desc {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--slate-body);
+}
+
+/* ARCHITECTURE BANNER */
+.firsthand-arch-banner {
+  background-color: var(--midnight-base);
+  border: 2px solid var(--border-input);
+  border-top: 3px solid var(--globe-teal);
+  border-radius: var(--radius-block-md);
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.arch-brand-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--globe-teal);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.arch-brand-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--slate-body);
+}
+
+.btn-start-registration {
+  width: 100%;
+  font-size: 1rem;
+  padding: 1.05rem 1.5rem;
+  justify-content: center;
+}
+
+.phase5-actions {
+  margin-top: 0.85rem;
+}
+
+/* SOCIAL HEADERS & ACTIONS (PHASE 2 & PHASE 3) */
 .social-header {
   display: flex;
   align-items: center;
@@ -1746,7 +2025,8 @@ select.form-control option {
     font-size: 0.825rem;
   }
 
-  .cultural-cards-row {
+  .cultural-cards-row,
+  .cultural-panel-grid {
     grid-template-columns: 1fr !important;
     gap: 0.65rem;
   }

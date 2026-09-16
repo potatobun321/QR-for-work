@@ -73,26 +73,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepIndicator2 = document.getElementById('stepIndicator2');
   const stepIndicator3 = document.getElementById('stepIndicator3');
   const stepIndicator4 = document.getElementById('stepIndicator4');
+  const stepIndicator5 = document.getElementById('stepIndicator5');
   const divider1 = document.getElementById('divider1');
   const divider2 = document.getElementById('divider2');
   const divider3 = document.getElementById('divider3');
+  const divider4 = document.getElementById('divider4');
 
   const phase1Card = document.getElementById('phase1Card');
   const phase2Card = document.getElementById('phase2Card');
   const phase3Card = document.getElementById('phase3Card');
   const phase4Card = document.getElementById('phase4Card');
+  const phase5Card = document.getElementById('phase5Card');
 
-  // Social Redirection & Gating
-  const btnFollowInstagram = document.getElementById('btnFollowInstagram');
+  // Navigation & Social Redirection
   const btnNextPhase2 = document.getElementById('btnNextPhase2');
+  const btnBackPhase1 = document.getElementById('btnBackPhase1');
+
+  const btnFollowInstagram = document.getElementById('btnFollowInstagram');
+  const btnNextPhase3 = document.getElementById('btnNextPhase3');
   const instaLockNote = document.getElementById('instaLockNote');
 
+  const btnBackPhase2 = document.getElementById('btnBackPhase2');
   const btnFollowLinkedin = document.getElementById('btnFollowLinkedin');
-  const btnNextPhase3 = document.getElementById('btnNextPhase3');
+  const btnNextPhase4 = document.getElementById('btnNextPhase4');
   const linkedinLockNote = document.getElementById('linkedinLockNote');
 
-  const btnBackPhase1 = document.getElementById('btnBackPhase1');
-  const btnBackPhase2 = document.getElementById('btnBackPhase2');
+  const btnBackPhase3 = document.getElementById('btnBackPhase3');
 
   // Registration Form
   const eventRegistrationForm = document.getElementById('eventRegistrationForm');
@@ -118,13 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnClearFile = document.getElementById('btnClearFile');
   const idDocumentInput = document.getElementById('id_document');
 
-  // Phase 4 Elements
-  const phase4RegId = document.getElementById('phase4RegId');
+  // Phase 5 Elements
+  const phase5RegId = document.getElementById('phase5RegId');
   const btnCopyRegId = document.getElementById('btnCopyRegId');
   const btnCopyRegIdText = document.getElementById('btnCopyRegIdText');
-  const phase4Name = document.getElementById('phase4Name');
-  const phase4Phone = document.getElementById('phase4Phone');
-  const phase4Track = document.getElementById('phase4Track');
+  const phase5Name = document.getElementById('phase5Name');
+  const phase5Phone = document.getElementById('phase5Phone');
+  const phase5Track = document.getElementById('phase5Track');
   const btnUpiDeepLink = document.getElementById('btnUpiDeepLink');
   const dynamicQrContainer = document.getElementById('dynamicQrContainer');
   const displayUpiId = document.getElementById('displayUpiId');
@@ -132,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCopyUpiIdText = document.getElementById('btnCopyUpiIdText');
   const btnQuickEditUpi = document.getElementById('btnQuickEditUpi');
   const instRegId = document.getElementById('instRegId');
-  const phase4UtrInput = document.getElementById('phase4UtrInput');
+  const phase5UtrInput = document.getElementById('phase5UtrInput');
   const btnSaveUtr = document.getElementById('btnSaveUtr');
   const btnSaveUtrText = document.getElementById('btnSaveUtrText');
   const utrUpdateStatus = document.getElementById('utrUpdateStatus');
@@ -168,16 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPhoneValidator();
     setupPhaseNavigation();
     setupFormSubmission();
-    setupPhase4Interactions();
+    setupPhase5Interactions();
     setupModal();
     setupBriefingModal();
 
-    // If an active registration exists and current phase is 4, restore payment screen
-    if (currentPhase === 4 && activeRegistration) {
+    // If an active registration exists, restore Phase 5 payment screen
+    if (activeRegistration) {
       renderPaymentScreen(activeRegistration);
-      setPhase(4);
+      setPhase(5);
     } else {
-      if (currentPhase > 3) currentPhase = 3;
+      if (currentPhase > 4) currentPhase = 1;
       setPhase(currentPhase);
     }
   }
@@ -187,25 +193,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasFollowedInsta = SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true';
     const hasConnectedLinkedin = SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true';
 
-    // Phase 1 Instagram state
-    if (hasFollowedInsta && btnNextPhase2) {
-      btnNextPhase2.disabled = false;
-      btnNextPhase2.classList.remove('btn-locked');
+    // Phase 2 Instagram state -> unlocks btnNextPhase3 (to LinkedIn)
+    if (hasFollowedInsta && btnNextPhase3) {
+      btnNextPhase3.disabled = false;
+      btnNextPhase3.classList.remove('btn-locked');
       if (instaLockNote) {
         instaLockNote.textContent = 'Instagram link opened. Click below to continue.';
         instaLockNote.style.color = '#10B981';
       }
-    } else if (btnNextPhase2) {
-      btnNextPhase2.disabled = true;
-      btnNextPhase2.classList.add('btn-locked');
+    } else if (btnNextPhase3) {
+      btnNextPhase3.disabled = true;
+      btnNextPhase3.classList.add('btn-locked');
     }
 
     if (btnFollowInstagram) {
       btnFollowInstagram.addEventListener('click', () => {
         SafeStorage.setItem(STORAGE_KEYS.FOLLOWED_INSTA, 'true');
-        if (btnNextPhase2) {
-          btnNextPhase2.disabled = false;
-          btnNextPhase2.classList.remove('btn-locked');
+        if (btnNextPhase3) {
+          btnNextPhase3.disabled = false;
+          btnNextPhase3.classList.remove('btn-locked');
         }
         if (instaLockNote) {
           instaLockNote.textContent = 'Instagram link opened. Click below to continue to LinkedIn.';
@@ -214,25 +220,25 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Phase 2 LinkedIn state
-    if (hasConnectedLinkedin && btnNextPhase3) {
-      btnNextPhase3.disabled = false;
-      btnNextPhase3.classList.remove('btn-locked');
+    // Phase 3 LinkedIn state -> unlocks btnNextPhase4 (to Registration)
+    if (hasConnectedLinkedin && btnNextPhase4) {
+      btnNextPhase4.disabled = false;
+      btnNextPhase4.classList.remove('btn-locked');
       if (linkedinLockNote) {
         linkedinLockNote.textContent = 'LinkedIn link opened. Click below to continue to registration.';
         linkedinLockNote.style.color = '#10B981';
       }
-    } else if (btnNextPhase3) {
-      btnNextPhase3.disabled = true;
-      btnNextPhase3.classList.add('btn-locked');
+    } else if (btnNextPhase4) {
+      btnNextPhase4.disabled = true;
+      btnNextPhase4.classList.add('btn-locked');
     }
 
     if (btnFollowLinkedin) {
       btnFollowLinkedin.addEventListener('click', () => {
         SafeStorage.setItem(STORAGE_KEYS.CONNECTED_LINKEDIN, 'true');
-        if (btnNextPhase3) {
-          btnNextPhase3.disabled = false;
-          btnNextPhase3.classList.remove('btn-locked');
+        if (btnNextPhase4) {
+          btnNextPhase4.disabled = false;
+          btnNextPhase4.classList.remove('btn-locked');
         }
         if (linkedinLockNote) {
           linkedinLockNote.textContent = 'LinkedIn link opened. Click below to continue to registration.';
@@ -331,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- PHASE STEPPER NAVIGATION ENGINE ---
   function setPhase(phaseNum) {
     if (phaseNum < 1) phaseNum = 1;
-    if (phaseNum > 4) phaseNum = 4;
+    if (phaseNum > 5) phaseNum = 5;
 
     currentPhase = phaseNum;
     SafeStorage.setItem(STORAGE_KEYS.CURRENT_PHASE, phaseNum);
@@ -341,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phase2Card) phase2Card.style.display = 'none';
     if (phase3Card) phase3Card.style.display = 'none';
     if (phase4Card) phase4Card.style.display = 'none';
+    if (phase5Card) phase5Card.style.display = 'none';
 
     // Update Stepper Bar Indicators
     updateStepperUI(phaseNum);
@@ -354,6 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
       phase3Card.style.display = 'block';
     } else if (phaseNum === 4 && phase4Card) {
       phase4Card.style.display = 'block';
+    } else if (phaseNum === 5 && phase5Card) {
+      phase5Card.style.display = 'block';
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -396,43 +405,70 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepIndicator4) {
       stepIndicator4.classList.remove('active', 'completed');
       if (phaseNum === 4) stepIndicator4.classList.add('active');
+      else if (phaseNum > 4) stepIndicator4.classList.add('completed');
+    }
+
+    if (divider4) {
+      if (phaseNum > 4) divider4.classList.add('completed');
+      else divider4.classList.remove('completed');
+    }
+
+    if (stepIndicator5) {
+      stepIndicator5.classList.remove('active', 'completed');
+      if (phaseNum === 5) stepIndicator5.classList.add('active');
     }
   }
 
   function setupPhaseNavigation() {
+    // Phase 1 -> Phase 2
     if (btnNextPhase2) {
-      btnNextPhase2.addEventListener('click', () => {
-        if (!btnNextPhase2.disabled) setPhase(2);
-      });
+      btnNextPhase2.addEventListener('click', () => setPhase(2));
     }
+    // Phase 2 -> Phase 1
+    if (btnBackPhase1) {
+      btnBackPhase1.addEventListener('click', () => setPhase(1));
+    }
+    // Phase 2 -> Phase 3
     if (btnNextPhase3) {
       btnNextPhase3.addEventListener('click', () => {
         if (!btnNextPhase3.disabled) setPhase(3);
       });
     }
-    if (btnBackPhase1) {
-      btnBackPhase1.addEventListener('click', () => setPhase(1));
-    }
+    // Phase 3 -> Phase 2
     if (btnBackPhase2) {
       btnBackPhase2.addEventListener('click', () => setPhase(2));
     }
+    // Phase 3 -> Phase 4
+    if (btnNextPhase4) {
+      btnNextPhase4.addEventListener('click', () => {
+        if (!btnNextPhase4.disabled) setPhase(4);
+      });
+    }
+    // Phase 4 -> Phase 3
+    if (btnBackPhase3) {
+      btnBackPhase3.addEventListener('click', () => setPhase(3));
+    }
 
+    // Stepper click handlers
     if (stepIndicator1) {
       stepIndicator1.addEventListener('click', () => setPhase(1));
     }
     if (stepIndicator2) {
-      stepIndicator2.addEventListener('click', () => {
-        if (SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true') setPhase(2);
-      });
+      stepIndicator2.addEventListener('click', () => setPhase(2));
     }
     if (stepIndicator3) {
       stepIndicator3.addEventListener('click', () => {
-        if (SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true') setPhase(3);
+        if (SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true') setPhase(3);
       });
     }
     if (stepIndicator4) {
       stepIndicator4.addEventListener('click', () => {
-        if (currentPhase === 4 || activeRegistration) setPhase(4);
+        if (SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true') setPhase(4);
+      });
+    }
+    if (stepIndicator5) {
+      stepIndicator5.addEventListener('click', () => {
+        if (currentPhase === 5 || activeRegistration) setPhase(5);
       });
     }
   }
@@ -571,9 +607,9 @@ document.addEventListener('DOMContentLoaded', () => {
         activeRegistration = payload;
         SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(payload));
 
-        // Render Phase 4 Payment & Verification UI
+        // Render Phase 5 Payment & Verification UI
         renderPaymentScreen(payload);
-        setPhase(4);
+        setPhase(5);
       });
     }
   }
@@ -641,15 +677,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(form);
   }
 
-  // --- PHASE 4: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
+  // --- PHASE 5: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
   function renderPaymentScreen(payload) {
     const regId = payload.registration_id || 'JAI-26-0000';
 
-    if (phase4RegId) phase4RegId.textContent = regId;
+    if (phase5RegId) phase5RegId.textContent = regId;
     if (instRegId) instRegId.textContent = regId;
-    if (phase4Name) phase4Name.textContent = payload.full_name || '--';
-    if (phase4Phone) phase4Phone.textContent = payload.contact_number || '--';
-    if (phase4Track) phase4Track.textContent = payload.participation_type || 'Council';
+    if (phase5Name) phase5Name.textContent = payload.full_name || '--';
+    if (phase5Phone) phase5Phone.textContent = payload.contact_number || '--';
+    if (phase5Track) phase5Track.textContent = payload.participation_type || 'Council';
 
     if (displayUpiId) displayUpiId.textContent = activeUpiId;
 
@@ -690,12 +726,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- PHASE 4 INTERACTIVE CONTROLS ---
-  function setupPhase4Interactions() {
+  // --- PHASE 5 INTERACTIVE CONTROLS ---
+  function setupPhase5Interactions() {
     // Copy Registration ID
     if (btnCopyRegId) {
       btnCopyRegId.addEventListener('click', () => {
-        const textToCopy = phase4RegId ? phase4RegId.textContent : '';
+        const textToCopy = phase5RegId ? phase5RegId.textContent : '';
         copyToClipboard(textToCopy, btnCopyRegIdText, 'COPIED!', 'COPY ID');
       });
     }
@@ -718,9 +754,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Save Optional UTR Reference
-    if (btnSaveUtr && phase4UtrInput) {
+    if (btnSaveUtr && phase5UtrInput) {
       btnSaveUtr.addEventListener('click', async () => {
-        const utrVal = phase4UtrInput.value.trim();
+        const utrVal = phase5UtrInput.value.trim();
         if (!utrVal) {
           if (utrUpdateStatus) {
             utrUpdateStatus.style.color = '#FFA01A';
@@ -772,7 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
           activeRegistration = null;
           resetFile();
           if (eventRegistrationForm) eventRegistrationForm.reset();
-          if (phase4UtrInput) phase4UtrInput.value = '';
+          if (phase5UtrInput) phase5UtrInput.value = '';
           if (utrUpdateStatus) utrUpdateStatus.textContent = '';
           setPhase(1);
         }
