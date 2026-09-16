@@ -2,17 +2,22 @@
  * ==============================================================================
  * JAI CONCLAVE 2026 | VISHWAM - GOOGLE APPS SCRIPT BACKEND (Code.gs)
  * ==============================================================================
- * Self-Healing & Header-Aware Data Engine:
- * - Dynamically maps incoming data to matching column headers in Row 1.
- * - Prevents column shifting even if headers are rearranged or added.
- * - Supports one-click setupSheet() and fixShiftedRows() for existing data.
+ * Features:
+ * 1. Self-Healing & Header-Aware: Maps fields dynamically to matching column headers in Row 1.
+ * 2. Deduplication Engine: Updates existing rows by Registration ID instead of creating multiple entries.
+ * 3. Dedicated Google Drive Upload: Directly saves ID photos to your specified Drive folder.
+ * 4. One-Click Setup & Verification: Includes setupSheet() and testDriveFolderAccess().
  * ==============================================================================
  */
 
-// Target Master Sheet Name
+// Target Master Sheet Tab Name
 var SHEET_NAME = "Registrations";
 
-// Standard Master Schema (27 Master Columns)
+// Target Google Drive Folder ID for ID photos / documents
+// URL: https://drive.google.com/drive/u/0/folders/1zsI2DV10KLTwGixUYlzkxJZQ3wkZSmpr
+var DRIVE_FOLDER_ID = "1zsI2DV10KLTwGixUYlzkxJZQ3wkZSmpr";
+
+// Standard Master Schema (27 Columns)
 var MASTER_HEADERS = [
   "Timestamp",                       // Col A (1)
   "Registration ID",                 // Col B (2)
@@ -63,7 +68,21 @@ function unhideAllRows(sheet) {
 }
 
 /**
- * Run this function in Google Apps Script Editor to format and set up Row 1 headers cleanly.
+ * Run this function in the Google Apps Script Editor once to authorize DriveApp.
+ */
+function testDriveFolderAccess() {
+  try {
+    var folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    Logger.log("SUCCESS: Connected to folder: " + folder.getName());
+    return "SUCCESS: Connected to folder: " + folder.getName();
+  } catch (err) {
+    Logger.log("ERROR: " + err.toString());
+    return "ERROR: " + err.toString();
+  }
+}
+
+/**
+ * Formats Row 1 with official headers and styles.
  */
 function setupSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -81,7 +100,7 @@ function setupSheet() {
   headerRange.setVerticalAlignment("middle");
   sheet.setFrozenRows(1);
 
-  // Format Registration ID, Contact Number, and UTR as text (@) so leading zeros aren't lost
+  // Format Text columns (@) so numbers like phones and registration IDs don't lose digits
   sheet.getRange("B:B").setNumberFormat("@");
   sheet.getRange("G:G").setNumberFormat("@");
   sheet.getRange("Y:Y").setNumberFormat("@");
@@ -94,46 +113,6 @@ function setupSheet() {
       .build();
     sheet.getRange("U2:U2000").setDataValidation(rule);
   } catch(e) {}
-}
-
-/**
- * Clean existing corrupted / shifted rows (where Registration ID was under Full Name, etc.)
- */
-function fixShiftedRows() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = getRegistrationsSheet(ss);
-  unhideAllRows(sheet);
-
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return;
-
-  // First ensure Row 1 has the standard headers
-  setupSheet();
-
-  var data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
-
-  for (var r = 0; r < data.length; r++) {
-    var row = data[r];
-    // Check if row has a Registration ID pattern in Col 2 (B) or Col 1 (A)
-    // JAI-26-XXXX format
-    var foundRegId = "";
-    var regIdIdx = -1;
-    for (var c = 0; c < 5; c++) {
-      var valStr = String(row[c] || "").trim();
-      if (/^JAI-26-\d{4}/i.test(valStr)) {
-        foundRegId = valStr;
-        regIdIdx = c;
-        break;
-      }
-    }
-
-    // If Registration ID was placed in Col C (index 2) or Col B (index 1) with shifted values:
-    if (regIdIdx === 1 && typeof row[0] === "number") {
-      // Row is likely shifted by 1 column
-      // row[1] = Reg ID, row[2] = Full Name, row[3] = Gender, row[4] = Age, row[5] = Email, etc.
-      sheet.getRange(r + 2, 2).setValue("'" + foundRegId);
-    }
-  }
 }
 
 function flushSheet() {
@@ -169,7 +148,7 @@ function handleRequest(e) {
       }
     }
 
-    // 2. JSON POST payload if sent
+    // 2. JSON POST body
     if (e && e.postData && e.postData.contents) {
       try {
         var jsonBody = JSON.parse(e.postData.contents);
@@ -188,17 +167,12 @@ function handleRequest(e) {
       return createJsonResponse({ status: "SUCCESS", message: "Registrations sheet setup complete." });
     }
 
-    if (action === "fix") {
-      fixShiftedRows();
-      return createJsonResponse({ status: "SUCCESS", message: "Existing rows aligned." });
-    }
-
     if (action === "flush") {
       flushSheet();
       return createJsonResponse({ status: "SUCCESS", message: "Registrations sheet cleared." });
     }
 
-    // Auto-setup if sheet is completely empty
+    // Auto-setup if sheet is completely blank
     if (sheet.getLastRow() === 0) {
       setupSheet();
     }
@@ -223,9 +197,9 @@ function handleRequest(e) {
         if (nH === "utrupitransactionid" || nH === "utr" || nH === "transactionid") utrColIdx = h;
       }
 
-      if (regColIdx === -1) regColIdx = 1; // Fallback Col B
-      if (phoneColIdx === -1) phoneColIdx = 6; // Fallback Col G
-      if (utrColIdx === -1) utrColIdx = 24; // Fallback Col Y
+      if (regColIdx === -1) regColIdx = 1;
+      if (phoneColIdx === -1) phoneColIdx = 6;
+      if (utrColIdx === -1) utrColIdx = 24;
 
       var updated = false;
       for (var i = 1; i < data.length; i++) {
@@ -271,7 +245,7 @@ function handleRequest(e) {
     var paymentEmail = (params.payment_email || "").trim();
     var utrUpiTransactionId = "'" + (params.utr_upi_transaction_id || params.utr || "").trim();
 
-    // Handle uploaded file if present
+    // --- GOOGLE DRIVE FILE UPLOADER ---
     var idDocument = (params.id_document || "").trim();
     if (params.id_file_base64) {
       try {
@@ -281,19 +255,42 @@ function handleRequest(e) {
         }
         var decoded = Utilities.base64Decode(base64Data);
         var mimeType = params.id_file_type || "image/jpeg";
-        var fileName = (params.id_file_name || ("ID_" + (registrationId || "doc"))).replace(/[^a-zA-Z0-9._-]/g, "_");
+        var fileExt = mimeType.indexOf("png") > -1 ? ".png" : (mimeType.indexOf("pdf") > -1 ? ".pdf" : ".jpg");
+        var safeRegId = (registrationId || "DOC").replace(/[^a-zA-Z0-9_-]/g, "_");
+        var safeName = (fullName || "Participant").replace(/[^a-zA-Z0-9_-]/g, "_");
+        var fileName = safeRegId + "_" + safeName + fileExt;
+
         var blob = Utilities.newBlob(decoded, mimeType, fileName);
-        var file = DriveApp.createFile(blob);
-        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-        idDocument = file.getUrl();
+
+        // Upload into specified Drive Folder
+        var targetFolder;
+        try {
+          targetFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+        } catch (fErr) {
+          try {
+            targetFolder = DriveApp.getRootFolder();
+          } catch (rErr) {
+            targetFolder = null;
+          }
+        }
+
+        if (targetFolder) {
+          var uploadedFile = targetFolder.createFile(blob);
+          try {
+            uploadedFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch (shareErr) {}
+          idDocument = uploadedFile.getUrl();
+        } else {
+          idDocument = "https://drive.google.com/drive/folders/" + DRIVE_FOLDER_ID;
+        }
       } catch (driveErr) {
         if (!idDocument) {
-          idDocument = "Gallery File: " + (params.id_file_name || "Uploaded") + " (" + driveErr.toString() + ")";
+          idDocument = "https://drive.google.com/drive/folders/" + DRIVE_FOLDER_ID + " (Upload note: " + driveErr.toString() + ")";
         }
       }
     }
 
-    // Value mapping dictionary keyed by normalized keywords
+    // Value mapping dictionary
     var valueDict = {
       "timestamp": timestamp,
       "date": timestamp,
@@ -392,14 +389,13 @@ function handleRequest(e) {
       "paymentemail": paymentEmail
     };
 
-    // --- DYNAMIC HEADER MAPPING ---
-    // Read the existing Row 1 headers from the user's sheet
+    // --- DYNAMIC ROW CONSTRUCTION ---
     var currentLastCol = sheet.getLastColumn();
     var existingHeaders = currentLastCol > 0 ? sheet.getRange(1, 1, 1, currentLastCol).getValues()[0] : [];
+    var mappedRow;
 
-    // If headers exist, build row matching the user's exact columns
     if (existingHeaders.length > 0 && String(existingHeaders[0] || "").trim() !== "") {
-      var mappedRow = new Array(existingHeaders.length);
+      mappedRow = new Array(existingHeaders.length);
       for (var col = 0; col < existingHeaders.length; col++) {
         var rawHeader = String(existingHeaders[col] || "").trim();
         var normH = normalizeKey(rawHeader);
@@ -407,7 +403,6 @@ function handleRequest(e) {
         if (valueDict.hasOwnProperty(normH)) {
           mappedRow[col] = valueDict[normH];
         } else {
-          // Fuzzy fallback search
           var assigned = false;
           for (var dictKey in valueDict) {
             if (normH.indexOf(dictKey) > -1 || dictKey.indexOf(normH) > -1) {
@@ -421,13 +416,9 @@ function handleRequest(e) {
           }
         }
       }
-
-      sheet.appendRow(mappedRow);
-
     } else {
-      // Fallback: Use standard schema
       setupSheet();
-      var fallbackRow = [
+      mappedRow = [
         timestamp,
         registrationId,
         fullName,
@@ -456,7 +447,40 @@ function handleRequest(e) {
         paymentEmail,
         ""
       ];
-      sheet.appendRow(fallbackRow);
+    }
+
+    // --- DEDUPLICATION & IDEMPOTENCY ENGINE ---
+    // If a row with this Registration ID already exists, UPDATE it in place instead of creating duplicates!
+    var existingRowNumber = -1;
+    if (registrationId) {
+      var allRows = sheet.getDataRange().getValues();
+      var idCol = 1; // Default Column B
+
+      if (existingHeaders && existingHeaders.length > 0) {
+        for (var idx = 0; idx < existingHeaders.length; idx++) {
+          var key = normalizeKey(existingHeaders[idx]);
+          if (key === "registrationid" || key === "regid") {
+            idCol = idx;
+            break;
+          }
+        }
+      }
+
+      for (var r = 1; r < allRows.length; r++) {
+        var cellId = String(allRows[r][idCol] || "").trim();
+        if (cellId && cellId === registrationId) {
+          existingRowNumber = r + 1; // 1-indexed row in sheet
+          break;
+        }
+      }
+    }
+
+    if (existingRowNumber > 0) {
+      // Row already exists: update existing row in place
+      sheet.getRange(existingRowNumber, 1, 1, mappedRow.length).setValues([mappedRow]);
+    } else {
+      // New record: append single clean row
+      sheet.appendRow(mappedRow);
     }
 
     return createJsonResponse({

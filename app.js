@@ -641,65 +641,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function sendToBackend(payload) {
-    // If payload contains base64 file, send via POST JSON to avoid URL length limits
-    if (payload.id_file_base64) {
-      try {
-        await fetch(activeApiUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          cache: 'no-cache',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        return;
-      } catch (e) { }
-    }
+    if (!activeApiUrl) return;
 
-    const queryString = new URLSearchParams(payload).toString();
-    const requestUrl = `${activeApiUrl}?${queryString}`;
-
-    const img = new Image();
-    img.src = requestUrl;
-
+    // Send ONE single clean POST request (handles both JSON and base64)
     try {
-      await fetch(requestUrl, {
-        method: 'GET',
+      await fetch(activeApiUrl, {
+        method: 'POST',
         mode: 'no-cors',
-        cache: 'no-cache'
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-    } catch (e) { }
-
-    try {
-      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-        navigator.sendBeacon(requestUrl);
-      }
-    } catch (e) { }
-  }
-
-  function fallbackIframeSubmission(payload) {
-    const form = document.createElement('form');
-    form.action = activeApiUrl;
-    form.method = 'GET';
-    form.target = 'hidden_iframe';
-
-    for (const key in payload) {
-      if (key !== 'id_file_base64') { // Don't overflow iframe GET query
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = payload[key];
-        form.appendChild(input);
-      }
+      return;
+    } catch (postErr) {
+      console.warn('POST failed, attempting single GET fallback:', postErr);
     }
 
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    // Only if POST threw an exception and there is no large base64 file, attempt single GET
+    if (!payload.id_file_base64) {
+      try {
+        const queryString = new URLSearchParams(payload).toString();
+        await fetch(`${activeApiUrl}?${queryString}`, {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-cache'
+        });
+      } catch (getErr) {
+        console.warn('GET fallback note:', getErr);
+      }
+    }
   }
 
   // --- PHASE 4: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
   function renderPaymentScreen(payload) {
     const regId = payload.registration_id || 'JAI-26-0000';
+
+    const phase4ThankYouName = document.getElementById('phase4ThankYouName');
+    if (phase4ThankYouName) phase4ThankYouName.textContent = payload.full_name || 'Delegate';
 
     if (phase4RegId) phase4RegId.textContent = regId;
     if (instRegId) instRegId.textContent = regId;
