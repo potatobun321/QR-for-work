@@ -1,6 +1,12 @@
 /**
  * ==============================================================================
- * VISHWAM SPEAKS - EVENT REGISTRATION PORTAL (app.js)
+ * VISHWAM | JAI CONCLAVE 2026 - EVENT REGISTRATION PORTAL (app.js)
+ * ==============================================================================
+ * Streamlined 4-Phase Architecture:
+ * Phase 1: Instagram Community Connect
+ * Phase 2: LinkedIn Community Connect
+ * Phase 3: Participant Registration Form (Thematic Councils, Art Orbit, MINT)
+ * Phase 4: Dedicated Final Payment & Desk Space Verification Screen
  * ==============================================================================
  */
 
@@ -69,44 +75,41 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- DOM REFERENCES ---
+  // Stepper Indicators (4 Steps)
   const stepIndicator1 = document.getElementById('stepIndicator1');
   const stepIndicator2 = document.getElementById('stepIndicator2');
   const stepIndicator3 = document.getElementById('stepIndicator3');
   const stepIndicator4 = document.getElementById('stepIndicator4');
-  const stepIndicator5 = document.getElementById('stepIndicator5');
+
   const divider1 = document.getElementById('divider1');
   const divider2 = document.getElementById('divider2');
   const divider3 = document.getElementById('divider3');
-  const divider4 = document.getElementById('divider4');
 
+  // Phase Cards
   const phase1Card = document.getElementById('phase1Card');
   const phase2Card = document.getElementById('phase2Card');
   const phase3Card = document.getElementById('phase3Card');
   const phase4Card = document.getElementById('phase4Card');
-  const phase5Card = document.getElementById('phase5Card');
 
-  // Navigation & Social Redirection
-  const btnNextPhase2 = document.getElementById('btnNextPhase2');
-  const btnBackPhase1 = document.getElementById('btnBackPhase1');
-
+  // Phase 1: Instagram
   const btnFollowInstagram = document.getElementById('btnFollowInstagram');
-  const btnNextPhase3 = document.getElementById('btnNextPhase3');
+  const btnNextPhase2 = document.getElementById('btnNextPhase2');
   const instaLockNote = document.getElementById('instaLockNote');
 
-  const btnBackPhase2 = document.getElementById('btnBackPhase2');
+  // Phase 2: LinkedIn
   const btnFollowLinkedin = document.getElementById('btnFollowLinkedin');
-  const btnNextPhase4 = document.getElementById('btnNextPhase4');
+  const btnBackPhase1 = document.getElementById('btnBackPhase1');
+  const btnNextPhase3 = document.getElementById('btnNextPhase3');
   const linkedinLockNote = document.getElementById('linkedinLockNote');
 
-  const btnBackPhase3 = document.getElementById('btnBackPhase3');
-
-  // Registration Form
+  // Phase 3: Registration Form
+  const btnBackPhase2 = document.getElementById('btnBackPhase2');
   const eventRegistrationForm = document.getElementById('eventRegistrationForm');
   const submitRegBtn = document.getElementById('submitRegBtn');
   const btnSpinner = document.getElementById('btnSpinner');
   const btnText = document.getElementById('btnText');
 
-  // Track cards & segment boxes
+  // Track Cards & Dynamic Segments
   const trackCardCouncil = document.getElementById('trackCardCouncil');
   const trackCardArt = document.getElementById('trackCardArt');
   const trackCardWorkshop = document.getElementById('trackCardWorkshop');
@@ -114,7 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const segmentArt = document.getElementById('segmentArt');
   const segmentWorkshop = document.getElementById('segmentWorkshop');
 
-  // Optional ID File Picker Elements
+  const trackBriefCard = document.getElementById('trackBriefCard');
+  const trackBriefBadge = document.getElementById('trackBriefBadge');
+  const trackBriefText = document.getElementById('trackBriefText');
+
+  // Optional ID File Picker
   const fileDropzone = document.getElementById('fileDropzone');
   const idFileUpload = document.getElementById('id_file_upload');
   const dropzoneIdle = document.getElementById('dropzoneIdle');
@@ -124,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnClearFile = document.getElementById('btnClearFile');
   const idDocumentInput = document.getElementById('id_document');
 
-  // Phase 5 Elements
-  const phase5RegId = document.getElementById('phase5RegId');
+  // Phase 4: Payment & Verification Elements
+  const phase4RegId = document.getElementById('phase4RegId');
   const btnCopyRegId = document.getElementById('btnCopyRegId');
   const btnCopyRegIdText = document.getElementById('btnCopyRegIdText');
-  const phase5Name = document.getElementById('phase5Name');
-  const phase5Phone = document.getElementById('phase5Phone');
-  const phase5Track = document.getElementById('phase5Track');
+  const phase4Name = document.getElementById('phase4Name');
+  const phase4Phone = document.getElementById('phase4Phone');
+  const phase4Track = document.getElementById('phase4Track');
   const btnUpiDeepLink = document.getElementById('btnUpiDeepLink');
   const dynamicQrContainer = document.getElementById('dynamicQrContainer');
   const displayUpiId = document.getElementById('displayUpiId');
@@ -138,28 +145,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCopyUpiIdText = document.getElementById('btnCopyUpiIdText');
   const btnQuickEditUpi = document.getElementById('btnQuickEditUpi');
   const instRegId = document.getElementById('instRegId');
-  const phase5UtrInput = document.getElementById('phase5UtrInput');
+  const phase4UtrInput = document.getElementById('phase4UtrInput');
   const btnSaveUtr = document.getElementById('btnSaveUtr');
   const btnSaveUtrText = document.getElementById('btnSaveUtrText');
   const utrUpdateStatus = document.getElementById('utrUpdateStatus');
   const btnRegisterNew = document.getElementById('btnRegisterNew');
 
-  // Modal & Briefing Elements
+  // Settings Modal
   const apiConfigTrigger = document.getElementById('apiConfigTrigger');
   const configModal = document.getElementById('configModal');
   const closeConfigModalBtn = document.getElementById('closeConfigModalBtn');
   const apiUrlInput = document.getElementById('apiUrlInput');
   const upiIdInput = document.getElementById('upiIdInput');
   const saveConfigBtn = document.getElementById('saveConfigBtn');
-
-  const btnOpenBriefing = document.getElementById('btnOpenBriefing');
-  const briefingModal = document.getElementById('briefingModal');
-  const closeBriefingModalBtn = document.getElementById('closeBriefingModalBtn');
-
-  // Track Contextual Brief Elements
-  const trackBriefBadge = document.getElementById('trackBriefBadge');
-  const trackBriefText = document.getElementById('trackBriefText');
-  const trackBriefCard = document.getElementById('trackBriefCard');
 
   // --- INITIALIZATION ---
   init();
@@ -174,16 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPhoneValidator();
     setupPhaseNavigation();
     setupFormSubmission();
-    setupPhase5Interactions();
+    setupPhase4Interactions();
     setupModal();
-    setupBriefingModal();
 
-    // If an active registration exists, restore Phase 5 payment screen
+    // If an active registration exists, restore Phase 4 payment screen
     if (activeRegistration) {
       renderPaymentScreen(activeRegistration);
-      setPhase(5);
+      setPhase(4);
     } else {
-      if (currentPhase > 4) currentPhase = 1;
+      if (currentPhase < 1 || currentPhase > 4) currentPhase = 1;
       setPhase(currentPhase);
     }
   }
@@ -193,25 +190,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasFollowedInsta = SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true';
     const hasConnectedLinkedin = SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true';
 
-    // Phase 2 Instagram state -> unlocks btnNextPhase3 (to LinkedIn)
-    if (hasFollowedInsta && btnNextPhase3) {
-      btnNextPhase3.disabled = false;
-      btnNextPhase3.classList.remove('btn-locked');
+    // Phase 1 Instagram state -> unlocks btnNextPhase2 (to LinkedIn)
+    if (hasFollowedInsta && btnNextPhase2) {
+      btnNextPhase2.disabled = false;
+      btnNextPhase2.classList.remove('btn-locked');
       if (instaLockNote) {
-        instaLockNote.textContent = 'Instagram link opened. Click below to continue.';
+        instaLockNote.textContent = 'Instagram link opened. Click below to continue to LinkedIn.';
         instaLockNote.style.color = '#10B981';
       }
-    } else if (btnNextPhase3) {
-      btnNextPhase3.disabled = true;
-      btnNextPhase3.classList.add('btn-locked');
+    } else if (btnNextPhase2) {
+      btnNextPhase2.disabled = true;
+      btnNextPhase2.classList.add('btn-locked');
     }
 
     if (btnFollowInstagram) {
       btnFollowInstagram.addEventListener('click', () => {
         SafeStorage.setItem(STORAGE_KEYS.FOLLOWED_INSTA, 'true');
-        if (btnNextPhase3) {
-          btnNextPhase3.disabled = false;
-          btnNextPhase3.classList.remove('btn-locked');
+        if (btnNextPhase2) {
+          btnNextPhase2.disabled = false;
+          btnNextPhase2.classList.remove('btn-locked');
         }
         if (instaLockNote) {
           instaLockNote.textContent = 'Instagram link opened. Click below to continue to LinkedIn.';
@@ -220,25 +217,25 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Phase 3 LinkedIn state -> unlocks btnNextPhase4 (to Registration)
-    if (hasConnectedLinkedin && btnNextPhase4) {
-      btnNextPhase4.disabled = false;
-      btnNextPhase4.classList.remove('btn-locked');
+    // Phase 2 LinkedIn state -> unlocks btnNextPhase3 (to Registration)
+    if (hasConnectedLinkedin && btnNextPhase3) {
+      btnNextPhase3.disabled = false;
+      btnNextPhase3.classList.remove('btn-locked');
       if (linkedinLockNote) {
         linkedinLockNote.textContent = 'LinkedIn link opened. Click below to continue to registration.';
         linkedinLockNote.style.color = '#10B981';
       }
-    } else if (btnNextPhase4) {
-      btnNextPhase4.disabled = true;
-      btnNextPhase4.classList.add('btn-locked');
+    } else if (btnNextPhase3) {
+      btnNextPhase3.disabled = true;
+      btnNextPhase3.classList.add('btn-locked');
     }
 
     if (btnFollowLinkedin) {
       btnFollowLinkedin.addEventListener('click', () => {
         SafeStorage.setItem(STORAGE_KEYS.CONNECTED_LINKEDIN, 'true');
-        if (btnNextPhase4) {
-          btnNextPhase4.disabled = false;
-          btnNextPhase4.classList.remove('btn-locked');
+        if (btnNextPhase3) {
+          btnNextPhase3.disabled = false;
+          btnNextPhase3.classList.remove('btn-locked');
         }
         if (linkedinLockNote) {
           linkedinLockNote.textContent = 'LinkedIn link opened. Click below to continue to registration.';
@@ -248,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- OPTIONAL ID GALLERY / FILE DROPZONE ENGINE ---
+  // --- OPTIONAL ID GALLERY / CAMERA FILE ENGINE WITH CLIENT DOWNSCALING ---
   function setupFileUpload() {
     if (!fileDropzone || !idFileUpload) return;
 
@@ -291,35 +288,80 @@ document.addEventListener('DOMContentLoaded', () => {
   function processFile(file) {
     if (!file) return;
 
-    // Max 5MB file size
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File is larger than 5MB. Please choose a smaller image or paste a cloud link.');
+    // Max 10MB original file size
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File is larger than 10MB. Please choose a smaller image or paste a cloud link.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      selectedIdFile = {
-        base64: event.target.result,
-        name: file.name,
-        type: file.type || 'image/jpeg'
+    if (file.type && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Client-side canvas downscale (max 1200px) to prevent layout break & memory lag
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to lightweight JPEG base64 (~100-200KB)
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+          selectedIdFile = {
+            base64: compressedDataUrl,
+            name: file.name,
+            type: 'image/jpeg'
+          };
+
+          displaySelectedFile(file.name, compressedDataUrl);
+        };
+        img.src = event.target.result;
       };
+      reader.readAsDataURL(file);
+    } else {
+      // PDF or non-image document
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        selectedIdFile = {
+          base64: event.target.result,
+          name: file.name,
+          type: file.type || 'application/pdf'
+        };
+        displaySelectedFile(file.name, null);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
-      if (dropzoneIdle) dropzoneIdle.style.display = 'none';
-      if (fileSelectedBar) fileSelectedBar.style.display = 'flex';
-      if (fileSelectedName) fileSelectedName.textContent = file.name;
+  function displaySelectedFile(name, thumbSrc) {
+    if (dropzoneIdle) dropzoneIdle.style.display = 'none';
+    if (fileSelectedBar) fileSelectedBar.style.display = 'flex';
+    if (fileSelectedName) fileSelectedName.textContent = name;
 
-      if (filePreviewThumb) {
-        if (file.type && file.type.startsWith('image/')) {
-          filePreviewThumb.src = event.target.result;
-          filePreviewThumb.style.display = 'block';
-        } else {
-          filePreviewThumb.src = '';
-          filePreviewThumb.style.display = 'none';
-        }
+    if (filePreviewThumb) {
+      if (thumbSrc) {
+        filePreviewThumb.src = thumbSrc;
+        filePreviewThumb.style.display = 'block';
+      } else {
+        filePreviewThumb.src = '';
+        filePreviewThumb.style.display = 'none';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   }
 
   function resetFile() {
@@ -337,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- PHASE STEPPER NAVIGATION ENGINE ---
   function setPhase(phaseNum) {
     if (phaseNum < 1) phaseNum = 1;
-    if (phaseNum > 5) phaseNum = 5;
+    if (phaseNum > 4) phaseNum = 4;
 
     currentPhase = phaseNum;
     SafeStorage.setItem(STORAGE_KEYS.CURRENT_PHASE, phaseNum);
@@ -347,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phase2Card) phase2Card.style.display = 'none';
     if (phase3Card) phase3Card.style.display = 'none';
     if (phase4Card) phase4Card.style.display = 'none';
-    if (phase5Card) phase5Card.style.display = 'none';
 
     // Update Stepper Bar Indicators
     updateStepperUI(phaseNum);
@@ -361,8 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
       phase3Card.style.display = 'block';
     } else if (phaseNum === 4 && phase4Card) {
       phase4Card.style.display = 'block';
-    } else if (phaseNum === 5 && phase5Card) {
-      phase5Card.style.display = 'block';
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -405,48 +444,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepIndicator4) {
       stepIndicator4.classList.remove('active', 'completed');
       if (phaseNum === 4) stepIndicator4.classList.add('active');
-      else if (phaseNum > 4) stepIndicator4.classList.add('completed');
-    }
-
-    if (divider4) {
-      if (phaseNum > 4) divider4.classList.add('completed');
-      else divider4.classList.remove('completed');
-    }
-
-    if (stepIndicator5) {
-      stepIndicator5.classList.remove('active', 'completed');
-      if (phaseNum === 5) stepIndicator5.classList.add('active');
     }
   }
 
   function setupPhaseNavigation() {
-    // Phase 1 -> Phase 2
+    // Phase 1 (Instagram) -> Phase 2 (LinkedIn)
     if (btnNextPhase2) {
-      btnNextPhase2.addEventListener('click', () => setPhase(2));
+      btnNextPhase2.addEventListener('click', () => {
+        if (!btnNextPhase2.disabled) setPhase(2);
+      });
     }
-    // Phase 2 -> Phase 1
+
+    // Phase 2 (LinkedIn) -> Phase 1 (Instagram)
     if (btnBackPhase1) {
       btnBackPhase1.addEventListener('click', () => setPhase(1));
     }
-    // Phase 2 -> Phase 3
+
+    // Phase 2 (LinkedIn) -> Phase 3 (Registration Form)
     if (btnNextPhase3) {
       btnNextPhase3.addEventListener('click', () => {
         if (!btnNextPhase3.disabled) setPhase(3);
       });
     }
-    // Phase 3 -> Phase 2
+
+    // Phase 3 (Registration Form) -> Phase 2 (LinkedIn)
     if (btnBackPhase2) {
       btnBackPhase2.addEventListener('click', () => setPhase(2));
-    }
-    // Phase 3 -> Phase 4
-    if (btnNextPhase4) {
-      btnNextPhase4.addEventListener('click', () => {
-        if (!btnNextPhase4.disabled) setPhase(4);
-      });
-    }
-    // Phase 4 -> Phase 3
-    if (btnBackPhase3) {
-      btnBackPhase3.addEventListener('click', () => setPhase(3));
     }
 
     // Stepper click handlers
@@ -454,26 +477,23 @@ document.addEventListener('DOMContentLoaded', () => {
       stepIndicator1.addEventListener('click', () => setPhase(1));
     }
     if (stepIndicator2) {
-      stepIndicator2.addEventListener('click', () => setPhase(2));
+      stepIndicator2.addEventListener('click', () => {
+        if (SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true') setPhase(2);
+      });
     }
     if (stepIndicator3) {
       stepIndicator3.addEventListener('click', () => {
-        if (SafeStorage.getItem(STORAGE_KEYS.FOLLOWED_INSTA) === 'true') setPhase(3);
+        if (SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true') setPhase(3);
       });
     }
     if (stepIndicator4) {
       stepIndicator4.addEventListener('click', () => {
-        if (SafeStorage.getItem(STORAGE_KEYS.CONNECTED_LINKEDIN) === 'true') setPhase(4);
-      });
-    }
-    if (stepIndicator5) {
-      stepIndicator5.addEventListener('click', () => {
-        if (currentPhase === 5 || activeRegistration) setPhase(5);
+        if (currentPhase === 4 || activeRegistration) setPhase(4);
       });
     }
   }
 
-  // --- DYNAMIC TRACK SELECTORS ---
+  // --- DYNAMIC TRACK SELECTORS (THEMATIC COUNCILS, ART ORBIT, MINT) ---
   function setupTrackSelectors() {
     const trackRadios = document.querySelectorAll('input[name="participation_type"]');
 
@@ -505,37 +525,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (segmentArt) segmentArt.style.display = 'none';
     if (segmentWorkshop) segmentWorkshop.style.display = 'none';
 
-    if (trackValue === 'Council') {
+    if (trackValue === 'Thematic Councils' || trackValue === 'Council') {
       if (trackCardCouncil) trackCardCouncil.classList.add('active');
       if (segmentCouncil) segmentCouncil.style.display = 'block';
       if (trackBriefBadge) {
-        trackBriefBadge.textContent = 'COUNCILS TRACK BRIEF';
+        trackBriefBadge.textContent = 'Thematic Councils';
         trackBriefBadge.className = 'track-brief-badge council-badge';
       }
       if (trackBriefText) {
         trackBriefText.textContent = 'Structured discussions, debates, negotiations, and policy-oriented deliberations through thematic councils. Intended for participants interested in public policy, international relations, governance, law, diplomacy, and debate.';
       }
       if (trackBriefCard) trackBriefCard.className = 'track-brief-card council-active';
-    } else if (trackValue === 'Art Work') {
+    } else if (trackValue === 'Art Orbit' || trackValue === 'Art Work') {
       if (trackCardArt) trackCardArt.classList.add('active');
       if (segmentArt) segmentArt.style.display = 'block';
       if (trackBriefBadge) {
-        trackBriefBadge.textContent = 'ART ORBIT BRIEF';
+        trackBriefBadge.textContent = 'Art Orbit';
         trackBriefBadge.className = 'track-brief-badge art-badge';
       }
       if (trackBriefText) {
-        trackBriefText.textContent = 'A creative platform to showcase artistic work or participate in live workshops. Formats include painting, sketching, digital art, photography, calligraphy, sculpture, and performance art.';
+        trackBriefText.textContent = 'A creative platform where participants can showcase their artistic work or participate in live workshops. Formats can include painting, sketching, digital art, photography, calligraphy, sculpture, performance art, and other creative forms.';
       }
       if (trackBriefCard) trackBriefCard.className = 'track-brief-card art-active';
-    } else if (trackValue === 'Workshop') {
+    } else if (trackValue === 'MINT' || trackValue === 'Workshop') {
       if (trackCardWorkshop) trackCardWorkshop.classList.add('active');
       if (segmentWorkshop) segmentWorkshop.style.display = 'block';
       if (trackBriefBadge) {
-        trackBriefBadge.textContent = 'MINT TRACK BRIEF';
+        trackBriefBadge.textContent = 'MINT';
         trackBriefBadge.className = 'track-brief-badge venture-badge';
       }
       if (trackBriefText) {
-        trackBriefText.textContent = 'A platform for student founders, young entrepreneurs, innovators, and creators to showcase products, services, or ventures, interact with attendees, and gain visibility.';
+        trackBriefText.textContent = 'A dedicated platform for student founders, young entrepreneurs, innovators, and creators to exhibit and showcase their products, services, ideas, or early-stage ventures to attendees, leaders, and peers.';
       }
       if (trackBriefCard) trackBriefCard.className = 'track-brief-card mint-active';
     }
@@ -559,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
           payload[key] = value.trim();
         });
 
-        // Phone number validation
+        // Phone number validation (10 digits)
         let phone = (payload.contact_number || '').replace(/[^0-9]/g, '');
         if (phone.length > 10 && (phone.startsWith('91') || phone.startsWith('0'))) {
           phone = phone.slice(-10);
@@ -571,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
         payload.contact_number = phone;
 
         // Track-specific fields fallback
-        if (payload.art_specifications && (!payload.participation_mode || payload.participation_type === 'Art Work')) {
+        if (payload.art_specifications && (!payload.participation_mode || payload.participation_type === 'Art Orbit')) {
           payload.participation_mode = payload.art_specifications;
         }
 
@@ -607,9 +627,9 @@ document.addEventListener('DOMContentLoaded', () => {
         activeRegistration = payload;
         SafeStorage.setItem(STORAGE_KEYS.USER_REGISTRATION, JSON.stringify(payload));
 
-        // Render Phase 5 Payment & Verification UI
+        // Render Phase 4 Payment & Verification Screen
         renderPaymentScreen(payload);
-        setPhase(5);
+        setPhase(4);
       });
     }
   }
@@ -677,15 +697,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(form);
   }
 
-  // --- PHASE 5: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
+  // --- PHASE 4: RENDER PAYMENT & DESK VERIFICATION SCREEN ---
   function renderPaymentScreen(payload) {
     const regId = payload.registration_id || 'JAI-26-0000';
 
-    if (phase5RegId) phase5RegId.textContent = regId;
+    if (phase4RegId) phase4RegId.textContent = regId;
     if (instRegId) instRegId.textContent = regId;
-    if (phase5Name) phase5Name.textContent = payload.full_name || '--';
-    if (phase5Phone) phase5Phone.textContent = payload.contact_number || '--';
-    if (phase5Track) phase5Track.textContent = payload.participation_type || 'Council';
+    if (phase4Name) phase4Name.textContent = payload.full_name || '--';
+    if (phase4Phone) phase4Phone.textContent = payload.contact_number || '--';
+    if (phase4Track) phase4Track.textContent = payload.participation_type || 'Thematic Councils';
 
     if (displayUpiId) displayUpiId.textContent = activeUpiId;
 
@@ -726,12 +746,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- PHASE 5 INTERACTIVE CONTROLS ---
-  function setupPhase5Interactions() {
+  // --- PHASE 4 INTERACTIVE CONTROLS ---
+  function setupPhase4Interactions() {
     // Copy Registration ID
     if (btnCopyRegId) {
       btnCopyRegId.addEventListener('click', () => {
-        const textToCopy = phase5RegId ? phase5RegId.textContent : '';
+        const textToCopy = phase4RegId ? phase4RegId.textContent : '';
         copyToClipboard(textToCopy, btnCopyRegIdText, 'COPIED!', 'COPY ID');
       });
     }
@@ -754,9 +774,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Save Optional UTR Reference
-    if (btnSaveUtr && phase5UtrInput) {
+    if (btnSaveUtr && phase4UtrInput) {
       btnSaveUtr.addEventListener('click', async () => {
-        const utrVal = phase5UtrInput.value.trim();
+        const utrVal = phase4UtrInput.value.trim();
         if (!utrVal) {
           if (utrUpdateStatus) {
             utrUpdateStatus.style.color = '#FFA01A';
@@ -793,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
           if (btnSaveUtrText) btnSaveUtrText.textContent = 'SAVED';
           setTimeout(() => {
-            if (btnSaveUtrText) btnSaveUtrText.textContent = 'UPDATE UTR';
+            if (btnSaveUtrText) btnSaveUtrText.textContent = 'SAVE UTR';
             btnSaveUtr.disabled = false;
           }, 2500);
         }
@@ -808,8 +828,9 @@ document.addEventListener('DOMContentLoaded', () => {
           activeRegistration = null;
           resetFile();
           if (eventRegistrationForm) eventRegistrationForm.reset();
-          if (phase5UtrInput) phase5UtrInput.value = '';
+          if (phase4UtrInput) phase4UtrInput.value = '';
           if (utrUpdateStatus) utrUpdateStatus.textContent = '';
+          updateTrackSegments('Thematic Councils');
           setPhase(1);
         }
       });
@@ -914,29 +935,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         alert('Settings saved. The active UPI QR code and payment link have been updated.');
         configModal.classList.remove('active');
-      });
-    }
-  }
-
-  // --- CONCLAVE BRIEFING MODAL ENGINE ---
-  function setupBriefingModal() {
-    if (btnOpenBriefing && briefingModal) {
-      btnOpenBriefing.addEventListener('click', () => {
-        briefingModal.classList.add('active');
-      });
-    }
-
-    if (closeBriefingModalBtn && briefingModal) {
-      closeBriefingModalBtn.addEventListener('click', () => {
-        briefingModal.classList.remove('active');
-      });
-    }
-
-    if (briefingModal) {
-      briefingModal.addEventListener('click', (e) => {
-        if (e.target === briefingModal) {
-          briefingModal.classList.remove('active');
-        }
       });
     }
   }
