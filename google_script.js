@@ -3,20 +3,20 @@
  * EVENT REGISTRATION PORTAL - GOOGLE APPS SCRIPT BACKEND (Code.gs)
  * ==============================================================================
  * Target Sheet Name: "Registrations"
- * Columns (25 Total):
- * 1. Timestamp                   14. Venture Name
- * 2. Full Name                   15. Founder / Team Name
- * 3. Gender                      16. Payment Receipt URL/Doc
- * 4. Age                         17. Payment Confirmation Status
- * 5. Email Address               18. Referral Source
- * 6. Contact Number              19. Shakti Referral Code
- * 7. College / University        20. ID Document URL/Ref
- * 8. Current College Year/Class  21. Payment Email
- * 9. City / State                22. Payment Transaction Screenshot
- * 10. Participation Type         23. UTR / UPI Transaction ID
- * 11. Prior MUN Experience       24. Venture Overview
- * 12. Preferred Council          25. Accommodation Required
- * 13. Participation Mode
+ * Columns (26 Total):
+ * 1. Timestamp                   14. Preferred Council
+ * 2. Registration ID             15. Participation Mode
+ * 3. Full Name                   16. Venture Name
+ * 4. Gender                      17. Founder / Team Name
+ * 5. Age                         18. Payment Receipt
+ * 6. Email Address               19. Payment Confirmation (Pending / Verified)
+ * 7. Contact Number              20. Referral Source
+ * 8. College / University        21. Shakti Referral Code
+ * 9. Current College Year/Class  22. ID Document
+ * 10. City / State               23. Payment Email
+ * 11. Participation Type         24. Payment Transaction Screenshot
+ * 12. Registration Fee           25. UTR / UPI Transaction ID
+ * 13. Prior MUN Experience       26. Venture Overview & Notes
  * ==============================================================================
  */
 
@@ -47,6 +47,7 @@ function setupSheet() {
 
   var headers = [
     "Timestamp",
+    "Registration ID",
     "Full Name",
     "Gender",
     "Age",
@@ -56,6 +57,7 @@ function setupSheet() {
     "Current College Year / Class",
     "City / State",
     "Participation Type",
+    "Registration Fee",
     "Prior MUN Experience",
     "Preferred Council",
     "Participation Mode",
@@ -69,8 +71,7 @@ function setupSheet() {
     "Payment Email",
     "Payment Transaction Screenshot",
     "UTR / UPI Transaction ID",
-    "Venture Overview",
-    "Accommodation Required"
+    "Venture Overview"
   ];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
@@ -84,9 +85,19 @@ function setupSheet() {
   headerRange.setVerticalAlignment("middle");
   sheet.setFrozenRows(1);
   
-  // Format Contact Number (Col 6) and UTR ID (Col 23) as explicit text (@) to preserve leading zeroes
-  sheet.getRange("F:F").setNumberFormat("@");
-  sheet.getRange("W:W").setNumberFormat("@");
+  // Format Registration ID (Col 2), Contact Number (Col 7), and UTR ID (Col 25) as explicit text (@)
+  sheet.getRange("B:B").setNumberFormat("@");
+  sheet.getRange("G:G").setNumberFormat("@");
+  sheet.getRange("Y:Y").setNumberFormat("@");
+
+  // Add validation dropdown to Payment Confirmation (Col 19)
+  try {
+    var rule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(["Pending", "Verified", "Cash/Desk", "Waived"], true)
+      .setAllowInvalid(false)
+      .build();
+    sheet.getRange("S2:S1000").setDataValidation(rule);
+  } catch(e) {}
 }
 
 function flushSheet() {
@@ -147,8 +158,32 @@ function handleRequest(e) {
       setupSheet();
     }
 
-    // Capture the 25 columns
+    // Handle updating UTR asynchronously if provided post-registration
+    if (action === "update_utr") {
+      var targetRegId = String(params.registration_id || params.reg_id || "").trim();
+      var targetPhone = String(params.contact_number || params.phone || "").trim().replace(/[^0-9]/g, "");
+      var utrVal = String(params.utr_upi_transaction_id || params.utr || "").trim();
+      
+      var data = sheet.getDataRange().getValues();
+      var updated = false;
+      for (var i = 1; i < data.length; i++) {
+        var rowRegId = String(data[i][1] || "").trim();
+        var rowPhone = String(data[i][6] || "").replace(/[^0-9]/g, "");
+        if ((targetRegId && rowRegId === targetRegId) || (targetPhone && rowPhone === targetPhone)) {
+          sheet.getRange(i + 1, 25).setValue("'" + utrVal);
+          updated = true;
+          break;
+        }
+      }
+      return createJsonResponse({
+        status: updated ? "SUCCESS" : "NOT_FOUND",
+        message: updated ? "UTR updated successfully" : "Registration record not found"
+      });
+    }
+
+    // Capture the columns
     var timestamp = new Date();
+    var registrationId = String(params.registration_id || params.reg_id || "").trim();
     var fullName = (params.full_name || params.name || "").trim();
     var gender = (params.gender || "").trim();
     var age = (params.age || "").trim();
@@ -158,6 +193,7 @@ function handleRequest(e) {
     var collegeYear = (params.current_college_year_or_class || params.year || "").trim();
     var cityState = (params.city_state || "").trim();
     var participationType = (params.participation_type || params.track || "").trim();
+    var registrationFee = (params.registration_fee || params.fee || "INR 2,500").trim();
     var priorMunExperience = (params.prior_mun_experience || "").trim();
     var preferredCouncil = (params.preferred_council || "").trim();
     var participationMode = (params.participation_mode || "").trim();
@@ -167,15 +203,34 @@ function handleRequest(e) {
     var paymentConfirmation = (params.payment_confirmation || "Pending").trim();
     var referralSource = (params.referral_source || "").trim();
     var shaktiReferralCode = (params.shakti_referral_code || "").trim();
-    var idDocument = (params.id_document || "").trim();
     var paymentEmail = (params.payment_email || "").trim();
+    var idDocument = (params.id_document || "").trim();
+    if (params.id_file_base64) {
+      try {
+        var base64Data = String(params.id_file_base64);
+        if (base64Data.indexOf(",") > -1) {
+          base64Data = base64Data.split(",")[1];
+        }
+        var decoded = Utilities.base64Decode(base64Data);
+        var mimeType = params.id_file_type || "image/jpeg";
+        var fileName = (params.id_file_name || ("ID_" + (registrationId || "doc"))).replace(/[^a-zA-Z0-9._-]/g, "_");
+        var blob = Utilities.newBlob(decoded, mimeType, fileName);
+        var file = DriveApp.createFile(blob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        idDocument = file.getUrl();
+      } catch (driveErr) {
+        if (!idDocument) {
+          idDocument = "Gallery File: " + (params.id_file_name || "Uploaded") + " (Drive: " + driveErr.toString() + ")";
+        }
+      }
+    }
     var paymentTransactionScreenshot = (params.payment_transaction_screenshot || "").trim();
     var utrUpiTransactionId = "'" + (params.utr_upi_transaction_id || params.utr || "").trim();
     var ventureOverview = (params.venture_overview || "").trim();
-    var accommodationRequired = (params.accommodation_required || "No").trim();
 
     var rowData = [
       timestamp,
+      registrationId,
       fullName,
       gender,
       age,
@@ -185,6 +240,7 @@ function handleRequest(e) {
       collegeYear,
       cityState,
       participationType,
+      registrationFee,
       priorMunExperience,
       preferredCouncil,
       participationMode,
@@ -198,15 +254,15 @@ function handleRequest(e) {
       paymentEmail,
       paymentTransactionScreenshot,
       utrUpiTransactionId,
-      ventureOverview,
-      accommodationRequired
+      ventureOverview
     ];
 
     sheet.appendRow(rowData);
 
     return createJsonResponse({
       status: "SUCCESS",
-      message: "Registration recorded successfully!",
+      message: "Registration recorded successfully",
+      registration_id: registrationId,
       timestamp: timestamp
     });
 
