@@ -103,16 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactNumberInput = document.getElementById('contact_number');
   const phoneIndicator = document.getElementById('phoneIndicator');
 
-  // Phase 4: Entry Pass Elements
-  const passHeaderName = document.getElementById('passHeaderName');
-  const passRegId = document.getElementById('passRegId');
-  const passName = document.getElementById('passName');
-  const passPhone = document.getElementById('passPhone');
-  const passCollege = document.getElementById('passCollege');
-  const passCity = document.getElementById('passCity');
-  const passInstRegId = document.getElementById('passInstRegId');
-  const btnCopyPassId = document.getElementById('btnCopyPassId');
-  const btnCopyPassIdText = document.getElementById('btnCopyPassIdText');
+  // Phase 4: Thank You Elements
+  const thankYouName = document.getElementById('thankYouName');
   const btnEditFromPass = document.getElementById('btnEditFromPass');
 
   // Settings Modal
@@ -132,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if user already registered previously
     if (activeRegistration && activeRegistration.registration_id) {
-      renderEntryPass(activeRegistration);
+      renderThankYou(activeRegistration);
       goToPhase(4);
     } else {
       goToPhase(currentPhase || 1);
@@ -321,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isSubmitting = true;
       if (submitRegBtn) submitRegBtn.disabled = true;
       if (btnSpinner) btnSpinner.style.display = 'inline-block';
-      if (btnText) btnText.textContent = 'GENERATING PASS...';
+      if (btnText) btnText.textContent = 'SUBMITTING...';
 
       // Save locally immediately
       activeRegistration = payload;
@@ -331,17 +323,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Send data to Google Apps Script
         await sendToGoogleSheet(payload);
       } catch (err) {
-        console.warn('Network sync notice (pass saved locally):', err);
+        console.warn('Network sync notice (saved locally):', err);
       } finally {
-        // Render pass and transition to Phase 4
-        renderEntryPass(payload);
+        // Render thank you note and transition to Phase 4
+        renderThankYou(payload);
         goToPhase(4);
 
         // Reset submit button state
         isSubmitting = false;
         if (submitRegBtn) submitRegBtn.disabled = false;
         if (btnSpinner) btnSpinner.style.display = 'none';
-        if (btnText) btnText.textContent = 'CONFIRM & GET FREE ENTRY PASS';
+        if (btnText) btnText.textContent = 'SUBMIT REGISTRATION';
       }
     });
   }
@@ -399,47 +391,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- DIGITAL ENTRY PASS RENDERING ---
-  function renderEntryPass(regData) {
+  // --- THANK YOU RENDERING ---
+  function renderThankYou(regData) {
     if (!regData) return;
-
-    const firstName = (regData.full_name || 'Delegate').split(' ')[0];
-    if (passHeaderName) passHeaderName.textContent = firstName;
-    if (passRegId) passRegId.textContent = regData.registration_id || 'HAIFA-26-0000';
-    if (passInstRegId) passInstRegId.textContent = regData.registration_id || 'HAIFA-26-0000';
-
-    if (passName) passName.textContent = regData.full_name || '--';
-    if (passPhone) passPhone.textContent = regData.contact_number || '--';
-    if (passCollege) passCollege.textContent = regData.college_university || '--';
-    if (passCity) passCity.textContent = regData.city_state || '--';
+    const firstName = (regData.full_name || 'Participant').split(' ')[0];
+    if (thankYouName) thankYouName.textContent = firstName;
   }
 
-  // --- PASS ACTIONS ---
+  // --- ACTIONS ---
   function setupPassActions() {
-    if (btnCopyPassId && passRegId) {
-      btnCopyPassId.addEventListener('click', () => {
-        const idText = passRegId.textContent.trim();
-        navigator.clipboard.writeText(idText).then(() => {
-          if (btnCopyPassIdText) btnCopyPassIdText.textContent = 'COPIED!';
-          setTimeout(() => {
-            if (btnCopyPassIdText) btnCopyPassIdText.textContent = 'COPY ID';
-          }, 2000);
-        }).catch(() => {
-          // Fallback
-          const temp = document.createElement('textarea');
-          temp.value = idText;
-          document.body.appendChild(temp);
-          temp.select();
-          document.execCommand('copy');
-          temp.remove();
-          if (btnCopyPassIdText) btnCopyPassIdText.textContent = 'COPIED!';
-          setTimeout(() => {
-            if (btnCopyPassIdText) btnCopyPassIdText.textContent = 'COPY ID';
-          }, 2000);
-        });
-      });
-    }
-
     if (btnEditFromPass) {
       btnEditFromPass.addEventListener('click', () => {
         // Pre-fill form if registration exists
