@@ -1,62 +1,39 @@
 /* ==============================================================================
-   HAIFA HOUSE | VISHWAM - OFFICIAL BRAND DESIGN SYSTEM
+   QR-PORTAL-INFRA | DECOUPLED BLOCKY DESIGN SYSTEM
    ==============================================================================
-   VISHWAM Brand Color Palette (Solid, Blocky & Zero Gradients):
-   - Deep Royal Navy (Primary):      #0B192C
-   - Midnight Obsidian (Dark Base):   #070F1E
-   - Lotus Orange (Primary Accent):   #EA580C
-   - Orange Glow (Accent):            #F97316
-   - Executive Gold (VIP / Accent):   #F59E0B
-   - Globe Teal (International):      #0D9488
-   - SHAKTI Purple (Leadership):      #7C3AED
-   - Crisp White:                     #FFFFFF
-   - Soft Section Slate:              #F8FAFC
-   - Card Surface:                    #0F223D
-   - Card Surface Elevated:           #132A4A
-   - Slate Body Text:                 #CBD5E1
-   - Muted Subtitle Text:             #94A3B8
-   - Success Emerald:                 #10B981
-   - Error Crimson:                   #EF4444
+   Solid, high-contrast, blocky geometry with zero fussy gradients.
+   All brand cosmetics are driven dynamically by CSS variables in :root
+   and can be toggled via config.js or the theme switcher.
    ============================================================================== */
 
 :root {
-  /* Brand Palette Colors */
-  --navy-primary: #0B192C;
-  --midnight-base: #070F1E;
-  --lotus-orange: #EA580C;
-  --orange-glow: #F97316;
-  --executive-gold: #F59E0B;
-  --globe-teal: #0D9488;
-  --shakti-purple: #7C3AED;
-  --crisp-white: #FFFFFF;
-  --soft-slate: #F8FAFC;
+  /* Default Palette: Obsidian & Electric Amber */
+  --bg-page: #070F1E;
+  --bg-card: #0B192C;
   --card-surface: #0F223D;
   --card-surface-elevated: #132A4A;
-  --slate-body: #CBD5E1;
-  --muted-text: #94A3B8;
-  --success-emerald: #10B981;
-  --error-crimson: #EF4444;
-
-  /* Theme Tokens (Pure Solid Colors - Zero Gradients) */
-  --bg-page: var(--midnight-base);
-  --bg-card: var(--navy-primary);
-  --bg-card-surface: var(--card-surface);
   --bg-input: #050B17;
 
   --border-input: #1E2E48;
   --border-subtle: #16243A;
-  --border-card-brand: 4px solid var(--lotus-orange);
+  --border-card-brand: 4px solid var(--brand-accent);
 
-  --text-heading: var(--crisp-white);
-  --text-primary: var(--slate-body);
-  --text-secondary: var(--muted-text);
+  --brand-accent: #EA580C;
+  --brand-accent-glow: #F97316;
+  --brand-highlight: #F59E0B;
+  --success-emerald: #10B981;
+  --error-crimson: #EF4444;
 
-  /* Blocky Visual System (Sharp 4px / 2px geometry) */
+  --text-heading: #FFFFFF;
+  --text-primary: #CBD5E1;
+  --text-secondary: #94A3B8;
+
+  /* Blocky Visual Geometry */
   --radius-block-lg: 4px;
   --radius-block-md: 4px;
   --radius-block-sm: 2px;
 
-  --shadow-block: 0 8px 24px -2px rgba(4, 9, 18, 0.7);
+  --shadow-block: 0 8px 24px -2px rgba(4, 9, 18, 0.75);
   --transition-fast: 0.15s ease;
 }
 
@@ -68,7 +45,7 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-page);
   color: var(--text-primary);
   min-height: 100vh;
@@ -82,7 +59,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* CONTAINER */
+/* APP CONTAINER */
 .app-container {
   width: 100%;
   max-width: 740px;
@@ -92,7 +69,7 @@ body {
   gap: 1.5rem;
 }
 
-/* BLOCKY CARD */
+/* BLOCKY GLASS-STYLE CARD */
 .glass-card {
   background-color: var(--bg-card);
   border: 2px solid var(--border-input);
@@ -103,51 +80,71 @@ body {
   position: relative;
 }
 
-/* HEADER BRANDING */
+/* ==============================================================================
+   HEADER INFRASTRUCTURE
+   ============================================================================== */
 .app-header {
   text-align: center;
-  padding: 0.5rem 0 1rem;
+  padding: 0.5rem 0 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .logo-wrapper {
-  margin-bottom: 1.15rem;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.brand-logo {
-  max-width: 210px;
+.monogram-box {
+  width: 56px;
+  height: 56px;
+  background-color: var(--card-surface);
+  border: 2px solid var(--brand-accent);
+  border-radius: var(--radius-block-md);
+  color: var(--brand-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.brand-logo-img {
+  max-width: 180px;
+  max-height: 56px;
   height: auto;
   object-fit: contain;
   border-radius: var(--radius-block-sm);
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
 }
 
 .app-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   font-weight: 900;
   letter-spacing: 0.04em;
-  color: var(--crisp-white);
+  color: var(--text-heading);
   text-transform: uppercase;
   line-height: 1.15;
 }
 
-.header-org {
+.header-tagline {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: var(--executive-gold);
+  color: var(--brand-highlight);
   letter-spacing: 0.16em;
   margin-top: 0.35rem;
+  text-transform: uppercase;
 }
 
 /* ==============================================================================
-   4-STEP STEPPER BAR
+   STEPPER CONTROLLER
    ============================================================================== */
 .stepper-container {
   width: 100%;
@@ -157,7 +154,7 @@ body {
   background-color: var(--bg-card);
   border: 2px solid var(--border-input);
   border-radius: var(--radius-block-md);
-  padding: 1rem 1.25rem;
+  padding: 0.9rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -176,7 +173,7 @@ body {
 }
 
 .step-item.completed {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .step-circle {
@@ -188,7 +185,7 @@ body {
   color: var(--text-secondary);
   font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -200,15 +197,15 @@ body {
 }
 
 .step-item.active .step-circle {
-  background-color: var(--lotus-orange);
-  border-color: var(--orange-glow);
-  color: var(--crisp-white);
+  background-color: var(--brand-accent);
+  border-color: var(--brand-accent-glow);
+  color: var(--text-heading);
 }
 
 .step-item.completed .step-circle {
   background-color: var(--success-emerald);
   border-color: var(--success-emerald);
-  color: var(--crisp-white);
+  color: var(--text-heading);
 }
 
 .step-item.completed .step-number {
@@ -223,15 +220,15 @@ body {
 
 .step-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--slate-body);
-  letter-spacing: 0.03em;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .step-item.active .step-title {
-  color: var(--crisp-white);
+  color: var(--text-heading);
 }
 
 .step-divider {
@@ -246,65 +243,54 @@ body {
 }
 
 /* ==============================================================================
-   PHASE 1 & 2: SOCIAL CONNECT CARDS
+   ACTION GATE CARDS (PHASES 1 & 2)
    ============================================================================== */
 .phase-card {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
-.social-header {
+.gate-header {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
-.social-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-block-sm);
+.gate-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-block-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--crisp-white);
-}
-
-.instagram-icon {
-  background-color: #C13584;
-}
-
-.linkedin-icon {
-  background-color: #0A66C2;
+  background-color: var(--card-surface);
+  border: 2px solid var(--border-input);
+  color: var(--brand-accent);
 }
 
 .card-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.35rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  color: var(--crisp-white);
+  color: var(--text-heading);
   letter-spacing: 0.02em;
+  line-height: 1.25;
 }
 
 .card-subtitle {
-  font-size: 0.9rem;
-  color: var(--muted-text);
-  margin-top: 0.25rem;
-}
-
-.card-intro {
   font-size: 0.92rem;
-  color: var(--slate-body);
+  color: var(--text-secondary);
   margin-top: 0.35rem;
   line-height: 1.5;
 }
 
-.social-action-box {
-  background-color: var(--bg-card-surface);
+.gate-action-box {
+  background-color: var(--card-surface);
   border: 2px solid var(--border-input);
   border-radius: var(--radius-block-md);
-  padding: 1.5rem;
+  padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -313,52 +299,22 @@ body {
 }
 
 .handle-pill {
-  background-color: #06101E;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-input);
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 1rem;
   border-radius: var(--radius-block-sm);
-}
-
-.handle-text {
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
   font-weight: 700;
-  color: var(--executive-gold);
+  font-size: 0.9rem;
+  color: var(--brand-highlight);
   letter-spacing: 0.05em;
 }
 
-.btn-social {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1.75rem;
-  border-radius: var(--radius-block-sm);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  color: var(--crisp-white);
-  cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
-  width: 100%;
-  max-width: 320px;
-}
-
-.btn-social:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-}
-
-.btn-instagram {
-  background-color: #E1306C;
-  border: 2px solid #F56040;
-}
-
-.btn-linkedin {
-  background-color: #0A66C2;
-  border: 2px solid #0077B5;
+.verification-note {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-align: center;
 }
 
 .phase-footer {
@@ -367,122 +323,123 @@ body {
   gap: 1rem;
 }
 
-.verification-note {
-  font-size: 0.85rem;
-  color: var(--muted-text);
-  text-align: center;
-}
-
 .btn-group-nav {
   display: flex;
   gap: 0.75rem;
 }
 
-.btn-primary {
-  background-color: var(--lotus-orange);
-  color: var(--crisp-white);
-  border: 2px solid var(--orange-glow);
-  border-radius: var(--radius-block-sm);
-  padding: 0.85rem 1.5rem;
+/* ==============================================================================
+   BUTTON DESIGN SYSTEM
+   ============================================================================== */
+.btn-primary, .btn-action, .btn-secondary {
   font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius-block-sm);
+  border: none;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  cursor: pointer;
-  width: 100%;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  gap: 0.65rem;
+  padding: 0.85rem 1.4rem;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.btn-primary:hover:not(:disabled) {
-  opacity: 0.92;
+.btn-primary, .btn-action {
+  background-color: var(--brand-accent);
+  color: #FFFFFF;
+  border: 2px solid var(--brand-accent-glow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary:hover:not(:disabled), .btn-action:hover {
+  background-color: var(--brand-accent-glow);
   transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
-  background-color: #1A283C;
-  border-color: #243B5A;
-  color: #556B88;
+  opacity: 0.35;
   cursor: not-allowed;
   transform: none;
 }
 
 .btn-secondary {
-  background-color: var(--bg-card-surface);
-  color: var(--slate-body);
+  background-color: transparent;
+  color: var(--text-primary);
   border: 2px solid var(--border-input);
-  border-radius: var(--radius-block-sm);
-  padding: 0.85rem 1.25rem;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: opacity var(--transition-fast);
 }
 
 .btn-secondary:hover {
-  color: var(--crisp-white);
-  border-color: #2A4368;
+  background-color: var(--card-surface);
+  border-color: var(--text-secondary);
+  color: var(--text-heading);
 }
 
 /* ==============================================================================
-   PHASE 3: HAIFA HOUSE REGISTRATION FORM
+   FORM SECTION & INPUTS (PHASE 3)
    ============================================================================== */
 .form-header {
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-input);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-intro {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  margin-top: 0.35rem;
 }
 
 .form-section {
-  background-color: var(--bg-card-surface);
-  border: 2px solid var(--border-input);
+  background-color: var(--card-surface);
+  border: 1.5px solid var(--border-input);
   border-radius: var(--radius-block-md);
-  padding: 1.35rem 1.5rem;
+  padding: 1.4rem 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--brand-highlight);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--crisp-white);
-  margin-bottom: 1.15rem;
-  letter-spacing: 0.02em;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
 }
 
 .section-num {
-  background-color: var(--lotus-orange);
-  color: var(--crisp-white);
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-input);
   border-radius: var(--radius-block-sm);
-  font-size: 0.78rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--text-heading);
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.15rem 1rem;
-  align-items: start;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.15rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 0.35rem;
 }
 
 .form-group.full-width {
@@ -490,24 +447,17 @@ body {
 }
 
 .form-label {
-  display: block;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--slate-body);
-  margin-bottom: 0.35rem;
-  min-height: 1.25rem;
-  line-height: 1.25;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .req {
-  color: var(--lotus-orange);
+  color: var(--brand-accent);
   font-weight: 800;
-}
-
-.opt-badge {
-  font-size: 0.72rem;
-  color: var(--muted-text);
-  font-weight: 500;
 }
 
 .form-control {
@@ -517,7 +467,7 @@ body {
   padding: 0.65rem 0.85rem;
   height: 44px;
   box-sizing: border-box;
-  color: var(--crisp-white);
+  color: var(--text-heading);
   font-family: inherit;
   font-size: 0.9rem;
   outline: none;
@@ -526,28 +476,26 @@ body {
 }
 
 .form-control:focus {
-  border-color: var(--lotus-orange);
+  border-color: var(--brand-accent);
 }
 
 .form-control option {
-  background-color: #071222;
-  color: var(--crisp-white);
+  background-color: var(--bg-card);
+  color: var(--text-heading);
 }
 
-/* Chrome/Safari Dark Autofill Override */
+/* Autofill Override */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #050B17 inset !important;
-  -webkit-text-fill-color: #FFFFFF !important;
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-heading) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 .phone-indicator {
   font-size: 0.75rem;
   font-weight: 700;
-  margin-top: 0.3rem;
   min-height: 16px;
   display: block;
 }
@@ -574,7 +522,7 @@ input:-webkit-autofill:active {
   width: 18px;
   height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--crisp-white);
+  border-top-color: #FFFFFF;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   display: inline-block;
@@ -585,7 +533,7 @@ input:-webkit-autofill:active {
 }
 
 /* ==============================================================================
-   PHASE 4: SIMPLE HUMBLE THANK YOU & WELCOME
+   CONFIRMATION & DYNAMIC QR BADGE CARD (PHASE 4)
    ============================================================================== */
 .thank-you-card {
   text-align: center;
@@ -593,19 +541,19 @@ input:-webkit-autofill:active {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  padding: 2.75rem 1.75rem;
+  padding: 2.5rem 1.75rem;
 }
 
 .thank-you-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .thank-you-success-icon {
-  width: 68px;
-  height: 68px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-block-md);
   background-color: #064E3B;
   border: 2px solid var(--success-emerald);
@@ -613,54 +561,88 @@ input:-webkit-autofill:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.35rem;
 }
 
 .thank-you-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.95rem;
+  font-size: 1.9rem;
   font-weight: 900;
-  color: var(--crisp-white);
+  color: var(--text-heading);
   letter-spacing: 0.02em;
 }
 
-.welcome-family-badge {
-  background-color: #0B1E36;
-  border: 1.5px solid #23436C;
-  color: var(--executive-gold);
-  padding: 0.45rem 1.15rem;
+.welcome-badge {
+  background-color: var(--card-surface);
+  border: 1.5px solid var(--border-input);
+  color: var(--brand-highlight);
+  padding: 0.4rem 1.1rem;
   border-radius: var(--radius-block-sm);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   display: inline-block;
 }
 
 .thank-you-desc {
-  font-size: 0.98rem;
-  color: var(--slate-body);
-  max-width: 480px;
-  line-height: 1.65;
-  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  max-width: 500px;
+  line-height: 1.6;
 }
 
-.re-register-link-wrap {
-  margin-top: 0.75rem;
+/* DYNAMIC QR PASS BADGE */
+.digital-pass-box {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--card-surface);
+  border: 2px solid var(--border-input);
+  border-top: 4px solid var(--brand-accent);
+  border-radius: var(--radius-block-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.btn-support-wa {
-  background-color: #075E54;
-  border: 1px solid #128C7E;
+.pass-id-pill {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-input);
+  color: var(--brand-highlight);
+  font-family: 'Outfit', monospace;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-block-sm);
+  letter-spacing: 0.08em;
 }
 
-.btn-support-insta {
-  background-color: #833AB4;
-  border: 1px solid #C13584;
+.qr-display-wrapper {
+  background: #FFFFFF;
+  padding: 12px;
+  border-radius: var(--radius-block-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  min-width: 160px;
+  min-height: 160px;
 }
 
-.btn-support-wa:hover, .btn-support-insta:hover {
-  opacity: 0.9;
+.qr-display-wrapper canvas, .qr-display-wrapper img {
+  display: block;
+}
+
+.pass-meta {
+  width: 100%;
+  border-top: 1px dashed var(--border-input);
+  padding-top: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .re-register-link-wrap {
@@ -670,7 +652,7 @@ input:-webkit-autofill:active {
 .btn-text-link {
   background: none;
   border: none;
-  color: var(--muted-text);
+  color: var(--text-secondary);
   font-size: 0.82rem;
   text-decoration: underline;
   cursor: pointer;
@@ -678,7 +660,7 @@ input:-webkit-autofill:active {
 }
 
 .btn-text-link:hover {
-  color: var(--lotus-orange);
+  color: var(--brand-accent);
 }
 
 /* ==============================================================================
@@ -687,25 +669,26 @@ input:-webkit-autofill:active {
 .app-footer {
   text-align: center;
   font-size: 0.8rem;
-  color: var(--muted-text);
+  color: var(--text-secondary);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   padding-top: 0.5rem;
 }
 
 .api-config-trigger {
   background: none;
   border: none;
-  color: #384F70;
-  font-size: 0.72rem;
+  color: var(--brand-highlight);
+  font-size: 0.75rem;
   cursor: pointer;
   text-decoration: underline;
+  font-family: inherit;
 }
 
 .api-config-trigger:hover {
-  color: var(--muted-text);
+  color: var(--text-heading);
 }
 
 .modal-overlay {
@@ -743,13 +726,13 @@ input:-webkit-autofill:active {
   font-family: 'Outfit', sans-serif;
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--crisp-white);
+  color: var(--text-heading);
 }
 
 .close-modal-btn {
   background: none;
   border: none;
-  color: var(--muted-text);
+  color: var(--text-secondary);
   font-size: 1.25rem;
   cursor: pointer;
 }
@@ -767,11 +750,11 @@ input:-webkit-autofill:active {
   }
 
   .app-title {
-    font-size: 1.95rem;
+    font-size: 1.85rem;
   }
 
-  .header-org {
-    font-size: 0.9rem;
+  .header-tagline {
+    font-size: 0.82rem;
   }
 
   .stepper-bar {
@@ -779,18 +762,14 @@ input:-webkit-autofill:active {
   }
 
   .step-title {
-    display: none; /* Hide labels on very narrow mobile, keep clean numbered badges */
+    display: none; /* Keep clean numbered dots on mobile */
   }
 
-  .form-grid, .pass-grid {
+  .form-grid {
     grid-template-columns: 1fr;
   }
 
   .form-group.full-width {
     grid-column: span 1;
-  }
-
-  .pass-id-number {
-    font-size: 1.5rem;
   }
 }
